@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'issues.apps.IssuesConfig',
+    'projects.apps.ProjectsConfig',
     'inventory.apps.InventoryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,7 +57,7 @@ ROOT_URLCONF = 'tickets.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ BASE_DIR + '/templates/' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
