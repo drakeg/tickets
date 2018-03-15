@@ -1,3 +1,12 @@
-from django.db import models
+import datetime
 
-# Create your models here.
+from django.db import models
+from django.utils import timezone
+
+class Project(models.Model):
+	requestor_name = models.CharField(max_length=50)
+	description = models.CharField(max_length=500)
+	pub_date = models.DateTimeField('date_published')
+	assigned = models.CharField(max_length=50)
+	def __str__(self):
+		return self.requestor_name

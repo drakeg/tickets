@@ -11,7 +11,7 @@ def index(request):
         return render(request, 'issue/issue_list.html', context)
 
 def issues(request, issue_id):
-        server = get_object_or_404, pk=issue_id)
+        issue = get_object_or_404, pk=issue_id
         return render(request, 'issue/issue_single.html', {'issue': issue})
 
 def my_issues(request, issue_id):
