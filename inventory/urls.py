@@ -2,6 +2,7 @@ from django.urls import path
 
 from . import views
 
+app_name = 'inventory'
 urlpatterns = [
     path('', views.index, name='index'),
     path('server/<int:server_id>/', views.servers, name='servers'),
