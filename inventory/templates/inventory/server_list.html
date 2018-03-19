@@ -9,7 +9,7 @@
             </thead>
             <tbody>
 	        {% for server in server_list %}
-		<tr><td><a href="/inventory/server/{{ server.id }}/">{{server.server_name }}</a></td><td>{{ server.cluster }}</td><td>{{ server.vendor }}</td><td>{{ server.os }}</td></tr>
+		<tr><td><a href="/inventory/server/{{ server.id }}/">{{server.server_name }}</a></td><td>{{ server.cluster }}</td><td>{{ server.vendor }}</td><td>{{ server.Operating_System }}</td></tr>
 	        {% endfor %}
             </tbody>
         </table>

@@ -11,8 +11,6 @@ class Version(models.Model):
 class Operating_System(models.Model):
 	os_name = models.CharField(max_length=50)
 	version_no = models.ForeignKey(Version, on_delete=models.CASCADE)
-	def __str__(self):
-		return self.os_name
 
 class Vendor(models.Model):
 	vendor_name = models.CharField(max_length=50)
