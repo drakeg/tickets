@@ -1,9 +1,9 @@
 {% extends 'tickets/base.html' %}
 {% block content %}
-    <h1>Issues</h1>
-    {% if issue_list %}
+    <h1>Projects</h1>
+    {% if project_list %}
 	<table class="table table-striped">
-            <caption>Open Tickets</caption>
+            <caption>Open Projects</caption>
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -15,32 +15,24 @@
                 </tr>
             </thead>
             <tbody>
-	        {% for issue in issue_list %}
+	        {% for project in project_list %}
 		<tr>
-            <td><a href="/issues/issues/{{ issue.id }}/">{{issue.id}}</a></td>
-            <td>{{issue.requestor_name }}</td>
-            <td>{{ issue.description }}</td>
-            <td>{{ issue.assigned }}</td>
+            <td><a href="/projects/projects/{{ project.id }}/">{{project.id}}</a></td>
+            <td>{{ project.requestor_name }}</td>
+            <td>{{ project.description }}</td>
+            <td>{{ project.assigned }}</td>
             <td>
-                {% if issue.issue_open %}
-                <!-- Rounded switch -->
-                <label class="switch">
-                    <input type="checkbox" checked disabled>
-                    <span class="slider round"></span>
-                </label>
-                {% else %}
                 <label class="switch">
                     <input type="checkbox" disabled>
                     <span class="slider round"></span>
                 </label>
-                {% endif %}
             </td>
-            <td>{{ issue.pub_date }}</td>
+            <td>{{ project.pub_date }}</td>
         </tr>
 	        {% endfor %}
             </tbody>
         </table>
     {% else %}
-	<p>No issues are available.</p>
+	<p>No projects are available.</p>
     {% endif %}
 {% endblock %}

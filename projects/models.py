@@ -1,4 +1,5 @@
 import datetime
+from .middleware import get_current_user
 
 from django.db import models
 from django.utils import timezone

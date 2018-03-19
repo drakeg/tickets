@@ -4,10 +4,11 @@ from django.http import HttpResponse
 from django.template import loader
 
 from .models import Project 
+from .forms import ProjectForm
 
 def index(request):
         project_list = Project.objects.order_by('pub_date')[:15]
-        context = {'project_list': projects_list}
+        context = {'project_list': project_list}
         return render(request, 'projects/project_list.html', context)
 
 def project(request, project_id):
@@ -29,4 +30,4 @@ def project_new(request):
                         project.save()
         else:
                 form = ProjectForm()
-        return render(request, 'project/project_new.html', {'form': form})
+        return render(request, 'projects/project_new.html', {'form': form})
