@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'django_mail_admin',
+    'watson',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'watson.middleware.SearchContextMiddleware',
 ]
 
 ROOT_URLCONF = 'tickets.urls'
@@ -72,7 +76,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tickets.wsgi.application'
-
+EMAIL_BACKEND = 'django_mail_admin.backends.CustomEmailBackend'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases

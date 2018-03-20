@@ -1,0 +1,3 @@
+django-watson
+django-extensions
+django_mail_admin

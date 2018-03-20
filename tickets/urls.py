@@ -21,5 +21,6 @@ urlpatterns = [
     path('issues/', include('issues.urls')),
     path('projects/', include('projects.urls')),
     path('admin/', admin.site.urls),
+    path('search/', include('watson.urls', namespace="watson")),
     path('', include('dashboard.urls')),
 ]

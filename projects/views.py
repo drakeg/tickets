@@ -15,9 +15,17 @@ def project(request, project_id):
         project = get_object_or_404, pk=project_id
         return render(request, 'projects/project_single.html', {'project': project})
 
-def my_issues(request, issue_id):
-        response = "You're looking at issue %s."
-        return HttpResponse(response % issue_id)
+
+def my_projects(request):
+        username = request.user
+        project_list = Project.objects.filter(assigned=username)
+        context = {'project_list': project_list}
+        return render(request, 'projects/project_list.html', context)
+
+def unassigned_projects(request):
+        project_list = Project.objects.filter(assigned__isnull=True)
+        context = {'project_list': project_list}
+        return render(request, 'projects/project_list.html', context)
 
 def project_new(request):
         if request.method == "POST":
