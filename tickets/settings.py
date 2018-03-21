@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'issues.apps.IssuesConfig',
     'projects.apps.ProjectsConfig',
+    'knowledgebase.apps.KnowledgebaseConfig',
     'inventory.apps.InventoryConfig',
     'dashboard.apps.DashboardConfig',
     'django.contrib.admin',

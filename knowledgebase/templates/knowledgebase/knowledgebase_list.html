@@ -1,0 +1,32 @@
+{% extends 'tickets/base.html' %}
+{% block content %}
+    <h1>Knowledge Base Articles</h1>
+    {% if knowledgebase_list %}
+	<table class="table table-striped">
+            <caption>Knowledge Base Articles</caption>
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Requestor</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Assigned</th>
+                    <th scope="col">Closed/Opened</th>
+                    <th scope="col">Date Opened</th>
+                </tr>
+            </thead>
+            <tbody>
+	        {% for knowledge in knowledge_list %}
+		<tr>
+            <td><a href="/knowledgebase/knowledgebase/{{ knowledgebase.id }}/">{{knowledgebase.id}}</a></td>
+            <td>{{ knowledgebase.requestor_name }}</td>
+            <td>{{ knowledgebase.description }}</td>
+            <td>{{ knowledgebase.assigned }}</td>
+            <td>{{ knowledgebase.pub_date }}</td>
+        </tr>
+	        {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+	<p>No knowledge base articles are available.</p>
+    {% endif %}
+{% endblock %}
