@@ -1,9 +1,10 @@
 {% extends 'tickets/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <h1> New Project </h1>
 <form method="POST" class="project-form">{% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
         <button type="submit" class="save btn btn-default">Save</button>
 </form>
 

@@ -1,8 +1,6 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import Http404
-from django.http import HttpResponse
-from django.template import loader
 from django.utils import timezone
+from django.db.models import Q
 
 from .models import Issue
 from .forms import IssueForm
@@ -41,3 +39,12 @@ def issue_new(request):
 	else:
 		form = IssueForm()
 	return render(request, 'issue/issue_new.html', {'form': form})
+
+def search(request):
+    template = 'issue/issue_list.html'
+    query = request.GET.get('q')
+    if query:
+        issue_list = Issue.objects.filter(Q(summary__icontains=query) | Q(description__icontains=query))
+    context = {'issue_list': issue_list}
+    return render(request, template, context)
+

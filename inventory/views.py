@@ -17,3 +17,11 @@ def servers(request, server_id):
 def operating_systems(request, operating_system_id):
 	response = "You're looking at operating system %s."
 	return HttpResponse(response % operating_system_id)
+
+def search(request):
+    template = 'inventory/server_list.html'
+    query = request.GET.get('q')
+    if query:
+        server_list = Issue.objects.filter(Q(server_name__icontains=query))
+    context = {'server_list': server_list}
+    return render(request, template, context)

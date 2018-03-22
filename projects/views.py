@@ -40,3 +40,12 @@ def project_new(request):
         else:
                 form = ProjectForm()
         return render(request, 'projects/project_new.html', {'form': form})
+
+def search(request):
+    template = 'projects/project_list.html'
+    query = request.GET.get('q')
+    if query:
+        project_list = Issue.objects.filter(Q(description__icontains=query))
+    context = {'project_list': project_list}
+    return render(request, template, context)
+

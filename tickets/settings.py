@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'django_mail_admin',
-    'watson',
+    'crispy_forms',
+    'floppyforms',
 ]
 
 MIDDLEWARE = [
@@ -55,10 +56,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'watson.middleware.SearchContextMiddleware',
 ]
 
 ROOT_URLCONF = 'tickets.urls'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 TEMPLATES = [
     {
