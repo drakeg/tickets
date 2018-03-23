@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 class Task(models.Model):
     summary = models.CharField(max_length=25)
     description = models.CharField(max_length=100)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    start_date = models.DateField()
+    end_date = models.DateField()
 
     def __str__(self):
         return self.summary
@@ -17,8 +17,8 @@ class Project(models.Model):
     summary = models.CharField(max_length=25)
     description = models.CharField(max_length=100)
     pub_date = models.DateTimeField('date_published')
-    start_date = models.DateTimeField(null=True, blank=True)
-    end_date = models.DateTimeField(null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     assigned = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
 
