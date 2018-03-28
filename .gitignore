@@ -12,6 +12,9 @@ tests/coverage_html/
 tests/.coverage
 build/
 tests/report/
+*.log
+local_settings.py
+db.sqlite3
 
 # Sensitive Data
 credentials.py

@@ -9,8 +9,7 @@ def index(request):
     num_systems = Server.objects.all().count()
     percent_systems = str(num_systems/max_systems * 100) + "%"
     max_my_issues = 100
-    #num_my_issues = Issue.objects.filter((issue_open__exact='True') & (assigned__exact='admin')).count()
-    num_my_issues = 2
+    num_my_issues = (Issue.objects.filter(issue_open__exact='True') & Issue.objects.filter(assigned__exact=request.user.id)).count()
     percent_my_issues = str(num_my_issues/max_my_issues * 100) + "%"
     max_open_issues = 100
     num_open_issues = Issue.objects.filter(issue_open__exact='True').count()
