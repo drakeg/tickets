@@ -8,6 +8,6 @@ class ProjectModelTest(SimpleTestCase):
 	def test_unassigned_project_status_code(self):
 		response = self.client.get('/projects/projects/unassigned/')
 		self.assertEqual(response.status_code, 200)
-	def test_assigned_project_status_code(self)
+	def test_assigned_project_status_code(self):
 		response = self.client.get('/projects/projects/my/')
-                self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.status_code, 200)
