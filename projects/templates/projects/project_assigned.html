@@ -1,4 +1,12 @@
 {% extends 'tickets/base.html' %}
+{% block search %}
+    <form method="GET" action="{% url 'projects:search' %}">
+        <input name="q" value="{{request.GET.q}}" placeholder="Search projects">
+        <button class="btn btn-primary" type="submit">
+            Search
+        </button>
+    </form>
+{% endblock %}
 {% block content %}
     <h1>Projects</h1>
     {% if project_list %}

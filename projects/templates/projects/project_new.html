@@ -1,6 +1,13 @@
 {% extends 'tickets/base.html' %}
 {% load crispy_forms_tags %}
-
+{% block search %}
+    <form method="GET" action="{% url 'projects:search' %}">
+        <input name="q" value="{{request.GET.q}}" placeholder="Search projects">
+        <button class="btn btn-primary" type="submit">
+            Search
+        </button>
+    </form>
+{% endblock %}
 {% block content %}
 <h1> New Project </h1>
 <form method="POST" class="project-form">{% csrf_token %}

@@ -1,8 +1,8 @@
 import datetime
 from .middleware import get_current_user
-
+from django.contrib.auth.models import User
 from django.db import models
-from accounts.models import Employee
+from django.conf import settings
 
 class Priority(models.Model):
     name = models.CharField(max_length=50)
@@ -15,7 +15,7 @@ class Issue(models.Model):
     description = models.CharField(max_length=500)
     priority = models.ForeignKey(Priority, on_delete=models.CASCADE)
     pub_date = models.DateTimeField('date_published')
-    assigned = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True)
+    assigned = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     issue_open = models.BooleanField(default="True")
     def __str__(self):
         return self.requestor_name

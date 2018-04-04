@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'accounts',
+    'watson',
 ]
 
 MIDDLEWARE = [
@@ -114,8 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'accounts.Employee'
-
+AUTH_USER_MODEL = 'accounts.MyUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/

@@ -1,7 +1,8 @@
 import datetime
 from .middleware import get_current_user
 from django.db import models
-from accounts.models import Employee
+from django.contrib.auth.models import User
+from django.conf import settings
 
 class Task(models.Model):
     summary = models.CharField(max_length=25)
@@ -19,7 +20,7 @@ class Project(models.Model):
     pub_date = models.DateTimeField('date_published')
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    assigned = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True)
+    assigned = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):

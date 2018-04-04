@@ -18,15 +18,16 @@ from django.urls import include, path, re_path
 
 urlpatterns = [
     re_path(r'^api/', include('djoser.urls')),
+    re_path(r"^search/", include("watson.urls", namespace="watson"), kwargs={"paginate_by":10}),
     path('inventory/', include('inventory.urls')),
     path('issues/', include('issues.urls')),
     path('projects/', include('projects.urls')),
     path('admin/', admin.site.urls),
     path('knowledgebase/', include('knowledgebase.urls')),
     path('', include('dashboard.urls')),
+    path('account/', include('accounts.urls')),
 ]
 
 urlpatterns += [
     path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/', include('accounts.urls')),
 ]
