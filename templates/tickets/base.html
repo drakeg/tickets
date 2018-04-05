@@ -52,6 +52,23 @@
                 $('#' + target).show();
             });
         });
+
+        $(document).ready(function() {
+            var navItems = $('.admin-menu li > a');
+            var navListItems = $('.admin-menu li');
+            var allWells = $('.admin-content');
+            var allWellsExceptFirst = $('.admin-content:not(:first)');
+            allWellsExceptFirst.hide();
+            navItems.click(function(e) {
+                e.preventDefault();
+                navListItems.removeClass('active');
+                $(this).closest('li').addClass('active');
+                allWells.hide();
+                var target = $(this).attr('data-target-id');
+                $('#' + target).show();
+            });
+        });
+
     </script>
 
 </head>
@@ -120,7 +137,9 @@
                             <span class="oi oi-wrench"></span> Admin
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Add Vendor</a>
+                            <a class="dropdown-item" href="{% url 'inventory:vendor_new' %}">Add Vendor</a>
+                            <a class="dropdown-item" href="#">Add Cluster</a>
+                            <a class="dropdown-item" href="#">Add Operating System</a>
                             <a class="dropdown-item" href="#">Add Priority</a>
                             <a class="dropdown-item" href="#">Add User</a>
                         </div>

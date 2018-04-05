@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.db.models import Q
 
 from .models import Server
-from .forms import InventoryForm
+from .forms import InventoryForm, VendorForm
 
 def index(request):
 	server_list = Server.objects.order_by('cluster')[:15]
@@ -40,3 +40,14 @@ def search(request):
         server_list = Server.objects.filter(Q(server_name__icontains=query))
     context = {'server_list': server_list}
     return render(request, template, context)
+
+def vendor_new(request):
+	if request.method == "POST":
+		form = VendorForm(request.POST)
+		if form.is_valid():
+			vendor = form.save(commit=False)
+			vendor.vendor_name = form.cleaned_data['vendor_name']
+			vendor.save()
+	else:
+		form = VendorForm()
+	return render(request, 'inventory/vendor_new.html', {'form': form})
