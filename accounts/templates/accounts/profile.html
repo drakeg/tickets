@@ -2,83 +2,106 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-xl-3">
             <ul class="nav nav-pills flex-column admin-menu">
-                <li><a href="" data-target-id="profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                <li><a href="" data-target-id="change-password"><i class="glyphicon glyphicon-lock"></i> Change Password</a>
+                <li class="nav-item"><a href="" data-target-id="profile" class="nav-link"><span class="oi oi-person"></span>&#xA0;Profile</a>
                 </li>
-                <li><a href="" data-target-id="settings"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
-                <li><a href="" data-target-id="logout"><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
+                <li class="nav-item"><a href="" data-target-id="change-password" class="nav-link"><span class="oi oi-lock-locked"></span>&#xA0;Change Password</a>
+                </li>
+                <li class="nav-item"><a href="" data-target-id="settings" class="nav-link"><span class="oi oi-cog"></span>&#xA0;Settings</a>
+                </li>
+                <li class="nav-item"><a href="" data-target-id="logout" class="nav-link"><span class="oi oi-account-logout"></span>&#xA0;Logout</a>
+                </li>
             </ul>
         </div>
 
-        <div class="col-md-9 admin-content" id="profile">
-            <div class="panel panel-info" style="margin: 1em;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Username</h3>
+        <div class="col-lg-9 admin-content" id="profile">
+            <div class="card text-white bg-primary" style="margin: 1em;">
+                <div class="card-header">
+                    <h3 class="card-title">Username</h3>
                 </div>
-                <div class="panel-body">
+                <div class="card-body bg-white text-dark">
                     {{ user.username }}
                 </div>
             </div>
-            <div class="panel panel-info" style="margin: 1em;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Email</h3>
+            <div class="card text-white bg-primary" style="margin: 1em;">
+                <div class="card-header">
+                    <h3 class="card-title">Email</h3>
                 </div>
-                <div class="panel-body">
+                <div class="card-body bg-white text-dark">
                     {{ user.email }}
                 </div>
             </div>
-            <div class="panel panel-info" style="margin: 1em;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Last Password Change</h3>
+            <div class="card text-white bg-primary" style="margin: 1em;">
+                <div class="card-header">
+                    <h3 class="card-title">Last Login</h3>
+                </div>
+                <div class="card-body bg-white text-dark">
+                    {{ user.last_login }}
+                </div>
+            </div>
+            <div class="card text-white bg-primary" style="margin: 1em;">
+                <div class="card-header">
+                    <h3 class="card-title">Date Joined</h3>
+                </div>
+                <div class="card-body bg-white text-dark">
+                    {{ user.date_joined }}
+                </div>
+            </div>
+            <div class="card text-white bg-primary" style="margin: 1em;">
+                <div class="card-header">
+                    <h3 class="card-title">Last Password Change</h3>
 
                 </div>
-                <div class="panel-body">
-                    {{ user.password_date }}
+                <div class="card-body bg-white text-dark">
+                    {%  if user.password_date == NULL %}
+                        Never
+                    {%  else %}
+                        {{ user.password_date }}
+                    {% endif %}
                 </div>
             </div>
 
         </div>
-        <div class="col-md-9  admin-content" id="settings">
-            <div class="panel panel-info" style="margin: 1em;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Notification</h3>
+        <div class="col-lg-9  admin-content" id="settings">
+            <div class="card text-white bg-primary" style="margin: 1em;">
+                <div class="card-header">
+                    <h3 class="card-title">Notification</h3>
                 </div>
-                <div class="panel-body">
+                <div class="card-body bg-white text-dark">
                     <div class="label label-success">allowed</div>
                 </div>
             </div>
-            <div class="panel panel-info" style="margin: 1em;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Newsletter</h3>
+            <div class="card text-white bg-primary" style="margin: 1em;">
+                <div class="card-header">
+                    <h3 class="card-title">Newsletter</h3>
                 </div>
-                <div class="panel-body">
+                <div class="card-body bg-white text-dark">
                     <div class="badge">Monthly</div>
                 </div>
             </div>
-            <div class="panel panel-info" style="margin: 1em;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Admin</h3>
+            <div class="card text-white bg-primary" style="margin: 1em;">
+                <div class="card-header">
+                    <h3 class="card-title">Admin</h3>
 
                 </div>
-                <div class="panel-body">
+                <div class="card-body bg-white text-dark">
                     <div class="label label-success">yes</div>
                 </div>
             </div>
 
         </div>
 
-        <div class="col-md-9  admin-content" id="change-password">
+        <div class="col-lg-9  admin-content" id="change-password">
             <form action="/password" method="post">
 
 
-                <div class="panel panel-info" style="margin: 1em;">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><label for="new_password" class="control-label panel-title">New
+                <div class="card text-white bg-primary" style="margin: 1em;">
+                    <div class="card-header">
+                        <h3 class="card-title"><label for="new_password" class="control-label panel-title">New
                             Password</label></h3>
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body bg-white text-dark">
                         <div class="form-group">
                             <div class="col-sm-10">
                                 <input type="password" class="form-control" name="password" id="new_password">
@@ -89,12 +112,12 @@
                 </div>
 
 
-                <div class="panel panel-info" style="margin: 1em;">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><label for="confirm_password" class="control-label panel-title">Confirm
+                <div class="card text-white bg-primary" style="margin: 1em;">
+                    <div class="card-header">
+                        <h3 class="card-title"><label for="confirm_password" class="control-label panel-title">Confirm
                             password</label></h3>
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body bg-white text-dark">
                         <div class="form-group">
                             <div class="col-sm-10">
                                 <input type="password" class="form-control" name="password_confirmation"
@@ -105,8 +128,8 @@
                 </div>
 
 
-                <div class="panel panel-info border" style="margin: 1em;">
-                    <div class="panel-body">
+                <div class="card text-white bg-primary border" style="margin: 1em;">
+                    <div class="card-body bg-white text-dark">
                         <div class="form-group">
                             <div class="pull-left">
                                 <input type="submit" class="form-control btn btn-primary" name="submit" id="submit">
@@ -118,14 +141,14 @@
             </form>
         </div>
 
-        <div class="col-md-9  admin-content" id="settings"></div>
+        <div class="col-lg-9  admin-content" id="settings"></div>
 
-        <div class="col-md-9  admin-content" id="logout">
-            <div class="panel panel-info" style="margin: 1em;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Confirm Logout</h3>
+        <div class="col-lg-9  admin-content" id="logout">
+            <div class="card text-white bg-primary" style="margin: 1em;">
+                <div class="card-header">
+                    <h3 class="card-title">Confirm Logout</h3>
                 </div>
-                <div class="panel-body">
+                <div class="card-body bg-white text-dark">
                     Do you really want to logout ?  
                     <a href="#" class="label label-danger"
                        onclick="event.preventDefault();

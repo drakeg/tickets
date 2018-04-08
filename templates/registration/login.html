@@ -3,10 +3,15 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-	<h2>Login</h2>
-	<form method="POST">
-		{% csrf_token %}
-		{{ form|crispy }}
-		<button type="submit" class="save btn btn-default">Login</button>
-	</form>
+    <h2>Login</h2>
+    {% if form.errors %}
+        <p>There's an error in what you've entered.</p>
+    {%  endif %}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <p><button type="submit" class="save btn btn-default">Login</button></p>
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+    <p>No account? <a href="{% url 'account:register' %}">Register</a>
 {% endblock content %}

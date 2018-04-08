@@ -53,151 +53,136 @@
             });
         });
 
-        $(document).ready(function() {
-            var navItems = $('.admin-menu li > a');
-            var navListItems = $('.admin-menu li');
-            var allWells = $('.admin-content');
-            var allWellsExceptFirst = $('.admin-content:not(:first)');
-            allWellsExceptFirst.hide();
-            navItems.click(function(e) {
-                e.preventDefault();
-                navListItems.removeClass('active');
-                $(this).closest('li').addClass('active');
-                allWells.hide();
-                var target = $(this).attr('data-target-id');
-                $('#' + target).show();
-            });
-        });
-
     </script>
 
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-fixed-top">
-    <a class="navbar-brand" href="{% url 'dashboard:index' %}">ServDesk</a>
-    <button class="navbar-toggler" type="button" data-toggler="collapse" data-targets="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div id="navbar" class="collapse navbar-collapse">
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle bg-primary" href="#" id="navbarDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span class="oi oi-spreadsheet"></span> Systems
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{% url 'inventory:servers_new' %}">Create New</a>
-                        <a class="dropdown-item" href="{% url 'inventory:index' %}">All Servers</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span class="oi oi-bug"></span> Issues
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{% url 'issues:issue_new' %}">Create New</a>
-                        <a class="dropdown-item" href="{% url 'issues:unassigned_issues' %}">Unassigned</a>
-                        <a class="dropdown-item" href="{% url 'issues:my_issues' %}">Assigned to me</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Complete</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span class="oi oi-project"></span> Projects
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{% url 'projects:project_new' %}">Create New</a>
-                        <a class="dropdown-item" href="{% url 'projects:unassigned_projects' %}">Unassigned</a>
-                        <a class="dropdown-item" href="{% url 'projects:my_projects' %}">Assigned to me</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Complete</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span class="oi oi-briefcase"></span> Knowledgbase
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Create New</a>
-                        <a class="dropdown-item" href="{% url 'knowledgebase:index' %}">All Articles</a>
-                    </div>
-                </li>
-                {% if user.is_authenticated and user.is_admin %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-fixed-top">
+        <a class="navbar-brand" href="{% url 'dashboard:index' %}">ServDesk</a>
+        <button class="navbar-toggler" type="button" data-toggler="collapse" data-targets="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbar" class="collapse navbar-collapse">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle bg-primary" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="oi oi-spreadsheet"></span> Systems
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{% url 'inventory:servers_new' %}">Create New</a>
+                            <a class="dropdown-item" href="{% url 'inventory:index' %}">All Servers</a>
+                        </div>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span class="oi oi-wrench"></span> Admin
+                            <span class="oi oi-bug"></span> Issues
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{% url 'inventory:vendor_new' %}">Add Vendor</a>
-                            <a class="dropdown-item" href="#">Add Cluster</a>
-                            <a class="dropdown-item" href="#">Add Operating System</a>
-                            <a class="dropdown-item" href="#">Add Priority</a>
-                            <a class="dropdown-item" href="#">Add User</a>
-                        </div>
-                    </li>
-                {% endif %}
-                {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span class="oi oi-key"></span> My Account
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#"><span class="oi oi-person"></span> {{ user.username }}</a>
-                            <a class="dropdown-item" href="#"><span
-                                    class="oi oi-envelope-closed"></span> {{ user.email }}</a>
+                            <a class="dropdown-item" href="{% url 'issues:issue_new' %}">Create New</a>
+                            <a class="dropdown-item" href="{% url 'issues:unassigned_issues' %}">Unassigned</a>
+                            <a class="dropdown-item" href="{% url 'issues:my_issues' %}">Assigned to me</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{% url 'logout' %}"><span
-                                    class="oi oi-account-logout"></span> Logout</a>
+                            <a class="dropdown-item" href="#">Complete</a>
                         </div>
                     </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a href="{% url 'login' %}" class="nav-link"><span class="oi oi-account-login"></span>
-                            Login/Register</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="oi oi-project"></span> Projects
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{% url 'projects:project_new' %}">Create New</a>
+                            <a class="dropdown-item" href="{% url 'projects:unassigned_projects' %}">Unassigned</a>
+                            <a class="dropdown-item" href="{% url 'projects:my_projects' %}">Assigned to me</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Complete</a>
+                        </div>
                     </li>
-                {% endif %}
-            </ul>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="oi oi-briefcase"></span> Knowledgbase
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Create New</a>
+                            <a class="dropdown-item" href="{% url 'knowledgebase:index' %}">All Articles</a>
+                        </div>
+                    </li>
+                    {% if user.is_authenticated and user.is_staff %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span class="oi oi-wrench"></span> Admin
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'inventory:vendor_new' %}">Add Vendor</a>
+                                <a class="dropdown-item" href="#">Add Cluster</a>
+                                <a class="dropdown-item" href="#">Add Operating System</a>
+                                <a class="dropdown-item" href="#">Add Priority</a>
+                                <a class="dropdown-item" href="#">Add User</a>
+                            </div>
+                        </li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span class="oi oi-key"></span> My Account
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{%  url 'account:index' %}">
+                                    <span class="oi oi-person"></span> {{ user.username }}</a>
+                                <a class="dropdown-item" href="{%  url 'account:index' %}">
+                                    <span class="oi oi-envelope-closed"></span> {{ user.email }}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'logout' %}">
+                                    <span class="oi oi-account-logout"></span> Logout</a>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'login' %}" class="nav-link"><span class="oi oi-account-login"></span>
+                                Login/Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% block search %}
+                <form action="{% url 'watson:search' %}">
+                    <input name="q" value="{{ request.GET.q }}">
+                    <button class="btn btn-primary" type="submit">
+                        Search
+                    </button>
+                </form>
+            {% endblock %}
         </div>
-        {% block search %}
-            <form action="{% url 'watson:search' %}">
-                <input name="q" value="{{ request.GET.q }}">
-                <button class="btn btn-primary" type="submit">
-                    Search
-                </button>
-            </form>
-        {% endblock %}
-    </div>
-</nav>
-<div class="container">
+    </nav>
+    <div class="container">
 
-    <div class="starter-template">
-        {% block content %}
-        {% endblock %}
-    </div>
+        <div class="starter-template">
+            {% block content %}
+            {% endblock %}
+        </div>
 
-</div><!-- /.container -->
+    </div><!-- /.container -->
 
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"
-        integrity="sha256-AKUJYz2DyEoZYHh2/+zPHm1tTdYb4cmG8HC2ydmTzM4=" crossorigin="anonymous"></script>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"
+            integrity="sha256-AKUJYz2DyEoZYHh2/+zPHm1tTdYb4cmG8HC2ydmTzM4=" crossorigin="anonymous"></script>
 </body>
 </html>
