@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django_habitat',
     'crispy_forms',
     'floppyforms',
+    'django_gravatar',
     'rest_framework',
     'djoser',
     'accounts',

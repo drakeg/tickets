@@ -19,14 +19,19 @@
             <div class="card text-white bg-primary mb-3" style="margin: 1em;">
                 <div class="card-header"><span class="oi oi-person"></span> {{ user.username }}</div>
                 <div class="card-body bg-white text-dark">
-                    <ul class="nav nav-pills flex-column admin-menu">
-                        <li class="nav-item">Email: {{ user.email }}</li>
-                        <li class="nav-item">Last Login: {{ user.last_login }}</li>
-                        <li class="nav-item">Date Joined: {{ user.date_joined }}</li>
-                        {%  if user.password_date != NULL %}
-                            <li class="nav-item">Last Password Change: {{ user.password_date }}</li>
-                        {% endif %}
-                    </ul>
+                    <div class="media">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Default-avatar.jpg" alt="gravatar" width="96">
+                        <div class="media-body">
+                            <ul class="nav nav-pills flex-column admin-menu">
+                                <li class="nav-item">&nbsp; Email: {{ user.email }}</li>
+                                <li class="nav-item">&nbsp; Last Login: {{ user.last_login }}</li>
+                                <li class="nav-item">&nbsp; Date Joined: {{ user.date_joined }}</li>
+                                {%  if user.password_date != NULL %}
+                                    <li class="nav-item">&nbsp; Last Password Change: {{ user.password_date }}</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
