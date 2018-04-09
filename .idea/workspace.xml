@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f82ef8f1-b70f-4705-a31a-a4061b1f4043" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/accounts/templates/accounts/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/templates/accounts/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tickets/settings/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/tickets/settings/common.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -75,8 +73,8 @@
       <file leaf-file-name="profile.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/accounts/templates/accounts/profile.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="25" column="59" selection-start-line="25" selection-start-column="59" selection-end-line="25" selection-end-column="59" />
+            <state relative-caret-position="228">
+              <caret line="23" column="2" selection-start-line="23" selection-start-column="2" selection-end-line="23" selection-end-column="2" />
               <folding>
                 <element signature="e#1537#1543#0#HTML" expanded="true" />
                 <element signature="e#1620#1626#0#HTML" expanded="true" />
@@ -868,8 +866,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/accounts/templates/accounts/profile.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="25" column="59" selection-start-line="25" selection-start-column="59" selection-end-line="25" selection-end-column="59" />
+        <state relative-caret-position="228">
+          <caret line="23" column="2" selection-start-line="23" selection-start-column="2" selection-end-line="23" selection-end-column="2" />
           <folding>
             <element signature="e#1537#1543#0#HTML" expanded="true" />
             <element signature="e#1620#1626#0#HTML" expanded="true" />
