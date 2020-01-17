@@ -11,7 +11,7 @@ django-jsonfield==1.0.1
 django-mail-admin==0.1.2
 django-templated-mail==1.1.1
 django-watson==1.5.2
-djangorestframework==3.7.7
+djangorestframework==3.9.1
 djoser==1.1.5
 geoip2==2.7.0
 python-dateutil
