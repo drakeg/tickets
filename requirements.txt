@@ -18,3 +18,4 @@ python-dateutil
 requests==2.20.0
 requests-oauthlib==0.8.0
 simplejson==3.13.2
+urllib3==3.7.4
