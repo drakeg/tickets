@@ -6,7 +6,7 @@ django-crispy-forms==1.8.1
 django-extensions==2.2.6
 django-filter==2.2.0
 django-floppyforms==1.8.0
-django-guardian==2.1.0
+django-guardian==2.2.0
 django-jsonfield==1.4.0
 django-mail-admin==0.1.4
 django-templated-mail==1.1.1
