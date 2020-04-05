@@ -1,4 +1,4 @@
-certifi==2020.4.5
+certifi==2020.4.5.1
 decorator==4.4.2
 Django==3.0.5
 django-bootstrap-form==3.4
