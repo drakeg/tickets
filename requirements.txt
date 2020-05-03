@@ -8,7 +8,7 @@ django-filter==2.2.0
 django-floppyforms==1.8.0
 django-guardian==2.2.0
 django-jsonfield==1.4.0
-django-mail-admin==0.1.4
+django-mail-admin==0.2.0
 django-templated-mail==1.1.1
 django-watson==1.5.5
 djangorestframework==3.11.0
