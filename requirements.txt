@@ -12,7 +12,7 @@ django-mail-admin==0.2.2
 django-templated-mail==1.1.1
 django-watson==1.5.5
 djangorestframework==3.12.1
-djoser==2.0.5
+djoser==2.1.0
 geoip2==4.1.0
 python-dateutil
 requests==2.24.0
