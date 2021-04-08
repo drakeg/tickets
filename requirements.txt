@@ -1,5 +1,5 @@
 certifi==2020.12.5
-decorator==5.0.5
+decorator==5.0.6
 Django==3.2
 django-bootstrap-form==3.4
 django-crispy-forms==1.11.2
