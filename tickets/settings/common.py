@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'django_extensions',
     'crispy_forms',
-    'floppyforms',
     'rest_framework',
     'djoser',
     'accounts',
