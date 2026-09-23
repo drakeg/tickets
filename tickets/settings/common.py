@@ -44,11 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django_extensions',
-    'django_mail_admin',
-    'django_habitat',
     'crispy_forms',
-    'floppyforms',
-    'django_gravatar',
     'rest_framework',
     'djoser',
     'accounts',
@@ -86,7 +82,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tickets.wsgi.application'
-EMAIL_BACKEND = 'django_mail_admin.backends.CustomEmailBackend'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
