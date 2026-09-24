@@ -112,7 +112,7 @@ Acceptance criteria:
 
 Representative pull requests: #157, #158.
 
-### Sprint 4 — Knowledge base core workflows — In progress
+### Sprint 4 — Knowledge base core workflows — Complete
 
 Goal: turn the knowledge base from a broken listing into a usable, tested article workflow.
 
@@ -133,12 +133,32 @@ Acceptance criteria:
 - authenticated users can create articles and are recorded as the author;
 - Python 3.11/3.12 tests and Docker Compose validation remain green.
 
-Representative pull requests: #161, #162, #TBD.
+Representative pull requests: #161, #162, #163.
+
+### Sprint 5 — Frontend/runtime hygiene — In progress
+
+Goal: remove legacy development artifacts and reduce outdated frontend/runtime baggage without changing application behavior.
+
+Planned scope:
+
+- remove tracked OS and IDE-generated files;
+- keep ignore rules aligned with local development tooling;
+- audit legacy frontend libraries and duplicate runtime assets;
+- remove obsolete assets only when usage is proven absent;
+- preserve existing tested behavior while modernizing incrementally.
+
+Acceptance criteria:
+
+- generated OS/IDE files are no longer tracked;
+- repository ignore rules prevent those artifacts from returning;
+- frontend/runtime cleanup is backed by the existing functional test suite;
+- Python 3.11/3.12 tests and Docker Compose validation remain green.
+
+Representative pull requests: #TBD.
 
 ## Future sprint candidates
 
-- completing knowledge-base search/edit/delete behavior;
-- replacing remaining legacy Bootstrap/jQuery-era markup and dependencies;
+- deeper Bootstrap/jQuery modernization after usage auditing;
 - dependency modernization under the existing CI safety net;
-- cleanup of tracked editor/OS artifacts and obsolete project files;
-- stronger model validation and data-integrity rules.
+- stronger model validation and data-integrity rules;
+- migrating string-based ownership fields to relational user references.
