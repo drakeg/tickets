@@ -1,5 +1,5 @@
 import datetime
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from inventory.models import Server
 from issues.models import Issue
 from projects.models import Project
@@ -9,10 +9,10 @@ def index(request):
     num_systems = Server.objects.all().count()
     percent_systems = str(num_systems/max_systems * 100) + "%"
     max_my_issues = 100
-    num_my_issues = (Issue.objects.filter(issue_open__exact='True') & Issue.objects.filter(assigned__exact=request.user.id)).count()
+    num_my_issues = Issue.objects.filter(issue_open=True, assigned=request.user.id).count()
     percent_my_issues = str(num_my_issues/max_my_issues * 100) + "%"
     max_open_issues = 100
-    num_open_issues = Issue.objects.filter(issue_open__exact='True').count()
+    num_open_issues = Issue.objects.filter(issue_open=True).count()
     percent_open_issues = str(num_open_issues/max_open_issues * 100) + "%"
     max_open_projects = 100
     num_open_projects = Project.objects.filter(end_date__gte=datetime.date.today()).count()
