@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+@login_required
 def index(request):
-    return render(request,'accounts/profile.html')
+    return render(request, 'accounts/profile.html')
 
 def register(request):
     if request.method == 'POST':
@@ -15,7 +17,7 @@ def register(request):
             login(request, user)
             return redirect('dashboard:index')
     else:
-        form = UserCreationForm
+        form = UserCreationForm()
 
     context = {'form': form}
     return render(request, 'registration/signup.html', context)
