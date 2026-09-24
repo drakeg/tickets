@@ -42,9 +42,12 @@ def issue_new(request):
 
 def search(request):
     template = 'issue/issue_list.html'
-    query = request.GET.get('q')
+    query = request.GET.get('q', '').strip()
+    issue_list = Issue.objects.none()
     if query:
-        issue_list = Issue.objects.filter(Q(summary__icontains=query) | Q(description__icontains=query))
+        issue_list = Issue.objects.filter(
+            Q(summary__icontains=query) | Q(description__icontains=query)
+        )
     context = {'issue_list': issue_list}
     return render(request, template, context)
 
