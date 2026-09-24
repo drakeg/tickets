@@ -8,6 +8,17 @@ Includes:
 - Issue tracker
 - Knowledge base
 
+## Development standards
+
+Project development follows documented sprint, coding, testing, and pull-request standards:
+
+- [Contributing workflow](CONTRIBUTING.md)
+- [Sprint process and history](docs/SPRINTS.md)
+- [Coding standards](docs/CODING_STANDARDS.md)
+- [Testing standards](docs/TESTING.md)
+
+These documents should be updated alongside the code whenever project workflow, quality gates, or sprint scope changes.
+
 ## Local development with Docker Compose
 
 Docker Compose is the recommended way to exercise the application locally.
