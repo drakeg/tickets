@@ -1,0 +1,44 @@
+services:
+  web:
+    build:
+      context: .
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      DJANGO_DEBUG: "true"
+      DJANGO_SECRET_KEY: "local-compose-development-key"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0"
+      DJANGO_DB_PATH: "/data/db.sqlite3"
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    volumes:
+      - .:/app
+      - tickets_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  test:
+    build:
+      context: .
+    command: python manage.py test --verbosity 2
+    environment:
+      DJANGO_DEBUG: "true"
+      DJANGO_SECRET_KEY: "local-compose-test-key"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,testserver"
+      DJANGO_DB_PATH: "/tmp/tickets-test.sqlite3"
+    volumes:
+      - .:/app
+    profiles:
+      - test
+
+volumes:
+  tickets_data:
