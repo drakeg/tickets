@@ -65,3 +65,42 @@ class KnowledgeBaseTests(TestCase):
         )
         self.assertEqual(created.author, self.user.username)
         self.assertEqual(created.keywords, "vpn,remote")
+
+    def test_search_matches_description_keywords_and_author(self):
+        Article.objects.create(
+            author="Network Team",
+            description="Configure wireless access",
+            keywords="wifi,network",
+            pub_date=timezone.now(),
+        )
+
+        by_description = self.client.get(
+            reverse("knowledgebase:search"),
+            {"q": "locked"},
+        )
+        self.assertEqual(
+            list(by_description.context["knowledgebase_list"]),
+            [self.article],
+        )
+
+        by_keywords = self.client.get(
+            reverse("knowledgebase:search"),
+            {"q": "network"},
+        )
+        self.assertEqual(by_keywords.status_code, 200)
+        self.assertContains(by_keywords, "Configure wireless access")
+
+        by_author = self.client.get(
+            reverse("knowledgebase:search"),
+            {"q": "support"},
+        )
+        self.assertEqual(
+            list(by_author.context["knowledgebase_list"]),
+            [self.article],
+        )
+
+    def test_empty_search_returns_empty_result(self):
+        response = self.client.get(reverse("knowledgebase:search"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["knowledgebase_list"]), [])
