@@ -31,7 +31,30 @@ docker compose up --build
 
 The site is available at `http://localhost:8000` by default.
 
-To change only the host port while Django still listens on port 8000 inside the container:
+### Configure ports with a .env file
+
+Copy the included example file:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env`:
+
+```dotenv
+APP_PORT=8080
+CONTAINER_PORT=8000
+```
+
+Docker Compose reads the root `.env` file automatically, so after saving it you can simply run:
+
+```bash
+docker compose up --build
+```
+
+The local `.env` file is ignored by Git; commit changes to `.env.example` instead when project defaults or supported variables change.
+
+You can also override the values inline. To change only the host port while Django still listens on port 8000 inside the container:
 
 ```bash
 APP_PORT=8080 docker compose up --build

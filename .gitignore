@@ -126,3 +126,6 @@ results/
 
 # IDE metadata
 .idea/
+
+# Local environment overrides
+.env

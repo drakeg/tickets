@@ -66,6 +66,12 @@ jobs:
           grep -q 'published: "18080"' /tmp/compose-config.yml
           grep -q 'target: 18081' /tmp/compose-config.yml
 
+      - name: Validate example environment file
+        run: |
+          docker compose --env-file .env.example config > /tmp/compose-example.yml
+          grep -q 'published: "8000"' /tmp/compose-example.yml
+          grep -q 'target: 8000' /tmp/compose-example.yml
+
       - name: Build local image
         run: docker compose build test
 
