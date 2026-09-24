@@ -51,6 +51,18 @@ class ProjectWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["project_list"]), [])
 
+    def test_project_create_requires_authentication(self):
+        response = self.client.get(reverse("projects:project_new"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("login"), response["Location"])
+
+    def test_my_projects_requires_authentication(self):
+        response = self.client.get(reverse("projects:my_projects"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("login"), response["Location"])
+
     def test_my_projects_only_returns_assignments_for_current_user(self):
         other_user = get_user_model().objects.create_user(
             username="other-user",
