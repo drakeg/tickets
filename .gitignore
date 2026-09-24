@@ -123,3 +123,6 @@ target/
 ehthumbs.db
 Thumbs.db
 results/
+
+# IDE metadata
+.idea/
