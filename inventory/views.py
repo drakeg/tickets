@@ -15,7 +15,7 @@ def servers(request, server_id):
 	server = get_object_or_404(Server, pk=server_id)
 	return render(request, 'inventory/server_single.html', {'server': server})
 
-def operating_systems(operating_system_id):
+def operating_systems(request, operating_system_id):
 	response = "You're looking at operating system %s."
 	return HttpResponse(response % operating_system_id)
 
@@ -35,7 +35,8 @@ def servers_new(request):
 
 def search(request):
     template = 'inventory/server_list.html'
-    query = request.GET.get('q')
+    query = request.GET.get('q', '').strip()
+    server_list = Server.objects.none()
     if query:
         server_list = Server.objects.filter(Q(server_name__icontains=query))
     context = {'server_list': server_list}
