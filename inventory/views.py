@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.utils import timezone
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 
 from .models import Server
 from .forms import InventoryForm, VendorForm
@@ -19,6 +21,7 @@ def operating_systems(request, operating_system_id):
 	response = "You're looking at operating system %s."
 	return HttpResponse(response % operating_system_id)
 
+@login_required
 def servers_new(request):
 	if request.method == "POST":
 		form = InventoryForm(request.POST)
@@ -42,7 +45,10 @@ def search(request):
     context = {'server_list': server_list}
     return render(request, template, context)
 
+@login_required
 def vendor_new(request):
+	if not request.user.is_staff:
+		raise PermissionDenied
 	if request.method == "POST":
 		form = VendorForm(request.POST)
 		if form.is_valid():

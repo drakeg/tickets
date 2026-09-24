@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.template import loader
 from django.utils import timezone
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
 from .models import Project 
 from .forms import ProjectForm
@@ -18,6 +19,7 @@ def project(request, project_id):
         return render(request, 'projects/project_single.html', {'project': project})
 
 
+@login_required
 def my_projects(request):
         username = request.user
         project_list = Project.objects.filter(assigned=username)
@@ -29,6 +31,7 @@ def unassigned_projects(request):
         context = {'project_list': project_list}
         return render(request, 'projects/project_list.html', context)
 
+@login_required
 def project_new(request):
         if request.method == "POST":
                 form = ProjectForm(request.POST)
