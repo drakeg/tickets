@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
+from django.core.exceptions import PermissionDenied
+from django.views.decorators.http import require_POST
 from django.utils import timezone
 
 from .forms import ArticleForm
@@ -59,3 +61,40 @@ def search(request):
             "query": query,
         },
     )
+
+def _can_manage_article(user, article):
+    return user.is_authenticated and (
+        user.is_staff or article.author == user.username
+    )
+
+
+@login_required
+def article_edit(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+    if not _can_manage_article(request.user, article):
+        raise PermissionDenied
+
+    if request.method == "POST":
+        form = ArticleForm(request.POST, instance=article)
+        if form.is_valid():
+            form.save()
+            return redirect("knowledgebase:detail", article_id=article.pk)
+    else:
+        form = ArticleForm(instance=article)
+
+    return render(
+        request,
+        "knowledgebase/knowledgebase_edit.html",
+        {"form": form, "article": article},
+    )
+
+
+@login_required
+@require_POST
+def article_delete(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+    if not _can_manage_article(request.user, article):
+        raise PermissionDenied
+
+    article.delete()
+    return redirect("knowledgebase:index")

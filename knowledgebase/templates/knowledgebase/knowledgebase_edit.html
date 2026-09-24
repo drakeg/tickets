@@ -1,0 +1,11 @@
+{% extends 'tickets/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h1>Edit Knowledge Base Article</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="btn btn-primary" type="submit">Save Changes</button>
+        <a class="btn btn-secondary" href="{% url 'knowledgebase:detail' article.id %}">Cancel</a>
+    </form>
+{% endblock %}
