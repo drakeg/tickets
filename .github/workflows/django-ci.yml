@@ -57,6 +57,15 @@ jobs:
       - name: Validate Compose configuration
         run: docker compose config
 
+      - name: Validate configurable port mapping
+        env:
+          APP_PORT: "18080"
+          CONTAINER_PORT: "18081"
+        run: |
+          docker compose config > /tmp/compose-config.yml
+          grep -q 'published: "18080"' /tmp/compose-config.yml
+          grep -q 'target: 18081' /tmp/compose-config.yml
+
       - name: Build local image
         run: docker compose build test
 

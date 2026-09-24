@@ -4,23 +4,22 @@ services:
       context: .
     command: >
       sh -c "python manage.py migrate --noinput &&
-             python manage.py runserver 0.0.0.0:8000"
+             python manage.py runserver 0.0.0.0:$${CONTAINER_PORT}"
     environment:
       DJANGO_DEBUG: "true"
       DJANGO_SECRET_KEY: "local-compose-development-key"
       DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0"
       DJANGO_DB_PATH: "/data/db.sqlite3"
+      CONTAINER_PORT: "${CONTAINER_PORT:-8000}"
     ports:
-      - "${APP_PORT:-8000}:8000"
+      - "${APP_PORT:-8000}:${CONTAINER_PORT:-8000}"
     volumes:
       - .:/app
       - tickets_data:/data
     healthcheck:
       test:
-        - CMD
-        - python
-        - -c
-        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3)"
+        - CMD-SHELL
+        - "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:' + '$$CONTAINER_PORT' + '/', timeout=3)\""
       interval: 10s
       timeout: 5s
       retries: 6
