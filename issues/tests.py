@@ -44,6 +44,18 @@ class IssueWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["issue_list"]), [])
 
+    def test_issue_create_requires_authentication(self):
+        response = self.client.get(reverse("issues:issue_new"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("login"), response["Location"])
+
+    def test_my_issues_requires_authentication(self):
+        response = self.client.get(reverse("issues:my_issues"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("login"), response["Location"])
+
     def test_issue_form_creates_issue(self):
         self.client.force_login(self.user)
 
