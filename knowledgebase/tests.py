@@ -104,3 +104,122 @@ class KnowledgeBaseTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["knowledgebase_list"]), [])
+
+    def test_author_can_edit_article(self):
+        owned = Article.objects.create(
+            author=self.user.username,
+            description="Original description",
+            keywords="original",
+            pub_date=timezone.now(),
+        )
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse("knowledgebase:edit", args=[owned.pk]),
+            {
+                "description": "Updated description",
+                "keywords": "updated",
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("knowledgebase:detail", args=[owned.pk]),
+        )
+        owned.refresh_from_db()
+        self.assertEqual(owned.description, "Updated description")
+        self.assertEqual(owned.keywords, "updated")
+
+    def test_non_author_cannot_edit_article(self):
+        other = get_user_model().objects.create_user(
+            username="other-kb-user",
+            password="test-password",
+        )
+        owned = Article.objects.create(
+            author=self.user.username,
+            description="Owned article",
+            keywords="owner",
+            pub_date=timezone.now(),
+        )
+        self.client.force_login(other)
+
+        response = self.client.get(
+            reverse("knowledgebase:edit", args=[owned.pk])
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_can_edit_article(self):
+        staff = get_user_model().objects.create_user(
+            username="kb-staff",
+            password="test-password",
+            is_staff=True,
+        )
+        self.client.force_login(staff)
+
+        response = self.client.post(
+            reverse("knowledgebase:edit", args=[self.article.pk]),
+            {
+                "description": "Staff updated article",
+                "keywords": "staff",
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("knowledgebase:detail", args=[self.article.pk]),
+        )
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.description, "Staff updated article")
+
+    def test_delete_requires_post(self):
+        owned = Article.objects.create(
+            author=self.user.username,
+            description="Delete me",
+            keywords="delete",
+            pub_date=timezone.now(),
+        )
+        self.client.force_login(self.user)
+
+        response = self.client.get(
+            reverse("knowledgebase:delete", args=[owned.pk])
+        )
+
+        self.assertEqual(response.status_code, 405)
+        self.assertTrue(Article.objects.filter(pk=owned.pk).exists())
+
+    def test_author_can_delete_article(self):
+        owned = Article.objects.create(
+            author=self.user.username,
+            description="Delete me",
+            keywords="delete",
+            pub_date=timezone.now(),
+        )
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse("knowledgebase:delete", args=[owned.pk])
+        )
+
+        self.assertRedirects(response, reverse("knowledgebase:index"))
+        self.assertFalse(Article.objects.filter(pk=owned.pk).exists())
+
+    def test_non_author_cannot_delete_article(self):
+        other = get_user_model().objects.create_user(
+            username="other-delete-user",
+            password="test-password",
+        )
+        owned = Article.objects.create(
+            author=self.user.username,
+            description="Protected article",
+            keywords="protected",
+            pub_date=timezone.now(),
+        )
+        self.client.force_login(other)
+
+        response = self.client.post(
+            reverse("knowledgebase:delete", args=[owned.pk])
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Article.objects.filter(pk=owned.pk).exists())
