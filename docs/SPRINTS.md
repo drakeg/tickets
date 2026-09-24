@@ -110,7 +110,7 @@ Acceptance criteria:
 - staff users retain vendor administration access;
 - Python 3.11/3.12 tests and Docker Compose smoke validation remain green.
 
-Representative pull requests: #TBD.
+Representative pull requests: #157, #158.
 
 ## Future sprint candidates
 

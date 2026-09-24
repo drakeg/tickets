@@ -113,3 +113,31 @@ class DashboardMetricTests(TestCase):
 
         self.assertEqual(response.context["max_my_issues"], 100)
         self.assertContains(response, 'aria-valuemax="100"')
+
+
+class DashboardAuthorizationNavigationTests(TestCase):
+    def test_anonymous_navigation_hides_protected_actions(self):
+        response = self.client.get(reverse("dashboard:index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, reverse("inventory:servers_new"))
+        self.assertNotContains(response, reverse("issues:issue_new"))
+        self.assertNotContains(response, reverse("issues:my_issues"))
+        self.assertNotContains(response, reverse("projects:project_new"))
+        self.assertNotContains(response, reverse("projects:my_projects"))
+
+    def test_authenticated_navigation_shows_protected_actions(self):
+        user = get_user_model().objects.create_user(
+            username="nav-user",
+            password="test-password",
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("dashboard:index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse("inventory:servers_new"))
+        self.assertContains(response, reverse("issues:issue_new"))
+        self.assertContains(response, reverse("issues:my_issues"))
+        self.assertContains(response, reverse("projects:project_new"))
+        self.assertContains(response, reverse("projects:my_projects"))

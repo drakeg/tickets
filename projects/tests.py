@@ -81,3 +81,23 @@ class ProjectWorkflowTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["project_list"]), [self.project])
+
+    def test_authenticated_user_can_create_project(self):
+        self.client.force_login(self.user)
+        today = datetime.date.today()
+
+        response = self.client.post(
+            reverse("projects:project_new"),
+            {
+                "summary": "New project",
+                "description": "Created through the project form",
+                "start_date": today.isoformat(),
+                "end_date": (today + datetime.timedelta(days=14)).isoformat(),
+                "assigned": self.user.pk,
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        created = Project.objects.get(summary="New project")
+        self.assertEqual(created.requestor_name, self.user.username)
+        self.assertEqual(created.assigned, self.user)
