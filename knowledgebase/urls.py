@@ -7,5 +7,6 @@ app_name = "knowledgebase"
 urlpatterns = [
     path("", views.index, name="index"),
     path("new/", views.article_new, name="new"),
+    path("search/", views.search, name="search"),
     path("<int:article_id>/", views.article_detail, name="detail"),
 ]

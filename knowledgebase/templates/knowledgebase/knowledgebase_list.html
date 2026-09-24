@@ -2,6 +2,21 @@
 {% block content %}
     <h1>Knowledge Base Articles</h1>
 
+    <form method="get" action="{% url 'knowledgebase:search' %}" class="mb-3">
+        <label class="form-label" for="knowledgebase-search">Search articles</label>
+        <div class="input-group">
+            <input
+                id="knowledgebase-search"
+                class="form-control"
+                type="search"
+                name="q"
+                value="{{ query|default:'' }}"
+                placeholder="Description, keywords, or author"
+            >
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </div>
+    </form>
+
     {% if user.is_authenticated %}
         <p>
             <a class="btn btn-primary" href="{% url 'knowledgebase:new' %}">Create Article</a>

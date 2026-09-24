@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Q
 from django.utils import timezone
 
 from .forms import ArticleForm
@@ -38,4 +39,23 @@ def article_new(request):
         request,
         "knowledgebase/knowledgebase_new.html",
         {"form": form},
+    )
+
+def search(request):
+    query = request.GET.get("q", "").strip()
+    knowledgebase_list = Article.objects.none()
+    if query:
+        knowledgebase_list = Article.objects.filter(
+            Q(description__icontains=query)
+            | Q(keywords__icontains=query)
+            | Q(author__icontains=query)
+        ).order_by("-pub_date")
+
+    return render(
+        request,
+        "knowledgebase/knowledgebase_list.html",
+        {
+            "knowledgebase_list": knowledgebase_list,
+            "query": query,
+        },
     )

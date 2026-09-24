@@ -133,7 +133,7 @@ Acceptance criteria:
 - authenticated users can create articles and are recorded as the author;
 - Python 3.11/3.12 tests and Docker Compose validation remain green.
 
-Representative pull requests: #TBD.
+Representative pull requests: #161, #TBD.
 
 ## Future sprint candidates
 
