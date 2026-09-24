@@ -1,0 +1,15 @@
+.git
+.github
+.idea
+.DS_Store
+__pycache__
+*.py[cod]
+*.sqlite
+*.sqlite3
+db.sqlite3
+.env
+.venv
+venv
+env
+htmlcov
+.coverage

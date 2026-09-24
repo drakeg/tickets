@@ -3,6 +3,7 @@ from django.http import Http404
 from django.http import HttpResponse
 from django.template import loader
 from django.utils import timezone
+from django.db.models import Q
 
 from .models import Project 
 from .forms import ProjectForm
@@ -13,7 +14,7 @@ def index(request):
         return render(request, 'projects/project_list.html', context)
 
 def project(request, project_id):
-        project = get_object_or_404, pk=project_id
+        project = get_object_or_404(Project, pk=project_id)
         return render(request, 'projects/project_single.html', {'project': project})
 
 
@@ -43,9 +44,12 @@ def project_new(request):
 
 def search(request):
     template = 'projects/project_list.html'
-    query = request.GET.get('q')
+    query = request.GET.get('q', '').strip()
+    project_list = Project.objects.none()
     if query:
-        project_list = Issue.objects.filter(Q(description__icontains=query))
+        project_list = Project.objects.filter(
+            Q(summary__icontains=query) | Q(description__icontains=query)
+        )
     context = {'project_list': project_list}
     return render(request, template, context)
 
