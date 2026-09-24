@@ -90,7 +90,7 @@ Completed work included:
 
 Representative pull requests: #152, #153.
 
-### Sprint 3 — Authorization and protected writes — In progress
+### Sprint 3 — Authorization and protected writes — Complete
 
 Goal: enforce backend authorization for state-changing and user-scoped application workflows.
 
@@ -112,10 +112,33 @@ Acceptance criteria:
 
 Representative pull requests: #157, #158.
 
+### Sprint 4 — Knowledge base core workflows — In progress
+
+Goal: turn the knowledge base from a broken listing into a usable, tested article workflow.
+
+Planned scope:
+
+- repair article listing rendering;
+- add public article detail views;
+- add authenticated article creation;
+- link knowledge-base creation from navigation;
+- add regression tests for list, detail, authentication, and creation behavior;
+- evaluate search/edit/delete behavior for follow-up work after the core flow is stable.
+
+Acceptance criteria:
+
+- existing articles render correctly in the list;
+- article detail pages render by ID and return 404 for missing records;
+- anonymous users cannot create articles;
+- authenticated users can create articles and are recorded as the author;
+- Python 3.11/3.12 tests and Docker Compose validation remain green.
+
+Representative pull requests: #TBD.
+
 ## Future sprint candidates
 
+- completing knowledge-base search/edit/delete behavior;
 - replacing remaining legacy Bootstrap/jQuery-era markup and dependencies;
-- completing knowledge-base CRUD behavior;
 - dependency modernization under the existing CI safety net;
 - cleanup of tracked editor/OS artifacts and obsolete project files;
 - stronger model validation and data-integrity rules.
