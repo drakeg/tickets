@@ -141,3 +141,15 @@ class DashboardAuthorizationNavigationTests(TestCase):
         self.assertContains(response, reverse("issues:my_issues"))
         self.assertContains(response, reverse("projects:project_new"))
         self.assertContains(response, reverse("projects:my_projects"))
+
+
+class FrontendAssetRegressionTests(TestCase):
+    def test_shared_layout_omits_unused_legacy_assets(self):
+        response = self.client.get(reverse("dashboard:index"))
+        content = response.content.decode()
+
+        self.assertNotIn("bootstrap-switch", content)
+        self.assertNotIn("jquery.datetimepicker", content)
+        self.assertNotIn("popper.js/1.16.1", content)
+        self.assertIn("jquery-ui.min.js", content)
+        self.assertIn("bootstrap.bundle.min.js", content)
