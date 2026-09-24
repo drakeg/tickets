@@ -1,0 +1,15 @@
+{% extends 'tickets/base.html' %}
+{% block content %}
+    <h1>Knowledge Base Article</h1>
+    <dl>
+        <dt>Author</dt>
+        <dd>{{ article.author }}</dd>
+        <dt>Description</dt>
+        <dd>{{ article.description }}</dd>
+        <dt>Keywords</dt>
+        <dd>{{ article.keywords }}</dd>
+        <dt>Published</dt>
+        <dd>{{ article.pub_date }}</dd>
+    </dl>
+    <p><a href="{% url 'knowledgebase:index' %}">Back to Knowledge Base</a></p>
+{% endblock %}
