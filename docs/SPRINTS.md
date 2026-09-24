@@ -90,15 +90,32 @@ Completed work included:
 
 Representative pull requests: #152, #153.
 
-## Next sprint
+### Sprint 3 — Authorization and protected writes — In progress
 
-The next sprint should be selected from current repository risks and product priorities. Candidate areas include:
+Goal: enforce backend authorization for state-changing and user-scoped application workflows.
 
-- authorization rules for create/edit/admin actions;
+Planned scope:
+
+- require authentication for issue, project, and inventory creation;
+- require authentication for current-user assignment views;
+- restrict vendor administration to staff users;
+- add regression tests for anonymous, authenticated, and staff authorization boundaries;
+- keep UI behavior aligned with backend permissions in follow-up work if needed.
+
+Acceptance criteria:
+
+- anonymous users cannot create issues, projects, servers, or vendors;
+- anonymous users cannot access "my issues" or "my projects" views;
+- non-staff users cannot create vendors;
+- staff users retain vendor administration access;
+- Python 3.11/3.12 tests and Docker Compose smoke validation remain green.
+
+Representative pull requests: #TBD.
+
+## Future sprint candidates
+
 - replacing remaining legacy Bootstrap/jQuery-era markup and dependencies;
 - completing knowledge-base CRUD behavior;
 - dependency modernization under the existing CI safety net;
 - cleanup of tracked editor/OS artifacts and obsolete project files;
 - stronger model validation and data-integrity rules.
-
-The selected sprint should be added here before or alongside its first implementation pull request.
