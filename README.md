@@ -29,11 +29,28 @@ Start the application:
 docker compose up --build
 ```
 
-The site is available at `http://localhost:8000`. To use another host port:
+The site is available at `http://localhost:8000` by default.
+
+To change only the host port while Django still listens on port 8000 inside the container:
 
 ```bash
 APP_PORT=8080 docker compose up --build
 ```
+
+To change the port Django listens on inside the container as well:
+
+```bash
+CONTAINER_PORT=9000 APP_PORT=9000 docker compose up --build
+```
+
+The two values may differ. For example, this publishes host port 8080 to container port 9000:
+
+```bash
+APP_PORT=8080 CONTAINER_PORT=9000 docker compose up --build
+```
+
+- `APP_PORT` controls the port exposed on the host and defaults to `8000`.
+- `CONTAINER_PORT` controls the port Django listens on inside the container and defaults to `8000`.
 
 The web service automatically applies migrations before starting Django. Its SQLite database is stored in the named `tickets_data` volume so local data survives container recreation.
 
