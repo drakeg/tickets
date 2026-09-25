@@ -153,3 +153,32 @@ class FrontendAssetRegressionTests(TestCase):
         self.assertNotIn("popper.js/1.16.1", content)
         self.assertIn("jquery-ui.min.js", content)
         self.assertIn("bootstrap.bundle.min.js", content)
+
+
+class NavbarMarkupRegressionTests(TestCase):
+    def test_shared_navbar_uses_unique_dropdown_ids(self):
+        user = get_user_model().objects.create_user(
+            username="navbar-user",
+            password="test-password",
+            is_staff=True,
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("dashboard:index"))
+        content = response.content.decode()
+
+        dropdown_ids = [
+            "systemsDropdown",
+            "issuesDropdown",
+            "projectsDropdown",
+            "knowledgebaseDropdown",
+            "adminDropdown",
+            "accountDropdown",
+        ]
+        for dropdown_id in dropdown_ids:
+            self.assertEqual(content.count(f'id="{dropdown_id}"'), 1)
+            self.assertIn(f'aria-labelledby="{dropdown_id}"', content)
+
+        self.assertNotIn('id="navbarDropdown"', content)
+        self.assertNotIn("navbar-fixed-top", content)
+        self.assertIn("Knowledge Base", content)
