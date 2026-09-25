@@ -154,7 +154,7 @@ Acceptance criteria:
 - frontend/runtime cleanup is backed by the existing functional test suite;
 - Python 3.11/3.12 tests and Docker Compose validation remain green.
 
-Representative pull requests: #164, #TBD.
+Representative pull requests: #164, #171, #TBD.
 
 ## Future sprint candidates
 
