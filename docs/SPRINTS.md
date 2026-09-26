@@ -156,6 +156,11 @@ Acceptance criteria:
 
 Representative pull requests: #164, #171, #TBD.
 
+## Runtime support update — September 2026
+
+- Dropped Python 3.11 support to adopt Django 6.1; Python 3.12 is the minimum supported interpreter.
+- Updated the CI test matrix and dependency requirement together. Earlier sprint entries document the Python versions tested at that time, not the current support policy.
+
 ## Future sprint candidates
 
 - deeper Bootstrap/jQuery modernization after usage auditing;
