@@ -109,7 +109,7 @@ For a faster targeted run while developing one area:
 docker compose run --rm test python manage.py test issues projects inventory --verbosity 2
 ```
 
-The same test suite runs in GitHub Actions on Python 3.11 and 3.12. CI also checks Django configuration, migration drift, and a Docker Compose smoke build/check.
+Python 3.12 or newer is required; Python 3.11 is no longer supported. The test suite runs in GitHub Actions on Python 3.12. CI also checks Django configuration, migration drift, and a Docker Compose smoke build/check.
 
 ## Running without Docker
 
