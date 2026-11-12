@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -29,19 +29,18 @@ def unassigned_issues(request):
 
 @login_required
 def issue_new(request):
-	if request.method == "POST":
-		form = IssueForm(request.POST)
-		if form.is_valid():
-			issue = form.save(commit=False)
-			issue.requestor_name = request.user
-			issue.summary = form.cleaned_data['summary']
-			issue.priority = form.cleaned_data['priority']
-			issue.description = form.cleaned_data['description']
-			issue.pub_date = timezone.now()
-			issue.save()
-	else:
-		form = IssueForm()
-	return render(request, 'issue/issue_new.html', {'form': form})
+    if request.method == "POST":
+        form = IssueForm(request.POST)
+        if form.is_valid():
+            issue = form.save(commit=False)
+            issue.requestor_name = request.user.username
+            issue.pub_date = timezone.now()
+            issue.save()
+            return redirect('issues:issue', issue_id=issue.pk)
+    else:
+        form = IssueForm()
+    return render(request, 'issue/issue_new.html', {'form': form})
+
 
 def search(request):
     template = 'issue/issue_list.html'
