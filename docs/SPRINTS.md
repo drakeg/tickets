@@ -190,9 +190,17 @@ unavailable locally.
 - stronger model validation and data-integrity rules;
 - migrating string-based ownership fields to relational user references.
 
-## Sprint 6 — Reachable ticket queues — In review
+## Sprint 6 — Reachable ticket queues — Complete (#196)
 
 Goal: remove the 15-ticket visibility ceiling and make queue status navigation usable.
 Stories TKT-001–004, 9 provisional points. See [detailed plan](SPRINT_PLAN.md)
 for acceptance criteria, test approach, risks, and proposed Sprints 7–9;
 see [backlog](BACKLOG.md) for ordered carryover and dependencies.
+
+## Sprint 7 — Protected ticket lifecycle — In review
+
+Stories TKT-005/006: explicit issues.change_issue permission controls triage
+updates (status, priority, assignee). Staff/assignee status alone grants no edit
+rights. Tests cover permission boundaries, CSRF, invalid forms, restricted fields,
+close/reopen/unassign and dashboard integration. No schema changes.
+See [delivery plan](SPRINT_PLAN.md) for review, rollback and follow-up history work.

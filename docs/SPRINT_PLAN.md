@@ -19,7 +19,7 @@ sprint complete until master CI is green and remaining work is accounted for.
 
 ## Sprint 6 — Reachable ticket queues
 
-Status: In review. Planned scope: 9 points, TKT-001 through TKT-004.
+Status: Complete (#196). Delivered scope: 9 points, TKT-001 through TKT-004.
 Goal: every existing ticket remains reachable as ticket volume grows.
 
 ### Stories and acceptance criteria
@@ -48,14 +48,19 @@ Rollback: revert the PR; there is no data migration to reverse.
 
 Review demo: create more than 15 tickets, inspect page 2, filter closed tickets,
 search with an ampersand, and visit Assigned to me as two different users.
-Completion evidence and retrospective are recorded after merge.
+Completion evidence: #196 merged; all 57 tests passed locally and master CI
+passed Django/Compose and CodeQL. Retrospective: shared queue rendering kept
+filter behavior consistent; offset paging remains sensitive to concurrent inserts.
+Next improvement: protect lifecycle writes with explicit model permissions.
 
-## Sprint 7 — Protected ticket lifecycle (proposed)
+## Sprint 7 — Protected ticket lifecycle — In review
 
 Goal: agents can triage and resolve tickets without administrator intervention.
-Candidate scope: TKT-005/006, 10 points; split if actual capacity is lower.
-Entry decision: choose staff-only, assigned-agent, or explicit model-permission
-policy for status/assignment changes. Do not infer authorization from public reads.
+Committed scope: TKT-005/006, 10 provisional points.
+Policy: explicit Django `issues.change_issue` permission (including superusers).
+This follows Django's existing Issue model permission rather than introducing a
+new role. Staff status and being the assignee alone do not grant access. Permission
+is global across tickets and can be delegated through Django admin users/groups.
 
 Acceptance criteria:
 
@@ -68,7 +73,15 @@ Acceptance criteria:
 
 Tasks: refine policy, add protected forms/routes, add UI controls, add request and
 dashboard integration tests, update operator docs. Risk: permission mistakes;
-mitigation: explicit backend checks and negative tests. Audit history is Sprint 8,
+mitigation: explicit backend checks and negative tests. Implementation evidence: restricted triage ModelForm, GET/POST edit route,
+permission-gated detail link, POST redirect, explicit update_fields to preserve
+content/requestor/date. Regression coverage includes close/reopen/unassign,
+repeat writes, invalid choices, missing records, method restrictions, actual CSRF
+checks, UI visibility, unauthorized staff/assignee denial, and dashboard totals.
+No migrations. Review demo: grant change permission to a non-staff user; update a
+ticket, close/reopen it, then revoke permission and verify writes are forbidden.
+Rollback: revert the PR; already saved ticket values remain persisted.
+Audit history is Sprint 8,
 so do not promise historical changes until that increment lands.
 
 ## Sprint 8 — Ticket change history (proposed)
