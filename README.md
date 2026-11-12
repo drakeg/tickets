@@ -23,6 +23,13 @@ Use Previous/Next to reach older articles; search phrases remain applied while
 paging. Search matches description, keywords, or author. Empty searches show no
 results. Existing author/staff editing and authenticated creation remain available.
 
+## Project creation
+
+Creating a project redirects to its detail page; refreshing that page does not
+resubmit the form. Details include summary, description, requestor, assignment,
+creation date and optional schedule dates. Unassigned/unscheduled fields are
+labeled explicitly. Invalid submissions retain values and validation errors.
+
 ## Ticket workflow
 
 Signed-in users can submit a ticket from **Issues → Create New**. Successful

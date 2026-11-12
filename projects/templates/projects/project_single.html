@@ -8,5 +8,16 @@
     </form>
 {% endblock %}
 {% block content %}
-	{{ project }}
+    <h1>{{ project.summary }}</h1>
+    <p class="text-muted">Project #{{ project.pk }}</p>
+    <dl class="row">
+        <dt class="col-sm-3">Requestor</dt><dd class="col-sm-9">{{ project.requestor_name }}</dd>
+        <dt class="col-sm-3">Assigned to</dt><dd class="col-sm-9">{% if project.assigned %}{{ project.assigned }}{% else %}Unassigned{% endif %}</dd>
+        <dt class="col-sm-3">Created</dt><dd class="col-sm-9">{{ project.pub_date }}</dd>
+        <dt class="col-sm-3">Start date</dt><dd class="col-sm-9">{{ project.start_date|default:'Not scheduled' }}</dd>
+        <dt class="col-sm-3">End date</dt><dd class="col-sm-9">{{ project.end_date|default:'Not scheduled' }}</dd>
+    </dl>
+    <h2>Description</h2>
+    {{ project.description|linebreaks }}
+    <a class="btn btn-outline-secondary" href="{% url 'projects:index' %}">Back to projects</a>
 {% endblock %}

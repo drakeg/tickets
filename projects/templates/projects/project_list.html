@@ -25,7 +25,7 @@
             <tbody>
 	        {% for project in project_list %}
 		<tr>
-            <td><a href="/projects/projects/{{ project.id }}/">{{project.id}}</a></td>
+            <td><a href="{% url 'projects:project' project.id %}">{{project.id}}</a></td>
             <td>{{project.requestor_name }}</td>
             <td>{{ project.description }}</td>
             <td>{{ project.assigned }}</td>

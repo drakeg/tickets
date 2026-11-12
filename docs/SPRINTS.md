@@ -221,10 +221,17 @@ Create links remain visible when signed out, with a sign-in explanation; backend
 login requirements remain enforced. No schema changes. Test navigation, role
 visibility, form reachability and local static delivery in Docker.
 
-## Sprint 9 — Knowledge reuse — In review
+## Sprint 9 — Knowledge reuse — Complete (#200)
 
 KB-001 completes pagination of existing article browsing/search workflows. KB-002
 editing was already present in merged code and is reconciled in the backlog.
 Shared rendering orders by date then ID and preserves search text across pages.
 Four new regression tests; no migrations. See detailed plan for acceptance and
 review scenarios. The live instance remains on merged master pending review.
+
+## Sprint 10 — Project creation feedback — In review
+
+PRJ-001: redirect after successful project creation and show complete project
+fields with empty-state labels on detail. Invalid forms retain input; anonymous
+writes stay protected. Named list links and refresh regression coverage included.
+No migration changes. See detailed plan for acceptance, risks and review demo.
