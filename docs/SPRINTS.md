@@ -135,7 +135,7 @@ Acceptance criteria:
 
 Representative pull requests: #161, #162, #163.
 
-### Sprint 5 — Frontend/runtime hygiene — In progress
+### Sprint 5 — Frontend/runtime hygiene — Paused (carryover tracked)
 
 Goal: remove legacy development artifacts and reduce outdated frontend/runtime baggage without changing application behavior.
 
@@ -161,9 +161,10 @@ Representative pull requests: #164, #171, #TBD.
 - Dropped Python 3.11 support to adopt Django 6.1; Python 3.12 is the minimum supported interpreter.
 - Updated the CI test matrix and dependency requirement together. Earlier sprint entries document the Python versions tested at that time, not the current support policy.
 
-## Ticket workflow reliability — November 2026 — In review
+## Ticket workflow reliability — November 2026 — Complete (#195)
 
-This focused defect fix interrupts Sprint 5; remaining asset hygiene stays open.
+Merged in #195; master Django CI and CodeQL passed. All 51 tests passed.
+This focused defect fix interrupted Sprint 5; remaining asset hygiene stays open.
 
 Goal: make ticket submission safe to refresh and the saved ticket useful to read.
 
@@ -188,3 +189,10 @@ unavailable locally.
 - dependency modernization under the existing CI safety net;
 - stronger model validation and data-integrity rules;
 - migrating string-based ownership fields to relational user references.
+
+## Sprint 6 — Reachable ticket queues — In review
+
+Goal: remove the 15-ticket visibility ceiling and make queue status navigation usable.
+Stories TKT-001–004, 9 provisional points. See [detailed plan](SPRINT_PLAN.md)
+for acceptance criteria, test approach, risks, and proposed Sprints 7–9;
+see [backlog](BACKLOG.md) for ordered carryover and dependencies.

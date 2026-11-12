@@ -119,3 +119,76 @@ class IssueWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response["Location"])
         self.assertEqual(Issue.objects.count(), 1)
+
+
+class IssueQueueTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(username='queue-user')
+        cls.other = get_user_model().objects.create_user(username='other-user')
+        priority = Priority.objects.create(name='Normal')
+        now = timezone.now()
+        cls.tickets = [Issue.objects.create(
+            requestor_name='requestor', summary=f'Network {number}',
+            description='Network & access', priority=priority, pub_date=now,
+            assigned=cls.user if number % 2 else None,
+            issue_open=number % 3 != 0,
+        ) for number in range(34)]
+        cls.foreign = Issue.objects.create(
+            requestor_name='other', summary='Other queue', description='Other',
+            priority=priority, pub_date=now, assigned=cls.other,
+        )
+
+    def test_all_tickets_are_reachable_with_stable_newest_first_order(self):
+        ids = []
+        for number in (1, 2, 3):
+            response = self.client.get(reverse('issues:index'), {'page': number})
+            self.assertEqual(response.status_code, 200)
+            ids.extend(issue.pk for issue in response.context['issue_list'])
+        expected = list(Issue.objects.order_by('-pub_date', '-pk').values_list('pk', flat=True))
+        self.assertEqual(ids, expected)
+        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_status_filters_and_invalid_status_fallback(self):
+        for status, expected in [('open', True), ('closed', False)]:
+            response = self.client.get(reverse('issues:index'), {'status': status})
+            self.assertEqual(response.context['page_obj'].paginator.count,
+                             Issue.objects.filter(issue_open=expected).count())
+            self.assertTrue(all(i.issue_open == expected for i in response.context['issue_list']))
+        response = self.client.get(reverse('issues:index'), {'status': 'invalid'})
+        self.assertEqual(response.context['status'], 'all')
+        self.assertEqual(response.context['page_obj'].paginator.count, Issue.objects.count())
+
+    def test_assignment_queues_keep_scope_when_filtering_and_paging(self):
+        self.client.force_login(self.user)
+        for route, filters in [('my_issues', {'assigned': self.user}),
+                               ('unassigned_issues', {'assigned__isnull': True})]:
+            response = self.client.get(reverse('issues:' + route), {'status': 'open', 'page': 2})
+            expected = Issue.objects.filter(issue_open=True, **filters)
+            self.assertEqual(response.context['page_obj'].paginator.count, expected.count())
+            self.assertTrue(set(response.context['issue_list']).issubset(set(expected)))
+            self.assertNotIn(self.foreign, response.context['issue_list'])
+
+    def test_search_pagination_preserves_query_and_status(self):
+        response = self.client.get(reverse('issues:search'), {'q': 'Network &', 'status': 'open'})
+        self.assertContains(response, 'q=Network+%26')
+        self.assertContains(response, 'status=open')
+        self.assertContains(response, 'page=2')
+        response = self.client.get(reverse('issues:search'), {
+            'q': 'Network &', 'status': 'open', 'page': 2,
+        })
+        self.assertTrue(response.context['issue_list'])
+        self.assertTrue(all(i.issue_open and 'Network &' in i.description
+                            for i in response.context['issue_list']))
+
+    def test_invalid_page_numbers_fall_back_safely(self):
+        for value, expected in [('bad', 1), ('999', 3), ('0', 3), ('-1', 3)]:
+            response = self.client.get(reverse('issues:index'), {'page': value})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.context['page_obj'].number, expected)
+
+    def test_empty_search_and_closed_navigation(self):
+        response = self.client.get(reverse('issues:search'), {'q': '   ', 'page': 99})
+        self.assertContains(response, 'No issues are available.')
+        self.assertEqual(response.context['page_obj'].paginator.count, 0)
+        self.assertContains(response, reverse('issues:index') + '?status=closed')

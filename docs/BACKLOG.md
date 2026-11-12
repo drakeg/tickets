@@ -1,0 +1,49 @@
+# Product backlog
+
+Updated: 2026-11-12. Product: ServDesk (`drakeg/tickets`).
+
+## Product goal
+
+Give a small support team one reliable place to triage tickets, track projects
+and assets, and publish reusable solutions. Deliver ticket handling first, then
+improve adjacent workflows under the same authentication and quality standards.
+
+## Prioritization and estimates
+
+P1 = next delivery, P2 = subsequent release, P3 = exploratory. Points are relative
+complexity estimates (1, 2, 3, 5, 8), not elapsed days. Split items larger than 8.
+Order within a priority reflects value, risk, and dependencies. Estimates are
+provisional until refinement; no measured velocity or delivery dates are assumed.
+
+| ID | Priority | User story / outcome | Points | Sprint | State | Dependency |
+|---|---|---|---:|---|---|---|
+| TKT-001 | P1 | As an agent, reach every ticket in stable newest-first pages | 3 | 6 | In review | #195 merged |
+| TKT-002 | P1 | As an agent, filter all, assigned, unassigned, and search queues by status | 3 | 6 | In review | TKT-001 |
+| TKT-003 | P1 | As an agent, open closed tickets from navigation | 1 | 6 | In review | TKT-002 |
+| TKT-004 | P1 | As a maintainer, find priorities, acceptance criteria, and sprint evidence in the repo | 2 | 6 | In review | None |
+| TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Ready for refinement | Role policy decision |
+| TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Ready for refinement | TKT-005 permission policy |
+| TKT-007 | P2 | As a reviewer, see who changed status/assignment and when | 5 | 8 | Needs refinement | TKT-005/006, migration plan |
+| KB-001 | P2 | As a reader, search knowledge articles | 3 | 9 | Needs refinement | Existing article workflows |
+| KB-002 | P2 | As an author/staff member, edit articles with enforced permissions | 5 | 9 | Needs refinement | Author policy |
+| DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |
+| CMDB-001 | P2 | As an operator, validate asset identifiers and required fields | 5 | Unscheduled | Needs refinement | Existing-data audit |
+| PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | Unscheduled | Needs refinement | Workflow audit |
+| UI-001 | P2 | As a maintainer, remove remaining tracked OS artifacts | 1 | 5 carryover | Ready | Usage audit |
+| UI-002 | P2 | As a user, use date inputs without obsolete runtime assets | 5 | 5 carryover | Needs discovery | Date parsing/browser audit |
+| OPS-001 | P2 | As an operator, follow tested backup/restore and production setup instructions | 5 | Unscheduled | Needs refinement | Deployment/storage choices |
+| API-001 | P3 | As an integration developer, use scoped authenticated ticket endpoints | 8 | Unscheduled | Discovery only | Access, rate-limit, paid API policy |
+
+## Definition of ready
+
+Before implementation: identify the user outcome, measurable acceptance criteria,
+permission boundaries, dependencies, estimate, test approach, and migration needs.
+Refine ambiguous policies before implementing writes. Keep future work provisional.
+
+## Backlog maintenance
+
+At sprint planning, select a coherent goal and a realistic point budget based on
+actual capacity. During delivery, move items through Ready → In progress → In
+review → Done; Blocked records a reason and next action. Done means merged with
+passing checks, not merely implemented. Reference PRs in sprint evidence. New
+security/build defects take priority and displace named scope explicitly.
