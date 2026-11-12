@@ -1,62 +1,23 @@
 {% extends 'tickets/base.html' %}
-
 {% block content %}
-
-<p>&nbsp;</p>
-
-<div class="row">
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-block">
-        <div class="h4 m-0">{{ num_open_projects }}</div>
-        <div>Projects</div>
-        <div class="progress progress-xs my-1">
-          <div class="progress-bar bg-success" role="progressbar" style="width: {{ percent_open_projects }}" aria-valuenow="{{ num_open_projects }}" aria-valuemin="0" aria-valuemax="{{ max_open_projects }}"></div>
-        </div>
-        <small class="text-muted">Current Active Projects</small>
-      </div>
+<section class="page-heading">
+    <div><p class="eyebrow">WORKSPACE OVERVIEW</p><h1>Your service desk, at a glance.</h1><p class="text-muted">Keep work moving. Track requests, organize projects and manage your systems.</p></div>
+    <a class="btn btn-primary" href="{% url 'issues:issue_new' %}">+ New ticket</a>
+</section>
+<div class="metric-grid">
+    <a class="metric-card" href="{% url 'issues:index' %}?status=open"><span class="metric-label">Open tickets</span><strong>{{ num_open_issues }}</strong><span class="metric-description">Requests needing attention <span aria-hidden="true">↗</span></span></a>
+    <a class="metric-card" href="{% url 'projects:index' %}"><span class="metric-label">Active projects</span><strong>{{ num_open_projects }}</strong><span class="metric-description">Work currently in progress <span aria-hidden="true">↗</span></span></a>
+    <a class="metric-card" href="{% url 'issues:my_issues' %}"><span class="metric-label">My open tickets</span><strong>{{ num_my_issues }}</strong><span class="metric-description">Your assigned requests <span aria-hidden="true">↗</span></span></a>
+    <a class="metric-card" href="{% url 'inventory:index' %}"><span class="metric-label">Systems</span><strong>{{ num_systems }}</strong><span class="metric-description">Assets in your inventory <span aria-hidden="true">↗</span></span></a>
+</div>
+<section class="workspace-panel">
+    <div class="section-heading"><div><h2>Start something new</h2><p class="text-muted">Everything you need to keep your team organized.</p></div></div>
+    <div class="action-grid">
+        <a class="action-card" href="{% url 'issues:issue_new' %}"><span class="action-icon" aria-hidden="true">+</span><h3>Create a ticket</h3><p>Capture a request and assign the next step.</p><span class="action-link">New ticket →</span></a>
+        <a class="action-card" href="{% url 'projects:project_new' %}"><span class="action-icon" aria-hidden="true">▤</span><h3>Plan a project</h3><p>Bring upcoming work into one place.</p><span class="action-link">New project →</span></a>
+        <a class="action-card" href="{% url 'inventory:servers_new' %}"><span class="action-icon" aria-hidden="true">▣</span><h3>Add a system</h3><p>Build a clear picture of your infrastructure.</p><span class="action-link">Add system →</span></a>
+        <a class="action-card" href="{% url 'knowledgebase:new' %}"><span class="action-icon" aria-hidden="true">≡</span><h3>Share a solution</h3><p>Turn a useful answer into a reusable article.</p><span class="action-link">Write article →</span></a>
     </div>
-  </div><!--/.col-->
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-block">
-        <div class="h4 m-0">{{ num_open_issues }}</div>
-        <div>Tickets</div>
-        <div class="progress progress-xs my-1">
-          <div class="progress-bar bg-info" role="progressbar" style="width: {{ percent_open_issues }}" aria-valuenow="{{ num_open_issues }}" aria-valuemin="0" aria-valuemax="{{ max_open_issues }}"></div>
-        </div>
-        <small class="text-muted">Current Open Tickets</small>
-      </div>
-    </div>
-  </div><!--/.col-->
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-block">
-        <div class="h4 m-0">{{ num_my_issues }}</div>
-        <div>My Tickets</div>
-        <div class="progress progress-xs my-1">
-            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ percent_my_issues }}" aria-valuenow="{{ num_my_issues }}" aria-valuemin="0" aria-valuemax="{{ max_my_issues }}"></div>
-        </div>
-        <small class="text-muted">My Current Open Tickets</small>
-      </div>
-    </div>
-  </div><!--/.col-->
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-block">
-        <div class="h4 m-0">{{ num_systems }}</div>
-        <div>Systems</div>
-        <div class="progress progress-xs my-1">
-            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ percent_systems }}" aria-valuenow="{{ num_systems }}" aria-valuemin="0" aria-valuemax="{{ max_systems }}"></div>
-        </div>
-        <small class="text-muted">Total Systems</small>
-      </div>
-    </div>
-  </div><!--/.col-->
-</div><!--/.row-->
-
-
-
-
-
+</section>
+<section class="workspace-panel queue-panel"><div><h2>Find the next request</h2><p class="text-muted mb-0">Review unassigned tickets or pick up where you left off.</p></div><div class="queue-actions"><a class="btn btn-outline-secondary" href="{% url 'issues:unassigned_issues' %}">Unassigned tickets</a><a class="btn btn-outline-secondary" href="{% url 'issues:index' %}">All tickets</a></div></section>
 {% endblock %}

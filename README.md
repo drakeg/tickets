@@ -8,6 +8,14 @@ Includes:
 - Issue tracker
 - Knowledge base
 
+## Workspace navigation
+
+Use the sidebar for Tickets, Projects, Systems and Knowledge base. Quick Create
+links and dashboard action cards open each creation form directly. Signed-out
+visitors are prompted to sign in before saving records. On narrow screens,
+navigation wraps above the content. The workspace styling is served locally and
+navigation works without JavaScript.
+
 ## Ticket workflow
 
 Signed-in users can submit a ticket from **Issues → Create New**. Successful

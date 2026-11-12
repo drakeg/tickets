@@ -16,7 +16,9 @@ class DashboardTemplateTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "ServDesk")
-        self.assertContains(response, 'data-bs-toggle="dropdown"')
+        self.assertContains(response, 'aria-label="Main navigation"')
+        self.assertNotContains(response, 'data-bs-toggle="dropdown"')
+        self.assertContains(response, '/static/tickets/vendor/bootstrap-5.3.3.min.css')
 
 
 class DashboardMetricTests(TestCase):
@@ -106,25 +108,22 @@ class DashboardMetricTests(TestCase):
         self.assertEqual(response.context["num_my_issues"], 1)
         self.assertEqual(response.context["num_open_projects"], 1)
 
-    def test_dashboard_uses_defined_my_issue_progress_maximum(self):
+    def test_dashboard_links_my_ticket_count_to_personal_queue(self):
         self.client.force_login(self.user)
 
         response = self.client.get(reverse("dashboard:index"))
 
         self.assertEqual(response.context["max_my_issues"], 100)
-        self.assertContains(response, 'aria-valuemax="100"')
+        self.assertContains(response, reverse("issues:my_issues"))
 
 
 class DashboardAuthorizationNavigationTests(TestCase):
-    def test_anonymous_navigation_hides_protected_actions(self):
+    def test_anonymous_navigation_explains_authentication_for_create_actions(self):
         response = self.client.get(reverse("dashboard:index"))
-
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, reverse("inventory:servers_new"))
-        self.assertNotContains(response, reverse("issues:issue_new"))
-        self.assertNotContains(response, reverse("issues:my_issues"))
-        self.assertNotContains(response, reverse("projects:project_new"))
-        self.assertNotContains(response, reverse("projects:my_projects"))
+        self.assertContains(response, 'sign in')
+        self.assertNotContains(response, reverse('inventory:vendor_new'))
+        self.assertNotContains(response, reverse('admin:index'))
 
     def test_authenticated_navigation_shows_protected_actions(self):
         user = get_user_model().objects.create_user(
@@ -151,8 +150,9 @@ class FrontendAssetRegressionTests(TestCase):
         self.assertNotIn("bootstrap-switch", content)
         self.assertNotIn("jquery.datetimepicker", content)
         self.assertNotIn("popper.js/1.16.1", content)
-        self.assertIn("jquery-ui.min.js", content)
-        self.assertIn("bootstrap.bundle.min.js", content)
+        self.assertNotIn('https://cdn', content)
+        self.assertNotIn('data-bs-toggle', content)
+        self.assertIn('/static/tickets/vendor/bootstrap-5.3.3.min.css', content)
 
 
 class NavbarMarkupRegressionTests(TestCase):
@@ -167,18 +167,41 @@ class NavbarMarkupRegressionTests(TestCase):
         response = self.client.get(reverse("dashboard:index"))
         content = response.content.decode()
 
-        dropdown_ids = [
-            "systemsDropdown",
-            "issuesDropdown",
-            "projectsDropdown",
-            "knowledgebaseDropdown",
-            "adminDropdown",
-            "accountDropdown",
-        ]
-        for dropdown_id in dropdown_ids:
-            self.assertEqual(content.count(f'id="{dropdown_id}"'), 1)
-            self.assertIn(f'aria-labelledby="{dropdown_id}"', content)
+        from html.parser import HTMLParser
+        class IdParser(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.ids = []
+            def handle_starttag(self, tag, attrs):
+                self.ids.extend(value for key, value in attrs if key == 'id')
+        parser = IdParser()
+        parser.feed(content)
+        self.assertEqual(len(parser.ids), len(set(parser.ids)))
+        self.assertNotIn('collapse navbar-collapse', content)
 
-        self.assertNotIn('id="navbarDropdown"', content)
-        self.assertNotIn("navbar-fixed-top", content)
-        self.assertIn("Knowledge Base", content)
+
+class WorkspaceNavigationTests(TestCase):
+    def test_signed_out_create_links_lead_to_login(self):
+        response = self.client.get(reverse('dashboard:index'))
+        self.assertContains(response, 'sign in')
+        for route in ('issues:issue_new', 'projects:project_new',
+                      'inventory:servers_new', 'knowledgebase:new'):
+            path = reverse(route)
+            self.assertContains(response, 'href="' + path + '"')
+            result = self.client.get(path)
+            self.assertEqual(result.status_code, 302)
+            self.assertIn(reverse('login'), result['Location'])
+
+    def test_signed_in_create_links_open_forms_and_navigation_has_no_dead_links(self):
+        user = get_user_model().objects.create_user(username='navigation-user')
+        self.client.force_login(user)
+        response = self.client.get(reverse('dashboard:index'))
+        self.assertNotContains(response, 'href="#"')
+        for route in ('issues:issue_new', 'projects:project_new',
+                      'inventory:servers_new', 'knowledgebase:new'):
+            self.assertEqual(self.client.get(reverse(route)).status_code, 200)
+        self.assertContains(response, reverse('projects:index'))
+        self.assertNotContains(response, reverse('admin:index'))
+        user.is_staff = True
+        user.save()
+        self.assertContains(self.client.get(reverse('dashboard:index')), reverse('admin:index'))

@@ -205,9 +205,18 @@ rights. Tests cover permission boundaries, CSRF, invalid forms, restricted field
 close/reopen/unassign and dashboard integration. No schema changes.
 See [delivery plan](SPRINT_PLAN.md) for review, rollback and follow-up history work.
 
-## Sprint 8 — Ticket change history — In review
+## Sprint 8 — Ticket change history — Complete (#198)
 
 TKT-007 records transactional triage changes with actor/time and before/after
 snapshots. History is permission-gated and paginated. Existing tickets receive no
 backfilled events. Includes additive migration 0002 and a preservation rehearsal.
 70 tests pass; see the detailed plan for policy, scope boundaries and rollback.
+
+## Navigation and dashboard repair — In review
+
+User-reported blocker interrupts planned Sprint 9. Fix nested navigation collapse,
+make ticket/project/system/article creation discoverable, replace inert menu links,
+and redesign the dashboard with responsive cards and locally served styling.
+Create links remain visible when signed out, with a sign-in explanation; backend
+login requirements remain enforced. No schema changes. Test navigation, role
+visibility, form reachability and local static delivery in Docker.
