@@ -212,7 +212,7 @@ snapshots. History is permission-gated and paginated. Existing tickets receive n
 backfilled events. Includes additive migration 0002 and a preservation rehearsal.
 70 tests pass; see the detailed plan for policy, scope boundaries and rollback.
 
-## Navigation and dashboard repair — In review
+## Navigation and dashboard repair — Complete (#199)
 
 User-reported blocker interrupts planned Sprint 9. Fix nested navigation collapse,
 make ticket/project/system/article creation discoverable, replace inert menu links,
@@ -220,3 +220,11 @@ and redesign the dashboard with responsive cards and locally served styling.
 Create links remain visible when signed out, with a sign-in explanation; backend
 login requirements remain enforced. No schema changes. Test navigation, role
 visibility, form reachability and local static delivery in Docker.
+
+## Sprint 9 — Knowledge reuse — In review
+
+KB-001 completes pagination of existing article browsing/search workflows. KB-002
+editing was already present in merged code and is reconciled in the backlog.
+Shared rendering orders by date then ID and preserves search text across pages.
+Four new regression tests; no migrations. See detailed plan for acceptance and
+review scenarios. The live instance remains on merged master pending review.

@@ -16,6 +16,13 @@ visitors are prompted to sign in before saving records. On narrow screens,
 navigation wraps above the content. The workspace styling is served locally and
 navigation works without JavaScript.
 
+## Knowledge base browsing
+
+The knowledge-base list and article search show 15 results per page, newest first.
+Use Previous/Next to reach older articles; search phrases remain applied while
+paging. Search matches description, keywords, or author. Empty searches show no
+results. Existing author/staff editing and authenticated creation remain available.
+
 ## Ticket workflow
 
 Signed-in users can submit a ticket from **Issues → Create New**. Successful

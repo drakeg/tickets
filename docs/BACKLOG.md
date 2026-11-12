@@ -17,7 +17,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 
 | ID | Priority | User story / outcome | Points | Sprint | State | Dependency |
 |---|---|---|---:|---|---|---|
-| UI-003 | P1 | As a user, navigate and find create actions on desktop/mobile with readable dashboard styling | 5 | Urgent repair | In review | User-reported blocker |
+| UI-003 | P1 | As a user, navigate and find create actions on desktop/mobile with readable dashboard styling | 5 | Urgent repair | Done (#199) | User-reported blocker |
 | TKT-001 | P1 | As an agent, reach every ticket in stable newest-first pages | 3 | 6 | Done (#196) | #195 merged |
 | TKT-002 | P1 | As an agent, filter all, assigned, unassigned, and search queues by status | 3 | 6 | Done (#196) | TKT-001 |
 | TKT-003 | P1 | As an agent, open closed tickets from navigation | 1 | 6 | Done (#196) | TKT-002 |
@@ -26,8 +26,8 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Done (#197) | TKT-005 permission policy |
 | TKT-007 | P2 | As a reviewer, see who changed status/assignment and when | 5 | 8 | Done (#198) | TKT-005/006 merged; additive migration |
 | TKT-008 | P2 | As an operator, cover admin/bulk change paths and define audit retention | 5 | Unscheduled | Needs refinement | TKT-007; admin workflow policy |
-| KB-001 | P2 | As a reader, search knowledge articles | 3 | 9 | Needs refinement | Existing article workflows |
-| KB-002 | P2 | As an author/staff member, edit articles with enforced permissions | 5 | 9 | Needs refinement | Author policy |
+| KB-001 | P2 | As a reader, search and page through all knowledge articles | 3 | 9 | In review | Existing search workflow |
+| KB-002 | P2 | As an author/staff member, edit articles with enforced permissions | 5 | Baseline | Existing implementation verified | Author/staff policy in views and tests |
 | DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |
 | CMDB-001 | P2 | As an operator, validate asset identifiers and required fields | 5 | Unscheduled | Needs refinement | Existing-data audit |
 | PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | Unscheduled | Needs refinement | Workflow audit |

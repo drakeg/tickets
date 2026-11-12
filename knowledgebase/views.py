@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 
@@ -9,10 +10,19 @@ from .forms import ArticleForm
 from .models import Article
 
 
+def _article_list(request, articles, query=""):
+    page = Paginator(articles.order_by('-pub_date', '-pk'), 15).get_page(
+        request.GET.get('page')
+    )
+    return render(request, "knowledgebase/knowledgebase_list.html", {
+        "knowledgebase_list": page.object_list,
+        "page_obj": page,
+        "query": query,
+    })
+
+
 def index(request):
-    knowledgebase_list = Article.objects.order_by("-pub_date")[:15]
-    context = {"knowledgebase_list": knowledgebase_list}
-    return render(request, "knowledgebase/knowledgebase_list.html", context)
+    return _article_list(request, Article.objects.all())
 
 
 def article_detail(request, article_id):
@@ -53,14 +63,8 @@ def search(request):
             | Q(author__icontains=query)
         ).order_by("-pub_date")
 
-    return render(
-        request,
-        "knowledgebase/knowledgebase_list.html",
-        {
-            "knowledgebase_list": knowledgebase_list,
-            "query": query,
-        },
-    )
+    return _article_list(request, knowledgebase_list, query)
+
 
 def _can_manage_article(user, article):
     return user.is_authenticated and (

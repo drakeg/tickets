@@ -119,15 +119,33 @@ repeat the same save, and verify history is hidden without edit permission.
 Rollback: reverting code can leave the added table in place; reversing issues 0002
 drops recorded history and requires an explicit backup/retention decision.
 
-## Sprint 9 — Knowledge reuse (proposed)
+## Sprint 9 — Knowledge reuse — In review
 
-Goal: find and maintain solutions that reduce repeated tickets.
-Candidate scope: KB-001/002 (8 points), independent of Sprint 8 if reprioritized.
-Acceptance: article search handles empty text and paginates; authors/staff can edit
-under an explicit policy; other users cannot edit; article author remains stable;
-valid edits redirect, invalid forms retain input, missing articles return 404.
-Tasks: refine author permissions, shared search/list behavior, edit forms/routes,
-request tests, documentation. Risk: unauthorized edits; enforce backend checks.
+Goal: all knowledge articles remain reachable as the collection grows.
+Committed increment: KB-001 (3 points). Inspection of merged master found search
+and author/staff edit/delete workflows already implemented, so KB-002 is recorded
+as existing functionality rather than recreated. Existing authorization tests stay
+in the suite; broader author-identity migration remains DATA-001 follow-up work.
+
+Acceptance criteria:
+
+- article browsing and searches paginate at 15 without dropping older records;
+- date descending then ID descending gives stable ordering for equal timestamps;
+- previous/next links preserve the trimmed, URL-encoded search phrase;
+- empty queries and no-match searches remain valid empty results;
+- malformed page values fall back safely; out-of-range pages select the last page;
+- existing create/edit/delete authorization and redirect tests continue passing.
+
+Tasks: share list rendering, add page navigation, add multi-page request tests,
+reconcile the backlog with current code, and run full tests/checks. No migration
+or dependency changes. Risk: offset pages may shift during concurrent article
+creation; cursor pagination is deferred. Rollback: revert this increment.
+
+Review demo: seed more than 15 articles in an isolated test database, browse every
+page, search a phrase containing an ampersand, and verify no unrelated results.
+Keep the user's live Docker instance on merged master while this PR is reviewed.
+Evidence: four pagination regressions cover stable reachability, encoded search,
+invalid page fallback and empty results; full-suite results recorded in the PR.
 
 ## Paused Sprint 5 and later refinement
 
@@ -136,7 +154,7 @@ increment after ticket queue delivery or earlier if a security issue requires it
 Do not label Sprint 5 complete while tracked artifacts remain. DATA-001, CMDB-001,
 PRJ-001, OPS-001 and API-001 remain ordered candidates, not delivery promises.
 
-## Urgent navigation repair — In review
+## Urgent navigation repair — Complete (#199)
 
 UI-003 interrupts Sprint 9 after local user feedback. Goal: navigation and record
 creation must be discoverable without dropdown JavaScript, on wide and narrow
@@ -153,3 +171,6 @@ are redirected to login by each create endpoint; admin links remain staff-only;
 sidebar and create cards remain available without JavaScript; existing issue,
 project, inventory, knowledge and account tests pass. Review at desktop and mobile
 widths. No migration. Roll back by reverting this UI-only PR.
+
+Navigation repair completion: #199 merged; master Django CI and CodeQL passed.
+Local Docker instance updated to merged master, health and HTTP checks passed.

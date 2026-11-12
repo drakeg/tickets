@@ -223,3 +223,48 @@ class KnowledgeBaseTests(TestCase):
 
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Article.objects.filter(pk=owned.pk).exists())
+
+
+class ArticlePaginationTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        now = timezone.now()
+        cls.articles = [Article.objects.create(
+            author='Support', description=f'Network & access {number}',
+            keywords='network,vpn', pub_date=now,
+        ) for number in range(34)]
+        Article.objects.create(author='Other', description='Unrelated', keywords='other', pub_date=now)
+
+    def test_every_article_is_reachable_in_stable_newest_first_order(self):
+        ids = []
+        for number in (1, 2, 3):
+            response = self.client.get(reverse('knowledgebase:index'), {'page': number})
+            self.assertEqual(response.status_code, 200)
+            ids.extend(item.pk for item in response.context['knowledgebase_list'])
+        self.assertEqual(ids, list(Article.objects.order_by('-pub_date', '-pk').values_list('pk', flat=True)))
+        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_search_preserves_encoded_query_and_does_not_include_nonmatches(self):
+        ids = []
+        for number in (1, 2, 3):
+            response = self.client.get(reverse('knowledgebase:search'), {
+                'q': ' Network & access ', 'page': number,
+            })
+            self.assertContains(response, 'q=Network%20%26%20access')
+            self.assertEqual(response.context['query'], 'Network & access')
+            ids.extend(item.pk for item in response.context['knowledgebase_list'])
+        self.assertEqual(ids, [item.pk for item in reversed(self.articles)])
+
+    def test_invalid_pages_fall_back_safely(self):
+        for value, expected in [('bad', 1), ('9999', 3), ('0', 3)]:
+            response = self.client.get(reverse('knowledgebase:index'), {'page': value})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.context['page_obj'].number, expected)
+
+    def test_empty_search_and_no_matches_have_no_pagination(self):
+        for query in ('', '   ', 'not-present'):
+            response = self.client.get(reverse('knowledgebase:search'), {'q': query, 'page': 99})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.context['page_obj'].paginator.count, 0)
+            self.assertContains(response, 'No knowledge base articles are available.')
+            self.assertNotContains(response, 'aria-label="Article pages"')
