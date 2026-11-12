@@ -78,12 +78,13 @@
                             {% if user.is_authenticated %}
                                 <a class="dropdown-item" href="{% url 'issues:issue_new' %}">Create New</a>
                             {% endif %}
+                            <a class="dropdown-item" href="{% url 'issues:index' %}">All tickets</a>
                             <a class="dropdown-item" href="{% url 'issues:unassigned_issues' %}">Unassigned</a>
                             {% if user.is_authenticated %}
                                 <a class="dropdown-item" href="{% url 'issues:my_issues' %}">Assigned to me</a>
                             {% endif %}
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Complete</a>
+                            <a class="dropdown-item" href="{% url 'issues:index' %}?status=closed">Closed tickets</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">

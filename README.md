@@ -15,6 +15,10 @@ submissions redirect to the saved ticket, so refreshing the resulting page does
 not resubmit the form. Invalid submissions retain the entered values and show
 validation errors.
 
+Ticket queues show 15 tickets per page, newest first, with All/Open/Closed status
+filters. Search and assignment filters persist while paging. Use **Issues → All
+tickets** or **Issues → Closed tickets** to browse the corresponding queue.
+
 Ticket details show the summary, description, status, priority, requestor,
 assignee (or Unassigned), and date opened, with a link back to the issue list.
 
@@ -23,6 +27,8 @@ assignee (or Unassigned), and date opened, with a link back to the issue list.
 Project development follows documented sprint, coding, testing, and pull-request standards:
 
 - [Contributing workflow](CONTRIBUTING.md)
+- [Prioritized product backlog](docs/BACKLOG.md)
+- [Detailed sprint delivery plan](docs/SPRINT_PLAN.md)
 - [Sprint process and history](docs/SPRINTS.md)
 - [Coding standards](docs/CODING_STANDARDS.md)
 - [Testing standards](docs/TESTING.md)

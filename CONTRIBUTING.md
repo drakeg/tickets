@@ -40,6 +40,8 @@ A change is complete when:
 
 ## Project documentation
 
+- [Prioritized product backlog](docs/BACKLOG.md)
+- [Detailed sprint delivery plan](docs/SPRINT_PLAN.md)
 - [Sprint process and history](docs/SPRINTS.md)
 - [Coding standards](docs/CODING_STANDARDS.md)
 - [Testing standards](docs/TESTING.md)

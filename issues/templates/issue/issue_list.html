@@ -8,10 +8,20 @@
     </form>
 {% endblock %}
 {% block content %}
-    <h1>Issues</h1>
+    <h1>{{ queue_title }}</h1>
+    <form method="get" class="mb-3">
+        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+        <label for="ticket-status">Status</label>
+        <select name="status" id="ticket-status">
+            <option value="all"{% if status == 'all' %} selected{% endif %}>All</option>
+            <option value="open"{% if status == 'open' %} selected{% endif %}>Open</option>
+            <option value="closed"{% if status == 'closed' %} selected{% endif %}>Closed</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
     {% if issue_list %}
 	<table class="table table-striped">
-            <caption>Open Tickets</caption>
+            <caption>{{ page_obj.paginator.count }} matching ticket{{ page_obj.paginator.count|pluralize }}</caption>
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -50,5 +60,16 @@
         </table>
     {% else %}
 	<p>No issues are available.</p>
+    {% endif %}
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Ticket pages">
+        {% if page_obj.has_previous %}
+        <a href="?{{ pagination_query }}&amp;page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a href="?{{ pagination_query }}&amp;page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+    </nav>
     {% endif %}
 {% endblock %}

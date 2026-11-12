@@ -71,8 +71,7 @@ python manage.py test --verbosity 2
 
 Pull requests and pushes to `master` should verify:
 
-- Python 3.11;
-- Python 3.12;
+- Python 3.12 (current CI runtime; historical sprints used earlier versions);
 - Django system checks;
 - migration drift;
 - the complete Django test suite;
