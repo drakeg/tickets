@@ -161,6 +161,27 @@ Representative pull requests: #164, #171, #TBD.
 - Dropped Python 3.11 support to adopt Django 6.1; Python 3.12 is the minimum supported interpreter.
 - Updated the CI test matrix and dependency requirement together. Earlier sprint entries document the Python versions tested at that time, not the current support policy.
 
+## Ticket workflow reliability — November 2026 — In review
+
+This focused defect fix interrupts Sprint 5; remaining asset hygiene stays open.
+
+Goal: make ticket submission safe to refresh and the saved ticket useful to read.
+
+Scope and acceptance criteria:
+
+- valid submissions redirect to the newly created ticket;
+- refreshing the destination does not create another ticket;
+- invalid submissions retain values and errors without saving;
+- detail pages show ticket fields, closed/unassigned states, and escaped multiline descriptions;
+- missing tickets return 404 and anonymous submissions remain blocked;
+- list links use the named detail route;
+- restore four missing app package markers so CI discovers every app test module;
+- no schema or dependency changes.
+
+Validation: run all six app test modules, Django checks, and migration-drift
+checks. Docker Compose verification remains required in CI when Docker is
+unavailable locally.
+
 ## Future sprint candidates
 
 - deeper Bootstrap/jQuery modernization after usage auditing;

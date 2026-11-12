@@ -8,6 +8,16 @@ Includes:
 - Issue tracker
 - Knowledge base
 
+## Ticket workflow
+
+Signed-in users can submit a ticket from **Issues → Create New**. Successful
+submissions redirect to the saved ticket, so refreshing the resulting page does
+not resubmit the form. Invalid submissions retain the entered values and show
+validation errors.
+
+Ticket details show the summary, description, status, priority, requestor,
+assignee (or Unassigned), and date opened, with a link back to the issue list.
+
 ## Development standards
 
 Project development follows documented sprint, coding, testing, and pull-request standards:

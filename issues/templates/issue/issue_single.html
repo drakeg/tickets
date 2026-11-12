@@ -8,5 +8,20 @@
     </form>
 {% endblock %}
 {% block content %}
-	{{ issue }}
+    <h1>Ticket #{{ issue.pk }}: {{ issue.summary }}</h1>
+    <dl class="row">
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">{% if issue.issue_open %}Open{% else %}Closed{% endif %}</dd>
+        <dt class="col-sm-3">Priority</dt>
+        <dd class="col-sm-9">{{ issue.priority }}</dd>
+        <dt class="col-sm-3">Requestor</dt>
+        <dd class="col-sm-9">{{ issue.requestor_name }}</dd>
+        <dt class="col-sm-3">Assigned to</dt>
+        <dd class="col-sm-9">{% if issue.assigned %}{{ issue.assigned }}{% else %}Unassigned{% endif %}</dd>
+        <dt class="col-sm-3">Date opened</dt>
+        <dd class="col-sm-9">{{ issue.pub_date }}</dd>
+    </dl>
+    <h2>Description</h2>
+    {{ issue.description|linebreaks }}
+    <a class="btn btn-secondary" href="{% url 'issues:index' %}">Back to issues</a>
 {% endblock %}

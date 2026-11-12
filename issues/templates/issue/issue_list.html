@@ -25,7 +25,7 @@
             <tbody>
 	        {% for issue in issue_list %}
 		<tr>
-            <td><a href="/issues/issues/{{ issue.id }}/">{{issue.id}}</a></td>
+            <td><a href="{% url 'issues:issue' issue.id %}">{{issue.id}}</a></td>
             <td>{{issue.requestor_name }}</td>
             <td>{{ issue.description }}</td>
             <td>{{ issue.assigned }}</td>

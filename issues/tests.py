@@ -69,7 +69,53 @@ class IssueWorkflowTests(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, 200)
         created = Issue.objects.get(summary="VPN access")
         self.assertEqual(created.requestor_name, self.user.username)
         self.assertEqual(created.assigned, self.user)
+
+        self.assertRedirects(
+            response, reverse("issues:issue", args=[created.pk])
+        )
+        self.client.get(response["Location"])
+        self.assertEqual(Issue.objects.filter(summary="VPN access").count(), 1)
+
+    def test_invalid_submission_keeps_errors_and_does_not_create_ticket(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("issues:issue_new"),
+            {"summary": "", "description": "Keep this text", "priority": self.priority.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response.context["form"], "summary", "This field is required.")
+        self.assertContains(response, "Keep this text")
+        self.assertEqual(Issue.objects.count(), 1)
+
+    def test_detail_displays_ticket_fields(self):
+        response = self.client.get(reverse("issues:issue", args=[self.issue.pk]))
+        for value in ("Printer unavailable", "Office printer is offline", "Normal", "Open", "issue-user"):
+            self.assertContains(response, value)
+        self.assertContains(response, reverse("issues:index"))
+
+    def test_detail_displays_closed_unassigned_ticket_and_escapes_description(self):
+        self.issue.issue_open = False
+        self.issue.assigned = None
+        self.issue.description = '<script>alert("unsafe")</script>\nSecond line'
+        self.issue.save()
+        response = self.client.get(reverse("issues:issue", args=[self.issue.pk]))
+        self.assertContains(response, "Closed")
+        self.assertContains(response, "Unassigned")
+        self.assertContains(response, "&lt;script&gt;")
+        self.assertNotContains(response, '<script>alert("unsafe")</script>')
+        self.assertContains(response, "<br>Second line")
+
+    def test_missing_ticket_returns_404(self):
+        response = self.client.get(reverse("issues:issue", args=[self.issue.pk + 1]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_anonymous_submission_cannot_create_ticket(self):
+        response = self.client.post(reverse("issues:issue_new"), {
+            "summary": "Unauthorized", "description": "Blocked", "priority": self.priority.pk,
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("login"), response["Location"])
+        self.assertEqual(Issue.objects.count(), 1)
