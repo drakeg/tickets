@@ -295,3 +295,93 @@ class IssueTriageTests(TestCase):
         response = self.client.get(reverse('dashboard:index'))
         self.assertEqual(response.context['num_open_issues'], 1)
         self.assertEqual(response.context['num_my_issues'], 1)
+
+
+class IssueHistoryTests(TestCase):
+    setUpTestData = classmethod(IssueTriageTests.setUpTestData.__func__)
+
+    def setUp(self):
+        self.client.force_login(self.agent)
+        self.url = reverse('issues:issue_edit', args=[self.issue.pk])
+        self.detail = reverse('issues:issue', args=[self.issue.pk])
+        self.payload = {'issue_open': 'closed', 'priority': self.urgent.pk, 'assigned': ''}
+
+    def test_changed_values_and_actor_are_recorded_once(self):
+        response = self.client.post(self.url, self.payload)
+        self.assertEqual(response.status_code, 302)
+        event = self.issue.changes.get()
+        self.assertEqual(event.actor, self.agent)
+        self.assertEqual(event.actor_name, 'agent')
+        self.assertEqual(event.before['status'], 'Open')
+        self.assertEqual(event.after['status'], 'Closed')
+        self.assertEqual(event.before['priority'], {'id': self.priority.pk, 'name': 'Normal'})
+        self.assertEqual(event.after['priority'], {'id': self.urgent.pk, 'name': 'Urgent'})
+        self.assertEqual(event.before['assigned']['id'], self.other.pk)
+        self.assertEqual(event.after['assigned'], {'id': None, 'name': 'Unassigned'})
+        self.client.post(self.url, self.payload)
+        self.assertEqual(self.issue.changes.count(), 1)
+
+    def test_invalid_forbidden_and_get_requests_create_no_history(self):
+        self.client.get(self.url)
+        self.client.post(self.url, dict(self.payload, priority='999999'))
+        self.client.force_login(self.other)
+        self.assertEqual(self.client.post(self.url, self.payload).status_code, 403)
+        self.assertFalse(self.issue.changes.exists())
+
+    def test_event_failure_rolls_back_ticket_update(self):
+        from unittest.mock import patch
+        from django.db import IntegrityError
+        with patch('issues.services.IssueChange.objects.create', side_effect=IntegrityError('failure')):
+            with self.assertRaises(IntegrityError):
+                self.client.post(self.url, self.payload)
+        self.issue.refresh_from_db()
+        self.assertTrue(self.issue.issue_open)
+        self.assertEqual(self.issue.priority, self.priority)
+        self.assertEqual(self.issue.assigned_id, self.other.pk)
+        self.assertFalse(self.issue.changes.exists())
+
+    def test_deleted_or_renamed_users_do_not_rewrite_historical_names(self):
+        self.client.post(self.url, self.payload)
+        self.agent.username = 'renamed'
+        self.agent.save()
+        self.agent.delete()
+        event = self.issue.changes.get()
+        self.assertIsNone(event.actor)
+        self.assertEqual(event.actor_name, 'agent')
+        self.assertEqual(event.before['assigned']['name'], 'unprivileged')
+        self.priority.name = 'Renamed priority'
+        self.priority.save()
+        event.refresh_from_db()
+        self.assertEqual(event.before['priority']['name'], 'Normal')
+
+    def test_history_requires_edit_permission_and_escapes_actor_names(self):
+        self.agent.username = '<script>unsafe</script>'
+        self.agent.save()
+        self.client.post(self.url, self.payload)
+        response = self.client.get(self.detail)
+        self.assertContains(response, '&lt;script&gt;unsafe&lt;/script&gt;')
+        self.assertContains(response, 'Change history')
+        self.client.force_login(self.other)
+        self.assertNotContains(self.client.get(self.detail), 'Change history')
+        self.client.logout()
+        self.assertNotContains(self.client.get(self.detail), 'Change history')
+
+    def test_history_pagination_is_stable_and_scoped_to_ticket(self):
+        from .models import IssueChange
+        from .services import triage_snapshot
+        state = triage_snapshot(self.issue)
+        events = [IssueChange.objects.create(
+            issue=self.issue, actor=self.agent, actor_name='agent', before=state, after=state,
+        ) for _ in range(12)]
+        timestamp = timezone.now()
+        self.issue.changes.update(created_at=timestamp)
+        ids = []
+        for number in (1, 2):
+            response = self.client.get(self.detail, {'history_page': number})
+            ids.extend(event.pk for event in response.context['history'])
+        self.assertEqual(ids, [event.pk for event in reversed(events)])
+        self.assertEqual(self.client.get(self.detail, {'history_page': 'bad'}).status_code, 200)
+        other_issue = Issue.objects.create(requestor_name='other', summary='Other',
+            description='Other', priority=self.priority, pub_date=timestamp)
+        self.assertContains(self.client.get(reverse('issues:issue', args=[other_issue.pk])),
+                            'No recorded changes.')
