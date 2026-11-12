@@ -2,10 +2,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_http_methods
 
 from .models import Issue
-from .forms import IssueForm
+from .forms import IssueForm, IssueTriageForm
 
 def _issue_list(request, queryset, title):
     status = request.GET.get('status', 'all')
@@ -68,3 +69,17 @@ def search(request):
             Q(summary__icontains=query) | Q(description__icontains=query)
         )
     return _issue_list(request, issue_list, 'Search results')
+
+
+@login_required
+@permission_required('issues.change_issue', raise_exception=True)
+@require_http_methods(['GET', 'POST'])
+def issue_edit(request, issue_id):
+    issue = get_object_or_404(Issue, pk=issue_id)
+    form = IssueTriageForm(request.POST if request.method == 'POST' else None, instance=issue)
+    if request.method == 'POST' and form.is_valid():
+        # Limit writes to triage fields, preserving requestor, content and creation date.
+        updated = form.save(commit=False)
+        updated.save(update_fields=['issue_open', 'priority', 'assigned'])
+        return redirect('issues:issue', issue_id=issue.pk)
+    return render(request, 'issue/issue_edit.html', {'issue': issue, 'form': form})

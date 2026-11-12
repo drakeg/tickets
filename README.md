@@ -22,6 +22,19 @@ tickets** or **Issues → Closed tickets** to browse the corresponding queue.
 Ticket details show the summary, description, status, priority, requestor,
 assignee (or Unassigned), and date opened, with a link back to the issue list.
 
+### Agent permissions and ticket updates
+
+Administrators can grant **Issues → issue → Can change issue** to users or groups
+in Django admin. This `issues.change_issue` permission allows updating status,
+priority, and assignment through **Update ticket** on the detail page. Superusers
+also have access; staff status or ticket assignment alone does not grant access.
+The permission applies to all tickets, so grant it only to trusted triage agents.
+
+The update form supports closing, reopening, reassignment, and clearing assignment.
+Saving redirects to the detail page; Cancel leaves the ticket unchanged. Requestor,
+summary, description, and creation date are preserved. Changes require a valid
+CSRF-protected POST. Change history is planned separately in Sprint 8.
+
 ## Development standards
 
 Project development follows documented sprint, coding, testing, and pull-request standards:

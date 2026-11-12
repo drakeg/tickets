@@ -21,6 +21,9 @@
         <dt class="col-sm-3">Date opened</dt>
         <dd class="col-sm-9">{{ issue.pub_date }}</dd>
     </dl>
+    {% if perms.issues.change_issue %}
+    <p><a class="btn btn-primary" href="{% url 'issues:issue_edit' issue.pk %}">Update ticket</a></p>
+    {% endif %}
     <h2>Description</h2>
     {{ issue.description|linebreaks }}
     <a class="btn btn-secondary" href="{% url 'issues:index' %}">Back to issues</a>

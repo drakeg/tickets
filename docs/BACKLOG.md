@@ -17,12 +17,12 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 
 | ID | Priority | User story / outcome | Points | Sprint | State | Dependency |
 |---|---|---|---:|---|---|---|
-| TKT-001 | P1 | As an agent, reach every ticket in stable newest-first pages | 3 | 6 | In review | #195 merged |
-| TKT-002 | P1 | As an agent, filter all, assigned, unassigned, and search queues by status | 3 | 6 | In review | TKT-001 |
-| TKT-003 | P1 | As an agent, open closed tickets from navigation | 1 | 6 | In review | TKT-002 |
-| TKT-004 | P1 | As a maintainer, find priorities, acceptance criteria, and sprint evidence in the repo | 2 | 6 | In review | None |
-| TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Ready for refinement | Role policy decision |
-| TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Ready for refinement | TKT-005 permission policy |
+| TKT-001 | P1 | As an agent, reach every ticket in stable newest-first pages | 3 | 6 | Done (#196) | #195 merged |
+| TKT-002 | P1 | As an agent, filter all, assigned, unassigned, and search queues by status | 3 | 6 | Done (#196) | TKT-001 |
+| TKT-003 | P1 | As an agent, open closed tickets from navigation | 1 | 6 | Done (#196) | TKT-002 |
+| TKT-004 | P1 | As a maintainer, find priorities, acceptance criteria, and sprint evidence in the repo | 2 | 6 | Done (#196) | None |
+| TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | In review | Explicit issues.change_issue permission |
+| TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | In review | TKT-005 permission policy |
 | TKT-007 | P2 | As a reviewer, see who changed status/assignment and when | 5 | 8 | Needs refinement | TKT-005/006, migration plan |
 | KB-001 | P2 | As a reader, search knowledge articles | 3 | 9 | Needs refinement | Existing article workflows |
 | KB-002 | P2 | As an author/staff member, edit articles with enforced permissions | 5 | 9 | Needs refinement | Author policy |

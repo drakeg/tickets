@@ -192,3 +192,106 @@ class IssueQueueTests(TestCase):
         self.assertContains(response, 'No issues are available.')
         self.assertEqual(response.context['page_obj'].paginator.count, 0)
         self.assertContains(response, reverse('issues:index') + '?status=closed')
+
+
+class IssueTriageTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        from django.contrib.auth.models import Permission
+        cls.agent = get_user_model().objects.create_user(username='agent')
+        cls.agent.user_permissions.add(Permission.objects.get(
+            content_type__app_label='issues', codename='change_issue'))
+        cls.other = get_user_model().objects.create_user(username='unprivileged', is_staff=True)
+        cls.priority = Priority.objects.create(name='Normal')
+        cls.urgent = Priority.objects.create(name='Urgent')
+        cls.issue = Issue.objects.create(
+            requestor_name='requestor', summary='Preserve summary', description='Preserve description',
+            priority=cls.priority, pub_date=timezone.now(), assigned=cls.other,
+        )
+
+    def setUp(self):
+        self.url = reverse('issues:issue_edit', args=[self.issue.pk])
+        self.payload = {'issue_open': 'closed', 'priority': self.urgent.pk, 'assigned': self.agent.pk}
+
+    def test_permission_required_for_get_and_post_even_for_staff_or_assignee(self):
+        for method in (self.client.get, self.client.post):
+            response = method(self.url, self.payload)
+            self.assertEqual(response.status_code, 302)
+            self.assertIn(reverse('login'), response['Location'])
+        self.client.force_login(self.other)
+        self.assertEqual(self.client.get(self.url).status_code, 403)
+        self.assertEqual(self.client.post(self.url, self.payload).status_code, 403)
+        self.issue.refresh_from_db()
+        self.assertTrue(self.issue.issue_open)
+        self.assertEqual(self.issue.priority, self.priority)
+
+    def test_agent_can_close_reopen_and_unassign_without_changing_content(self):
+        self.client.force_login(self.agent)
+        before_date = self.issue.pub_date
+        self.payload.update(summary='Tampered', requestor_name='Tampered', description='Tampered')
+        for status, assigned in [('closed', self.agent.pk), ('open', ''), ('open', '')]:
+            self.payload.update(issue_open=status, assigned=assigned)
+            response = self.client.post(self.url, self.payload)
+            self.assertRedirects(response, reverse('issues:issue', args=[self.issue.pk]))
+            self.issue.refresh_from_db()
+            self.assertEqual(self.issue.issue_open, status == 'open')
+            self.assertEqual(self.issue.assigned_id, assigned or None)
+            self.assertEqual(self.issue.priority, self.urgent)
+            self.assertEqual(self.issue.summary, 'Preserve summary')
+            self.assertEqual(self.issue.description, 'Preserve description')
+            self.assertEqual(self.issue.requestor_name, 'requestor')
+            self.assertEqual(self.issue.pub_date, before_date)
+
+    def test_get_is_read_only_and_current_status_is_selected(self):
+        self.client.force_login(self.agent)
+        response = self.client.get(self.url)
+        self.assertContains(response, 'value="open" selected')
+        self.issue.refresh_from_db()
+        self.assertTrue(self.issue.issue_open)
+        self.assertEqual(self.client.delete(self.url).status_code, 405)
+
+    def test_invalid_fields_do_not_save_any_changes(self):
+        self.client.force_login(self.agent)
+        for field, value in [('priority', 999999), ('assigned', 999999),
+                             ('issue_open', 'invalid'), ('issue_open', '')]:
+            payload = dict(self.payload, **{field: value})
+            response = self.client.post(self.url, payload)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(field, response.context['form'].errors)
+            self.assertEqual(response.context['form'].data[field], str(value))
+            self.issue.refresh_from_db()
+            self.assertTrue(self.issue.issue_open)
+            self.assertEqual(self.issue.priority, self.priority)
+            self.assertEqual(self.issue.assigned_id, self.other.pk)
+
+    def test_csrf_is_enforced(self):
+        from django.test import Client
+        client = Client(enforce_csrf_checks=True)
+        client.force_login(self.agent)
+        self.assertEqual(client.post(self.url, self.payload).status_code, 403)
+        client.get(self.url)
+        response = client.post(self.url, self.payload,
+                               HTTP_X_CSRFTOKEN=client.cookies['csrftoken'].value)
+        self.assertEqual(response.status_code, 302)
+
+    def test_missing_ticket_returns_404_for_agent(self):
+        self.client.force_login(self.agent)
+        url = reverse('issues:issue_edit', args=[999999])
+        self.assertEqual(self.client.get(url).status_code, 404)
+        self.assertEqual(self.client.post(url, self.payload).status_code, 404)
+
+    def test_controls_follow_permissions_and_dashboard_reflects_changes(self):
+        detail = reverse('issues:issue', args=[self.issue.pk])
+        self.assertNotContains(self.client.get(detail), 'Update ticket')
+        self.client.force_login(self.other)
+        self.assertNotContains(self.client.get(detail), 'Update ticket')
+        self.client.force_login(self.agent)
+        self.assertContains(self.client.get(detail), self.url)
+        self.client.post(self.url, self.payload)
+        response = self.client.get(reverse('dashboard:index'))
+        self.assertEqual(response.context['num_open_issues'], 0)
+        self.payload['issue_open'] = 'open'
+        self.client.post(self.url, self.payload)
+        response = self.client.get(reverse('dashboard:index'))
+        self.assertEqual(response.context['num_open_issues'], 1)
+        self.assertEqual(response.context['num_my_issues'], 1)
