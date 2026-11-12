@@ -33,7 +33,18 @@ The permission applies to all tickets, so grant it only to trusted triage agents
 The update form supports closing, reopening, reassignment, and clearing assignment.
 Saving redirects to the detail page; Cancel leaves the ticket unchanged. Requestor,
 summary, description, and creation date are preserved. Changes require a valid
-CSRF-protected POST. Change history is planned separately in Sprint 8.
+CSRF-protected POST. Users with `issues.change_issue` can also see paginated change history on ticket
+details. Each successful triage change records the actor, timestamp, and before/after
+status, priority, and assignment. Unchanged saves create no entry. Ticket updates
+and history writes commit together. Actor and field names are snapshots, so later
+renames do not rewrite the record; deleted actors retain their recorded name.
+
+Run `python manage.py migrate` when upgrading (Compose applies migrations on
+startup). Existing tickets start with no recorded changes. History covers the
+application triage form; direct admin, shell, or bulk ORM updates are outside this
+increment. Deleting a ticket deletes its history. History is an operational record,
+not a tamper-proof audit ledger. SQLite does not provide row locks; deployments
+requiring concurrent write serialization should use a database with row locking.
 
 ## Development standards
 

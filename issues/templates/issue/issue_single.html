@@ -27,4 +27,26 @@
     <h2>Description</h2>
     {{ issue.description|linebreaks }}
     <a class="btn btn-secondary" href="{% url 'issues:index' %}">Back to issues</a>
+    {% if history != None %}
+    <h2>Change history</h2>
+    {% for change in history %}
+    <section class="card mb-3" aria-label="Ticket change">
+        <div class="card-body">
+            <h3 class="h6">{{ change.created_at }} — {{ change.actor_name }}</h3>
+            <dl>
+                <dt>Status</dt><dd>{{ change.before.status }} → {{ change.after.status }}</dd>
+                <dt>Priority</dt><dd>{{ change.before.priority.name }} → {{ change.after.priority.name }}</dd>
+                <dt>Assigned to</dt><dd>{{ change.before.assigned.name }} → {{ change.after.assigned.name }}</dd>
+            </dl>
+        </div>
+    </section>
+    {% empty %}<p>No recorded changes.</p>{% endfor %}
+    {% if history.has_other_pages %}
+    <nav aria-label="Change history pages">
+        {% if history.has_previous %}<a href="?history_page={{ history.previous_page_number }}">Previous changes</a>{% endif %}
+        <span>Page {{ history.number }} of {{ history.paginator.num_pages }}</span>
+        {% if history.has_next %}<a href="?history_page={{ history.next_page_number }}">Next changes</a>{% endif %}
+    </nav>
+    {% endif %}
+    {% endif %}
 {% endblock %}

@@ -1,12 +1,14 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.core.paginator import Paginator
+from django.http import Http404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
 
 from .models import Issue
 from .forms import IssueForm, IssueTriageForm
+from .services import update_ticket
 
 def _issue_list(request, queryset, title):
     status = request.GET.get('status', 'all')
@@ -34,7 +36,10 @@ def index(request):
 
 def issues(request, issue_id):
     issue = get_object_or_404(Issue, pk=issue_id)
-    return render(request, 'issue/issue_single.html', {'issue': issue})
+    history = None
+    if request.user.has_perm('issues.change_issue'):
+        history = Paginator(issue.changes.all(), 10).get_page(request.GET.get('history_page'))
+    return render(request, 'issue/issue_single.html', {'issue': issue, 'history': history})
 
 
 @login_required
@@ -76,10 +81,13 @@ def search(request):
 @require_http_methods(['GET', 'POST'])
 def issue_edit(request, issue_id):
     issue = get_object_or_404(Issue, pk=issue_id)
-    form = IssueTriageForm(request.POST if request.method == 'POST' else None, instance=issue)
-    if request.method == 'POST' and form.is_valid():
-        # Limit writes to triage fields, preserving requestor, content and creation date.
-        updated = form.save(commit=False)
-        updated.save(update_fields=['issue_open', 'priority', 'assigned'])
-        return redirect('issues:issue', issue_id=issue.pk)
+    if request.method == 'POST':
+        try:
+            form = update_ticket(issue.pk, request.POST, request.user)
+        except Issue.DoesNotExist:
+            raise Http404('Ticket not found')
+        if not form.errors:
+            return redirect('issues:issue', issue_id=issue.pk)
+    else:
+        form = IssueTriageForm(instance=issue)
     return render(request, 'issue/issue_edit.html', {'issue': issue, 'form': form})

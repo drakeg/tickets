@@ -20,3 +20,17 @@ class Issue(models.Model):
     def __str__(self):
         return self.requestor_name
 
+
+
+class IssueChange(models.Model):
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='changes')
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+    )
+    actor_name = models.CharField(max_length=150)
+    created_at = models.DateTimeField(auto_now_add=True)
+    before = models.JSONField()
+    after = models.JSONField()
+
+    class Meta:
+        ordering = ['-created_at', '-pk']

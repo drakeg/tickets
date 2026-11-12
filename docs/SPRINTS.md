@@ -197,10 +197,17 @@ Stories TKT-001–004, 9 provisional points. See [detailed plan](SPRINT_PLAN.md)
 for acceptance criteria, test approach, risks, and proposed Sprints 7–9;
 see [backlog](BACKLOG.md) for ordered carryover and dependencies.
 
-## Sprint 7 — Protected ticket lifecycle — In review
+## Sprint 7 — Protected ticket lifecycle — Complete (#197)
 
 Stories TKT-005/006: explicit issues.change_issue permission controls triage
 updates (status, priority, assignee). Staff/assignee status alone grants no edit
 rights. Tests cover permission boundaries, CSRF, invalid forms, restricted fields,
 close/reopen/unassign and dashboard integration. No schema changes.
 See [delivery plan](SPRINT_PLAN.md) for review, rollback and follow-up history work.
+
+## Sprint 8 — Ticket change history — In review
+
+TKT-007 records transactional triage changes with actor/time and before/after
+snapshots. History is permission-gated and paginated. Existing tickets receive no
+backfilled events. Includes additive migration 0002 and a preservation rehearsal.
+70 tests pass; see the detailed plan for policy, scope boundaries and rollback.

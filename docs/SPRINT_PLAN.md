@@ -53,7 +53,7 @@ passed Django/Compose and CodeQL. Retrospective: shared queue rendering kept
 filter behavior consistent; offset paging remains sensitive to concurrent inserts.
 Next improvement: protect lifecycle writes with explicit model permissions.
 
-## Sprint 7 — Protected ticket lifecycle — In review
+## Sprint 7 — Protected ticket lifecycle — Complete (#197)
 
 Goal: agents can triage and resolve tickets without administrator intervention.
 Committed scope: TKT-005/006, 10 provisional points.
@@ -84,16 +84,40 @@ Rollback: revert the PR; already saved ticket values remain persisted.
 Audit history is Sprint 8,
 so do not promise historical changes until that increment lands.
 
-## Sprint 8 — Ticket change history (proposed)
+Sprint 7 completion: #197 merged; master Django CI/Compose and CodeQL passed.
+All 64 local tests passed. Retrospective: model permissions enabled delegated
+triage without staff privileges. Next improvement: transactional history writes.
+
+## Sprint 8 — Ticket change history — In review
 
 Goal: explain ticket changes without inspecting the database.
-Candidate scope: TKT-007 (5 points); refine data policy before commitment.
-Entry: Sprint 7 merged, author retention and history access policy agreed.
+Committed scope: TKT-007 (5 points). Sprint 7 is merged.
+Policy: history is visible only with issues.change_issue, consistent with triage
+access. Actors use nullable SET_NULL references plus stored username snapshots;
+priority/assignee snapshots retain IDs and names. Deleting tickets cascades history.
+No fabricated events are backfilled. Only changes through the triage form are
+recorded; admin and bulk writes are tracked as TKT-008 follow-up work.
 Acceptance: status/assignment changes record actor, timestamp, and old/new values;
 failed/forbidden changes create no event; detail history has stable order; existing
 tickets migrate safely; no fabricated historical actors/events are backfilled.
 Tasks: model/migration, atomic write integration, history UI, authorization and
-migration regression tests. Risk: partial writes; validate transactional behavior.
+migration regression tests. Risk: partial writes; ticket and event creation use one atomic transaction.
+The service re-reads the ticket under select_for_update before computing snapshots.
+SQLite has no row locks; stronger concurrent-write guarantees require a backend
+with row locking. History is paginated at 10 entries, ordered by timestamp then ID
+descending. No-op, invalid, forbidden and GET requests create no history.
+
+Evidence: all 70 tests pass, system checks and migration drift pass. Six new tests
+cover snapshots/no-ops, rejected requests, rollback on history failure, deleted and
+renamed actors, permission-gated escaped rendering, and stable scoped pagination.
+An isolated SQLite migration rehearsal seeded an existing closed ticket at 0001,
+applied current migrations, and verified preserved fields and zero invented events.
+Docker is unavailable locally; existing CI verifies the Compose image.
+
+Review demo: change priority/assignee/status, inspect recorded before/after values,
+repeat the same save, and verify history is hidden without edit permission.
+Rollback: reverting code can leave the added table in place; reversing issues 0002
+drops recorded history and requires an explicit backup/retention decision.
 
 ## Sprint 9 — Knowledge reuse (proposed)
 
