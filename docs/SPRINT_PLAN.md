@@ -88,7 +88,7 @@ Sprint 7 completion: #197 merged; master Django CI/Compose and CodeQL passed.
 All 64 local tests passed. Retrospective: model permissions enabled delegated
 triage without staff privileges. Next improvement: transactional history writes.
 
-## Sprint 8 — Ticket change history — In review
+## Sprint 8 — Ticket change history — Complete (#198)
 
 Goal: explain ticket changes without inspecting the database.
 Committed scope: TKT-007 (5 points). Sprint 7 is merged.
@@ -135,3 +135,21 @@ UI-001/002 retain the unfinished frontend work. Return to it as a dedicated
 increment after ticket queue delivery or earlier if a security issue requires it.
 Do not label Sprint 5 complete while tracked artifacts remain. DATA-001, CMDB-001,
 PRJ-001, OPS-001 and API-001 remain ordered candidates, not delivery promises.
+
+## Urgent navigation repair — In review
+
+UI-003 interrupts Sprint 9 after local user feedback. Goal: navigation and record
+creation must be discoverable without dropdown JavaScript, on wide and narrow
+screens. Replace nested collapsed wrappers with direct responsive sidebar links;
+show explicit login guidance; keep backend authentication and staff checks intact.
+Dashboard uses linked count cards and four create actions. Bootstrap CSS is
+vendored with its license; no external styling request is needed. Legacy account
+section switching uses a small native script. Existing date forms remain Django
+form controls; the old datepicker enhancement is removed with the shared jQuery
+runtime. Invalid date input continues to use existing server-side validation.
+
+Acceptance: direct links reach all four create forms after login; anonymous users
+are redirected to login by each create endpoint; admin links remain staff-only;
+sidebar and create cards remain available without JavaScript; existing issue,
+project, inventory, knowledge and account tests pass. Review at desktop and mobile
+widths. No migration. Roll back by reverting this UI-only PR.
