@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http import Http404
 from django.http import HttpResponse
 from django.template import loader
@@ -33,17 +33,18 @@ def unassigned_projects(request):
 
 @login_required
 def project_new(request):
-        if request.method == "POST":
-                form = ProjectForm(request.POST)
-                if form.is_valid():
-                        project = form.save(commit=False)
-                        project.requestor_name = request.user
-                        project.description = form.cleaned_data['description']
-                        project.pub_date = timezone.now()
-                        project.save()
-        else:
-                form = ProjectForm()
-        return render(request, 'projects/project_new.html', {'form': form})
+    if request.method == "POST":
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.requestor_name = request.user.username
+            project.pub_date = timezone.now()
+            project.save()
+            return redirect("projects:project", project_id=project.pk)
+    else:
+        form = ProjectForm()
+    return render(request, 'projects/project_new.html', {'form': form})
+
 
 def search(request):
     template = 'projects/project_list.html'

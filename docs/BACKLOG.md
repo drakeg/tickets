@@ -26,11 +26,11 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Done (#197) | TKT-005 permission policy |
 | TKT-007 | P2 | As a reviewer, see who changed status/assignment and when | 5 | 8 | Done (#198) | TKT-005/006 merged; additive migration |
 | TKT-008 | P2 | As an operator, cover admin/bulk change paths and define audit retention | 5 | Unscheduled | Needs refinement | TKT-007; admin workflow policy |
-| KB-001 | P2 | As a reader, search and page through all knowledge articles | 3 | 9 | In review | Existing search workflow |
+| KB-001 | P2 | As a reader, search and page through all knowledge articles | 3 | 9 | Done (#200) | Existing search workflow |
 | KB-002 | P2 | As an author/staff member, edit articles with enforced permissions | 5 | Baseline | Existing implementation verified | Author/staff policy in views and tests |
 | DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |
 | CMDB-001 | P2 | As an operator, validate asset identifiers and required fields | 5 | Unscheduled | Needs refinement | Existing-data audit |
-| PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | Unscheduled | Needs refinement | Workflow audit |
+| PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | 10 | In review | Workflow audit complete |
 | UI-001 | P2 | As a maintainer, remove remaining tracked OS artifacts | 1 | 5 carryover | Ready | Usage audit |
 | UI-002 | P2 | As a user, use date inputs without obsolete runtime assets | 5 | 5 carryover | Needs discovery | Date parsing/browser audit |
 | OPS-001 | P2 | As an operator, follow tested backup/restore and production setup instructions | 5 | Unscheduled | Needs refinement | Deployment/storage choices |

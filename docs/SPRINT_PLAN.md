@@ -119,7 +119,7 @@ repeat the same save, and verify history is hidden without edit permission.
 Rollback: reverting code can leave the added table in place; reversing issues 0002
 drops recorded history and requires an explicit backup/retention decision.
 
-## Sprint 9 — Knowledge reuse — In review
+## Sprint 9 — Knowledge reuse — Complete (#200)
 
 Goal: all knowledge articles remain reachable as the collection grows.
 Committed increment: KB-001 (3 points). Inspection of merged master found search
@@ -174,3 +174,33 @@ widths. No migration. Roll back by reverting this UI-only PR.
 
 Navigation repair completion: #199 merged; master Django CI and CodeQL passed.
 Local Docker instance updated to merged master, health and HTTP checks passed.
+
+## Sprint 10 — Project creation feedback — In review
+
+Goal: a successful project submission leads to a useful saved record, and
+refreshing that page does not create another project. Scope: PRJ-001 (3 points).
+Entry: Sprint 9 merged with passing master CI; local Docker follows merged master.
+
+Acceptance criteria:
+
+- valid authenticated creation redirects to the new project's named detail route;
+- refreshing the destination leaves exactly one project;
+- requestor comes from the signed-in user and creation date is server-generated;
+- invalid submissions retain entered values/errors without creating a record;
+- detail shows summary, description, requestor, assignee and dates;
+- optional assignee/dates show Unassigned/Not scheduled rather than blank output;
+- descriptions are escaped and retain line breaks; missing projects return 404;
+- anonymous POST remains blocked and list links use named routes.
+
+Tasks: apply post/redirect/get, expand detail template, replace hardcoded list
+links, add regression tests, update user docs. No migration/dependency changes.
+Evidence: full-suite/check results appear in the PR. Review demo: create a project,
+refresh its detail page, and inspect an unassigned project without dates.
+Risk: the detail page exposes the same fields already public in project lists;
+read permissions remain unchanged. Rollback: revert PR without data migration.
+Deferred: project pagination, lifecycle state and scheduling validation remain
+separate refinement items rather than being mixed into creation feedback.
+
+Sprint 9 retrospective: reused existing search/edit flows rather than duplicating
+them; four new pagination cases brought the suite to 76 passing tests. Follow-up:
+review the next domain's create/detail workflow with the same regression pattern.

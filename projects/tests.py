@@ -97,7 +97,53 @@ class ProjectWorkflowTests(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, 200)
         created = Project.objects.get(summary="New project")
         self.assertEqual(created.requestor_name, self.user.username)
         self.assertEqual(created.assigned, self.user)
+
+        self.assertRedirects(response, reverse('projects:project', args=[created.pk]))
+        self.client.get(response['Location'])
+        self.assertEqual(Project.objects.filter(summary='New project').count(), 1)
+
+    def test_invalid_project_retains_values_and_does_not_save(self):
+        self.client.force_login(self.user)
+        response = self.client.post(reverse('projects:project_new'), {
+            'summary': '', 'description': 'Retain this description', 'start_date': 'not-a-date',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('summary', response.context['form'].errors)
+        self.assertIn('start_date', response.context['form'].errors)
+        self.assertContains(response, 'Retain this description')
+        self.assertEqual(Project.objects.count(), 1)
+
+    def test_project_detail_displays_content_assignment_and_dates(self):
+        response = self.client.get(reverse('projects:project', args=[self.project.pk]))
+        for value in ('Upgrade servers', 'Upgrade application servers', 'project-user',
+                      'Start date', 'End date', 'Created'):
+            self.assertContains(response, value)
+        self.assertContains(response, reverse('projects:index'))
+
+    def test_unassigned_unscheduled_project_escapes_description(self):
+        self.project.assigned = None
+        self.project.start_date = None
+        self.project.end_date = None
+        self.project.description = '<script>unsafe</script>\nSecond line'
+        self.project.save()
+        response = self.client.get(reverse('projects:project', args=[self.project.pk]))
+        self.assertContains(response, 'Unassigned')
+        self.assertContains(response, 'Not scheduled', count=2)
+        self.assertContains(response, '&lt;script&gt;unsafe&lt;/script&gt;')
+        self.assertNotContains(response, '<script>unsafe</script>')
+        self.assertContains(response, '<br>Second line')
+
+    def test_missing_project_returns_404(self):
+        response = self.client.get(reverse('projects:project', args=[self.project.pk + 1]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_anonymous_project_post_cannot_create_record(self):
+        response = self.client.post(reverse('projects:project_new'), {
+            'summary': 'Blocked', 'description': 'Blocked',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login'), response['Location'])
+        self.assertEqual(Project.objects.count(), 1)
