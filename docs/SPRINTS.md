@@ -229,9 +229,16 @@ Shared rendering orders by date then ID and preserves search text across pages.
 Four new regression tests; no migrations. See detailed plan for acceptance and
 review scenarios. The live instance remains on merged master pending review.
 
-## Sprint 10 — Project creation feedback — In review
+## Sprint 10 — Project creation feedback — Complete (#201)
 
 PRJ-001: redirect after successful project creation and show complete project
 fields with empty-state labels on detail. Invalid forms retain input; anonymous
 writes stay protected. Named list links and refresh regression coverage included.
 No migration changes. See detailed plan for acceptance, risks and review demo.
+
+## Sprint 11 — Project scheduling input — In review
+
+PRJ-002 adds native ISO date widgets and validates the project's end date is not
+before its start date. Same-day/partial/blank schedules remain valid. Four new
+request-level tests cover invalid ranges, input retention, valid schedules and
+calendar-date validation. No schema changes or existing-data edits.

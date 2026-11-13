@@ -28,7 +28,10 @@ results. Existing author/staff editing and authenticated creation remain availab
 Creating a project redirects to its detail page; refreshing that page does not
 resubmit the form. Details include summary, description, requestor, assignment,
 creation date and optional schedule dates. Unassigned/unscheduled fields are
-labeled explicitly. Invalid submissions retain values and validation errors.
+labeled explicitly. Native date controls support schedule entry. If both dates
+are supplied, the end date must be on or after the start date. Same-day projects
+and partial or blank schedules are supported. Invalid submissions retain values
+and validation errors.
 
 ## Ticket workflow
 
