@@ -147,3 +147,59 @@ class ProjectWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('login'), response['Location'])
         self.assertEqual(Project.objects.count(), 1)
+
+
+class ProjectSchedulingTests(TestCase):
+    def setUp(self):
+        user = get_user_model().objects.create_user(username='scheduler')
+        self.client.force_login(user)
+        self.url = reverse('projects:project_new')
+        self.payload = {'summary': 'Scheduled project', 'description': 'Keep this description'}
+
+    def test_reversed_schedule_is_rejected_without_losing_input(self):
+        response = self.client.post(self.url, dict(self.payload,
+            start_date='2026-12-10', end_date='2026-12-09'))
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response.context['form'], 'end_date',
+                             'End date must be on or after the start date.')
+        self.assertContains(response, 'Keep this description')
+        self.assertContains(response, 'value="2026-12-10"')
+        self.assertContains(response, 'value="2026-12-09"')
+        self.assertFalse(Project.objects.exists())
+
+    def test_same_day_and_forward_schedules_are_saved(self):
+        for end in ('2026-12-10', '2026-12-11'):
+            response = self.client.post(self.url, dict(self.payload,
+                start_date='2026-12-10', end_date=end))
+            created = Project.objects.latest('pk')
+            self.assertRedirects(response, reverse('projects:project', args=[created.pk]))
+            self.assertEqual(created.start_date, datetime.date(2026, 12, 10))
+            self.assertEqual(created.end_date, datetime.date.fromisoformat(end))
+
+    def test_optional_and_partial_schedules_remain_supported(self):
+        for start, end in (('', ''), ('2026-12-10', ''), ('', '2026-12-11')):
+            response = self.client.post(self.url, dict(self.payload, start_date=start, end_date=end))
+            created = Project.objects.latest('pk')
+            self.assertRedirects(response, reverse('projects:project', args=[created.pk]))
+            self.assertEqual(created.start_date, datetime.date.fromisoformat(start) if start else None)
+            self.assertEqual(created.end_date, datetime.date.fromisoformat(end) if end else None)
+
+    def test_date_controls_are_native_and_invalid_date_is_rejected(self):
+        from html.parser import HTMLParser
+        class InputParser(HTMLParser):
+            inputs = None
+            def handle_starttag(self, tag, attrs):
+                if tag == 'input':
+                    values = dict(attrs)
+                    self.inputs[values.get('name')] = values
+        response = self.client.get(self.url)
+        parser = InputParser()
+        parser.inputs = {}
+        parser.feed(response.content.decode())
+        for field in ('start_date', 'end_date'):
+            self.assertEqual(parser.inputs[field]['type'], 'date')
+        response = self.client.post(self.url, dict(self.payload,
+            start_date='2026-02-30', end_date='2026-12-10'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('start_date', response.context['form'].errors)
+        self.assertFalse(Project.objects.exists())

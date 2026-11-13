@@ -1,6 +1,6 @@
 # Delivery plan
 
-Updated: 2026-11-12. Source of scope: [product backlog](BACKLOG.md).
+Updated: 2026-11-13. Source of scope: [product backlog](BACKLOG.md).
 Historical evidence: [sprint history](SPRINTS.md).
 
 ## Working agreement
@@ -175,7 +175,7 @@ widths. No migration. Roll back by reverting this UI-only PR.
 Navigation repair completion: #199 merged; master Django CI and CodeQL passed.
 Local Docker instance updated to merged master, health and HTTP checks passed.
 
-## Sprint 10 — Project creation feedback — In review
+## Sprint 10 — Project creation feedback — Complete (#201)
 
 Goal: a successful project submission leads to a useful saved record, and
 refreshing that page does not create another project. Scope: PRJ-001 (3 points).
@@ -204,3 +204,34 @@ separate refinement items rather than being mixed into creation feedback.
 Sprint 9 retrospective: reused existing search/edit flows rather than duplicating
 them; four new pagination cases brought the suite to 76 passing tests. Follow-up:
 review the next domain's create/detail workflow with the same regression pattern.
+
+## Sprint 11 — Project scheduling input — In review
+
+Goal: make project dates easy to enter and reject reversed date ranges at project
+creation. Scope: PRJ-002 (3 points), refining the scheduling follow-up from Sprint
+10. No new role policy, database migration or dependency is needed.
+
+Acceptance criteria:
+
+- start and end dates use native HTML date controls without a CDN or JavaScript;
+- an end date before the start date returns a field error and saves no project;
+- rejected input retains the submitted dates and description for correction;
+- same-day and forward schedules save and redirect normally;
+- both blank dates and either date alone remain valid;
+- impossible calendar dates are rejected by the server, independently of browser checks;
+- existing authentication, creation and detail regressions remain passing.
+
+Tasks: configure ISO-valued date widgets, add form-level date comparison, exercise
+real request submissions, and document behavior. Validation covers full-suite,
+Django checks, migration drift and Docker CI. Review demo: submit a reversed range,
+correct the end date, then create a same-day and unscheduled project.
+
+Risk and scope: validation applies to the application creation form, not direct
+ORM/admin writes; existing stored schedules are not modified. Database-wide
+constraints/data cleanup require separate refinement. Native picker presentation
+varies by browser, with server validation as the shared boundary. Rollback: revert
+this form-only increment; saved project data remains unchanged.
+
+Sprint 10 retrospective: #201 merged; 81 tests passed and master CI verified.
+The creation redirect/detail pattern is now shared by tickets and projects.
+Follow-up: improve schedule entry without expanding into project lifecycle work.
