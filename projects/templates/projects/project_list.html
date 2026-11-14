@@ -1,24 +1,26 @@
 {% extends 'tickets/base.html' %}
 {% block search %}
     <form method="GET" action="{% url 'projects:search' %}">
-        <input name="q" value="{{request.GET.q}}" placeholder="Search projects">
+        <label class="visually-hidden" for="project-search">Search projects</label>
+        <input id="project-search" name="q" value="{{ query }}" placeholder="Search projects">
         <button class="btn btn-primary" type="submit">
             Search
         </button>
     </form>
 {% endblock %}
 {% block content %}
-    <h1>Projects</h1>
+    <div class="page-heading"><h1>{{ queue_title }}</h1><a class="btn btn-primary" href="{% url 'projects:project_new' %}">+ New project</a></div>
     {% if project_list %}
 	<table class="table table-striped">
-            <caption>Open Projects</caption>
+            <caption>{{ page_obj.paginator.count }} matching project{{ page_obj.paginator.count|pluralize }}</caption>
             <thead>
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Requestor</th>
-                    <th scope="col">Description</th>
+                    <th scope="col">Project</th>
                     <th scope="col">Assigned</th>
-                    <th scope="col">Closed/Opened</th>
+                    <th scope="col">Start date</th>
+                    <th scope="col">End date</th>
                     <th scope="col">Date Opened</th>
                 </tr>
             </thead>
@@ -27,14 +29,10 @@
 		<tr>
             <td><a href="{% url 'projects:project' project.id %}">{{project.id}}</a></td>
             <td>{{project.requestor_name }}</td>
-            <td>{{ project.description }}</td>
-            <td>{{ project.assigned }}</td>
-            <td>
-                <label class="switch">
-                    <input type="checkbox" disabled>
-                    <span class="slider round"></span>
-                </label>
-            </td>
+            <td><a href="{% url 'projects:project' project.pk %}">{{ project.summary }}</a><br>{{ project.description }}</td>
+            <td>{{ project.assigned|default:'Unassigned' }}</td>
+            <td>{{ project.start_date|default:'Not scheduled' }}</td>
+            <td>{{ project.end_date|default:'Not scheduled' }}</td>
             <td>{{ project.pub_date }}</td>
         </tr>
 	        {% endfor %}
@@ -42,5 +40,12 @@
         </table>
     {% else %}
 	<p>No projects are available.</p>
+    {% endif %}
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Project pages">
+        {% if page_obj.has_previous %}<a href="?q={{ query|urlencode }}&amp;page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?q={{ query|urlencode }}&amp;page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+    </nav>
     {% endif %}
 {% endblock %}

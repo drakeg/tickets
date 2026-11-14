@@ -203,3 +203,70 @@ class ProjectSchedulingTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('start_date', response.context['form'].errors)
         self.assertFalse(Project.objects.exists())
+
+
+class ProjectListTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(username='project-reader')
+        cls.other = get_user_model().objects.create_user(username='other-reader')
+        now = timezone.now()
+        cls.projects = [Project.objects.create(
+            requestor_name='Requestor', summary=f'Network {number}',
+            description='Network & access', pub_date=now,
+            assigned=cls.user if number % 2 else None,
+        ) for number in range(34)]
+        cls.foreign = Project.objects.create(
+            requestor_name='Other', summary='Unrelated', description='Different work',
+            pub_date=now, assigned=cls.other,
+        )
+
+    def test_all_projects_are_reachable_with_stable_ordering(self):
+        ids = []
+        for number in (1, 2, 3):
+            response = self.client.get(reverse('projects:index'), {'page': number})
+            self.assertEqual(response.status_code, 200)
+            ids.extend(project.pk for project in response.context['project_list'])
+        self.assertEqual(ids, list(Project.objects.order_by('-pub_date', '-pk').values_list('pk', flat=True)))
+        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_assignment_scopes_persist_across_pages(self):
+        self.client.force_login(self.user)
+        for route, filters in [('my_projects', {'assigned': self.user}),
+                               ('unassigned_projects', {'assigned__isnull': True})]:
+            ids = []
+            for number in (1, 2):
+                response = self.client.get(reverse('projects:' + route), {'page': number})
+                ids.extend(project.pk for project in response.context['project_list'])
+            self.assertEqual(ids, list(Project.objects.filter(**filters).order_by(
+                '-pub_date', '-pk').values_list('pk', flat=True)))
+            self.assertNotIn(self.foreign.pk, ids)
+
+    def test_search_paging_preserves_encoded_query_and_matching_scope(self):
+        ids = []
+        for number in (1, 2, 3):
+            response = self.client.get(reverse('projects:search'), {
+                'q': ' Network & access ', 'page': number,
+            })
+            self.assertContains(response, 'q=Network%20%26%20access')
+            self.assertEqual(response.context['query'], 'Network & access')
+            ids.extend(project.pk for project in response.context['project_list'])
+        self.assertEqual(ids, [project.pk for project in reversed(self.projects)])
+
+    def test_empty_results_and_invalid_pages_are_safe(self):
+        for value, expected in [('invalid', 1), ('999', 3), ('0', 3)]:
+            response = self.client.get(reverse('projects:index'), {'page': value})
+            self.assertEqual(response.context['page_obj'].number, expected)
+        for query in ('', '   ', 'no match'):
+            response = self.client.get(reverse('projects:search'), {'q': query, 'page': 99})
+            self.assertContains(response, 'No projects are available.')
+            self.assertNotContains(response, 'aria-label="Project pages"')
+
+    def test_list_shows_real_schedule_instead_of_inert_status_control(self):
+        response = self.client.get(reverse('projects:index'))
+        self.assertContains(response, 'Not scheduled')
+        self.assertContains(response, 'Unassigned')
+        self.assertContains(response, self.foreign.summary)
+        self.assertContains(response, reverse('projects:project_new'))
+        self.assertNotContains(response, 'Closed/Opened')
+        self.assertNotContains(response, 'type="checkbox"')

@@ -1,7 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import Http404
-from django.http import HttpResponse
-from django.template import loader
+from django.core.paginator import Paginator
 from django.utils import timezone
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -9,27 +7,36 @@ from django.contrib.auth.decorators import login_required
 from .models import Project 
 from .forms import ProjectForm
 
+def _project_list(request, projects, title):
+    page = Paginator(
+        projects.select_related('assigned').order_by('-pub_date', '-pk'), 15
+    ).get_page(request.GET.get('page'))
+    query = request.GET.get('q', '').strip()
+    return render(request, 'projects/project_list.html', {
+        'project_list': page.object_list,
+        'page_obj': page,
+        'queue_title': title,
+        'query': query,
+    })
+
+
 def index(request):
-        project_list = Project.objects.order_by('pub_date')[:15]
-        context = {'project_list': project_list}
-        return render(request, 'projects/project_list.html', context)
+    return _project_list(request, Project.objects.all(), 'All projects')
+
 
 def project(request, project_id):
-        project = get_object_or_404(Project, pk=project_id)
-        return render(request, 'projects/project_single.html', {'project': project})
+    project = get_object_or_404(Project, pk=project_id)
+    return render(request, 'projects/project_single.html', {'project': project})
 
 
 @login_required
 def my_projects(request):
-        username = request.user
-        project_list = Project.objects.filter(assigned=username)
-        context = {'project_list': project_list}
-        return render(request, 'projects/project_list.html', context)
+    return _project_list(request, Project.objects.filter(assigned=request.user), 'My projects')
+
 
 def unassigned_projects(request):
-        project_list = Project.objects.filter(assigned__isnull=True)
-        context = {'project_list': project_list}
-        return render(request, 'projects/project_list.html', context)
+    return _project_list(request, Project.objects.filter(assigned__isnull=True), 'Unassigned projects')
+
 
 @login_required
 def project_new(request):
@@ -47,13 +54,10 @@ def project_new(request):
 
 
 def search(request):
-    template = 'projects/project_list.html'
     query = request.GET.get('q', '').strip()
     project_list = Project.objects.none()
     if query:
         project_list = Project.objects.filter(
             Q(summary__icontains=query) | Q(description__icontains=query)
         )
-    context = {'project_list': project_list}
-    return render(request, template, context)
-
+    return _project_list(request, project_list, 'Project search results')

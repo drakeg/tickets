@@ -23,6 +23,13 @@ Use Previous/Next to reach older articles; search phrases remain applied while
 paging. Search matches description, keywords, or author. Empty searches show no
 results. Existing author/staff editing and authenticated creation remain available.
 
+## Project browsing
+
+All projects, My projects, Unassigned projects, and project searches show 15
+records per page, newest first. Previous/Next preserves the queue and search
+phrase. Lists show project summaries, assignments, and optional schedule dates;
+projects do not yet have an open/closed lifecycle status.
+
 ## Project creation
 
 Creating a project redirects to its detail page; refreshing that page does not

@@ -1,6 +1,6 @@
 # Product backlog
 
-Updated: 2026-11-13. Product: ServDesk (`drakeg/tickets`).
+Updated: 2026-11-14. Product: ServDesk (`drakeg/tickets`).
 
 ## Product goal
 
@@ -31,7 +31,8 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |
 | CMDB-001 | P2 | As an operator, validate asset identifiers and required fields | 5 | Unscheduled | Needs refinement | Existing-data audit |
 | PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | 10 | Done (#201) | Workflow audit complete |
-| PRJ-002 | P2 | As a project owner, choose dates with native controls and reject reversed schedules | 3 | 11 | In review | PRJ-001 merged |
+| PRJ-002 | P2 | As a project owner, choose dates with native controls and reject reversed schedules | 3 | 11 | Done (#202) | PRJ-001 merged |
+| PRJ-003 | P2 | As a project reader, reach every project and search result while keeping assignment scope | 3 | 12 | In review | PRJ-001/002 merged |
 | UI-001 | P2 | As a maintainer, remove remaining tracked OS artifacts | 1 | 5 carryover | Ready | Usage audit |
 | UI-002 | P2 | As a user, use date inputs without obsolete runtime assets | 5 | 5 carryover | Needs discovery | Date parsing/browser audit |
 | OPS-001 | P2 | As an operator, follow tested backup/restore and production setup instructions | 5 | Unscheduled | Needs refinement | Deployment/storage choices |

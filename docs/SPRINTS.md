@@ -236,9 +236,16 @@ fields with empty-state labels on detail. Invalid forms retain input; anonymous
 writes stay protected. Named list links and refresh regression coverage included.
 No migration changes. See detailed plan for acceptance, risks and review demo.
 
-## Sprint 11 — Project scheduling input — In review
+## Sprint 11 — Project scheduling input — Complete (#202)
 
 PRJ-002 adds native ISO date widgets and validates the project's end date is not
 before its start date. Same-day/partial/blank schedules remain valid. Four new
 request-level tests cover invalid ranges, input retention, valid schedules and
 calendar-date validation. No schema changes or existing-data edits.
+
+## Sprint 12 — Reachable project lists — In review
+
+PRJ-003 paginates browsing, personal/unassigned queues and search, retains encoded
+search text and assignment scope, and replaces the inert status switch with real
+schedule dates. Five request tests cover reachability, ordering, scope, search,
+invalid pages/empty results and list content. No schema changes.

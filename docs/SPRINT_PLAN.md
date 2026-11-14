@@ -1,6 +1,6 @@
 # Delivery plan
 
-Updated: 2026-11-13. Source of scope: [product backlog](BACKLOG.md).
+Updated: 2026-11-14. Source of scope: [product backlog](BACKLOG.md).
 Historical evidence: [sprint history](SPRINTS.md).
 
 ## Working agreement
@@ -205,7 +205,7 @@ Sprint 9 retrospective: reused existing search/edit flows rather than duplicatin
 them; four new pagination cases brought the suite to 76 passing tests. Follow-up:
 review the next domain's create/detail workflow with the same regression pattern.
 
-## Sprint 11 — Project scheduling input — In review
+## Sprint 11 — Project scheduling input — Complete (#202)
 
 Goal: make project dates easy to enter and reject reversed date ranges at project
 creation. Scope: PRJ-002 (3 points), refining the scheduling follow-up from Sprint
@@ -235,3 +235,33 @@ this form-only increment; saved project data remains unchanged.
 Sprint 10 retrospective: #201 merged; 81 tests passed and master CI verified.
 The creation redirect/detail pattern is now shared by tickets and projects.
 Follow-up: improve schedule entry without expanding into project lifecycle work.
+
+## Sprint 12 — Reachable project lists — In review
+
+Goal: all projects and search results remain reachable as volume grows, with
+accurate list fields. Scope: PRJ-003 (3 provisional points). Entry: #202 merged,
+master Django CI and CodeQL green. No schema/dependency changes.
+
+Acceptance criteria:
+
+- all/my/unassigned/search lists paginate at 15, newest first with ID tie-breaking;
+- moving between pages retains the current route's assignment restrictions;
+- search links preserve the trimmed URL-encoded phrase and exclude nonmatches;
+- invalid page input falls back safely; empty results render without page links;
+- list shows summary, assignment and actual schedule dates, replacing the disabled
+  Closed/Opened switch because Project has no corresponding lifecycle state;
+- missing assignment/dates display explicit labels; a direct create action is visible;
+- existing authorization, date validation and creation/detail tests still pass.
+
+Tasks: share query rendering/pagination, load related assignees with the page,
+update list columns and accessible search/page controls, add multi-page fixtures,
+run full suite/checks and verify Docker CI. Review demo: browse more than 15
+projects, follow My projects/Unassigned, and search a phrase with an ampersand.
+Risk: main list intentionally changes from oldest-first to newest-first; offset
+pages can shift under concurrent inserts. Cursor pagination remains deferred.
+Rollback: revert the PR; no migration or saved-data changes.
+
+Sprint 11 retrospective: #202 delivered native date controls and server-side
+schedule validation, with 85 passing tests and green master CI. Project list
+reachability is the next bounded increment. Live Docker remains on merged code
+with its LAN binding and allowed hosts preserved while this PR is reviewed.
