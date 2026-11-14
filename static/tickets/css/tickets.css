@@ -1,6 +1,6 @@
 :root {
     --ink:#182c40;
-    --muted:#61758a;
+    --muted:#526579;
     --line:#dfe7ee;
     --accent:#087f79;
     --bs-primary:#087f79
@@ -175,6 +175,26 @@ h3 {
     padding:9px 16px;
     font-size:13px;
     white-space:nowrap
+}
+.btn-outline-secondary {
+    --bs-btn-color:var(--muted);
+    --bs-btn-border-color:var(--muted);
+    --bs-btn-hover-color:#fff;
+    --bs-btn-hover-bg:var(--muted);
+    --bs-btn-hover-border-color:var(--muted);
+    --bs-btn-active-color:#fff;
+    --bs-btn-active-bg:var(--muted);
+    --bs-btn-active-border-color:var(--muted);
+}
+.btn-outline-primary {
+    --bs-btn-color:#08746f;
+    --bs-btn-border-color:#08746f;
+    --bs-btn-hover-color:#fff;
+    --bs-btn-hover-bg:#08746f;
+    --bs-btn-hover-border-color:#08746f;
+    --bs-btn-active-color:#fff;
+    --bs-btn-active-bg:#08746f;
+    --bs-btn-active-border-color:#08746f;
 }
 .btn-primary {
     --bs-btn-bg:#087f79;

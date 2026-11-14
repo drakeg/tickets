@@ -17,6 +17,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 
 | ID | Priority | User story / outcome | Points | Sprint | State | Dependency |
 |---|---|---|---:|---|---|---|
+| A11Y-001 | P1 | As a reader, see muted text and outline controls with sufficient contrast | 1 | Urgent repair | In review | User audit color-contrast |
 | UI-003 | P1 | As a user, navigate and find create actions on desktop/mobile with readable dashboard styling | 5 | Urgent repair | Done (#199) | User-reported blocker |
 | TKT-001 | P1 | As an agent, reach every ticket in stable newest-first pages | 3 | 6 | Done (#196) | #195 merged |
 | TKT-002 | P1 | As an agent, filter all, assigned, unassigned, and search queues by status | 3 | 6 | Done (#196) | TKT-001 |
@@ -32,7 +33,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | CMDB-001 | P2 | As an operator, validate asset identifiers and required fields | 5 | Unscheduled | Needs refinement | Existing-data audit |
 | PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | 10 | Done (#201) | Workflow audit complete |
 | PRJ-002 | P2 | As a project owner, choose dates with native controls and reject reversed schedules | 3 | 11 | Done (#202) | PRJ-001 merged |
-| PRJ-003 | P2 | As a project reader, reach every project and search result while keeping assignment scope | 3 | 12 | In review | PRJ-001/002 merged |
+| PRJ-003 | P2 | As a project reader, reach every project and search result while keeping assignment scope | 3 | 12 | Done (#203) | PRJ-001/002 merged |
 | UI-001 | P2 | As a maintainer, remove remaining tracked OS artifacts | 1 | 5 carryover | Ready | Usage audit |
 | UI-002 | P2 | As a user, use date inputs without obsolete runtime assets | 5 | 5 carryover | Needs discovery | Date parsing/browser audit |
 | OPS-001 | P2 | As an operator, follow tested backup/restore and production setup instructions | 5 | Unscheduled | Needs refinement | Deployment/storage choices |
