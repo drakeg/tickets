@@ -8,5 +8,13 @@
     </form>
 {% endblock %}
 {% block content %}
-    {{ server }}
+    <h1>{{ server.server_name }}</h1>
+    <p class="text-muted">System #{{ server.pk }}</p>
+    <dl class="row">
+        <dt class="col-sm-3">Operating system</dt><dd class="col-sm-9">{{ server.os }}</dd>
+        <dt class="col-sm-3">Vendor</dt><dd class="col-sm-9">{{ server.vendor }}</dd>
+        <dt class="col-sm-3">Cluster</dt><dd class="col-sm-9">{{ server.cluster }}</dd>
+        <dt class="col-sm-3">Created</dt><dd class="col-sm-9">{{ server.pub_date }}</dd>
+    </dl>
+    <a class="btn btn-outline-secondary" href="{% url 'inventory:index' %}">Back to systems</a>
 {% endblock %}
