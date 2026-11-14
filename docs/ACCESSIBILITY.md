@@ -30,3 +30,21 @@ axe-core into the rendered page and run `axe.run(document, {runOnly:
 ['color-contrast']})`. Browser audit dependencies were temporary, not added to
 application requirements. This verifies the checked rule/views, not full-site
 WCAG conformance or every data-dependent content state.
+
+## Follow-up: incomplete contrast checks on decorative glyphs
+
+The user's port-8086 workbench audit at 2026-11-14T20:35:17Z had no findings,
+but retained three `color-contrast` incomplete nodes. Reproduction identified
+the decorative Unicode project/system/article glyphs (`▤`, `▣`, `≡`): axe reported
+"Element content contains only non-text characters" rather than a contrast ratio
+failure. Replace action-card glyphs with decorative inline SVGs using currentColor,
+aria-hidden and focusable=false; the card's visible text remains its label.
+The follow-up is verified against both violations and incomplete results, using
+the actual workbench scanner as well as Chrome. Existing historical audit records
+remain unchanged; review the fresh result when comparing before/after.
+
+Verification after SVG replacement: new workbench audit
+`ae1177ca-4251-489f-af72-e802c3a0618c` of `http://localhost:8016/` completed with
+`findings: []` and `incomplete: []`. The original records were left intact.
+Chrome reproduction also returned neither contrast violations nor incomplete
+nodes. All 91 Django tests, system checks and migration-drift checks pass.
