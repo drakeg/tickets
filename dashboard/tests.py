@@ -205,3 +205,27 @@ class WorkspaceNavigationTests(TestCase):
         user.is_staff = True
         user.save()
         self.assertContains(self.client.get(reverse('dashboard:index')), reverse('admin:index'))
+
+
+class WorkspaceContrastTests(TestCase):
+    def test_muted_text_and_outline_buttons_meet_normal_text_contrast(self):
+        import re
+        from pathlib import Path
+        from django.conf import settings
+
+        css = (Path(settings.BASE_DIR) / 'static/tickets/css/tickets.css').read_text()
+        muted = re.search(r'--muted:\s*(#[0-9a-fA-F]{6})', css).group(1)
+
+        def luminance(value):
+            channels = [int(value[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+            linear = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+                      for c in channels]
+            return sum(c * weight for c, weight in zip(linear, (0.2126, 0.7152, 0.0722)))
+
+        for foreground, background in (
+            (muted, '#f3f6fa'), (muted, '#ffffff'), ('#ffffff', muted),
+            ('#08746f', '#f3f6fa'), ('#ffffff', '#08746f'),
+        ):
+            with self.subTest(foreground=foreground, background=background):
+                light, dark = sorted((luminance(foreground), luminance(background)), reverse=True)
+                self.assertGreaterEqual((light + 0.05) / (dark + 0.05), 4.5)

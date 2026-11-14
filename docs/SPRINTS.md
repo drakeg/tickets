@@ -243,9 +243,17 @@ before its start date. Same-day/partial/blank schedules remain valid. Four new
 request-level tests cover invalid ranges, input retention, valid schedules and
 calendar-date validation. No schema changes or existing-data edits.
 
-## Sprint 12 — Reachable project lists — In review
+## Sprint 12 — Reachable project lists — Complete (#203)
 
 PRJ-003 paginates browsing, personal/unassigned queues and search, retains encoded
 search text and assignment scope, and replaces the inert status switch with real
 schedule dates. Five request tests cover reachability, ordering, scope, search,
 invalid pages/empty results and list content. No schema changes.
+
+## Accessibility repair — Text contrast — In review
+
+User audit reported color-contrast failures. Browser reproduction identified
+muted dashboard text and outline buttons against the light workspace background.
+Darken shared muted text and outline-button normal/hover/active palettes, without
+changing layout or data. Guard the normal-text 4.5:1 threshold with a color-ratio
+regression and verify rendered pages with axe-core before/after.
