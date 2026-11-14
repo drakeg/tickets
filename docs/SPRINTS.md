@@ -250,10 +250,18 @@ search text and assignment scope, and replaces the inert status switch with real
 schedule dates. Five request tests cover reachability, ordering, scope, search,
 invalid pages/empty results and list content. No schema changes.
 
-## Accessibility repair — Text contrast — In review
+## Accessibility repair — Text contrast — Complete (#204)
 
 User audit reported color-contrast failures. Browser reproduction identified
 muted dashboard text and outline buttons against the light workspace background.
 Darken shared muted text and outline-button normal/hover/active palettes, without
 changing layout or data. Guard the normal-text 4.5:1 threshold with a color-ratio
 regression and verify rendered pages with axe-core before/after.
+
+## Accessibility follow-up — Decorative glyph audit — In review
+
+The port-8086 workbench reported no confirmed findings after #204, but retained
+three incomplete contrast checks for non-text Unicode action icons. Replace those
+glyphs with decorative SVGs; preserve visible card labels and existing colors.
+Reproduce and verify both findings and incomplete output with the actual scanner.
+No schema or dependency changes. Existing audit history is not rewritten.
