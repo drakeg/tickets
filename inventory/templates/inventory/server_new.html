@@ -11,9 +11,21 @@
 
 {% block content %}
 <h1> New System </h1>
+{% if missing_reference_data %}
+<div class="signin-notice" role="status">
+    <p>Before adding a system, an administrator must configure: {{ missing_reference_data|join:', ' }}.</p>
+    {% if user.is_staff %}
+    <nav aria-label="Inventory setup">
+        {% if perms.inventory.add_operating_system %}<a href="{% url 'admin:inventory_operating_system_add' %}">Add operating system</a>{% endif %}
+        {% if perms.inventory.add_vendor %}<a href="{% url 'admin:inventory_vendor_add' %}">Add vendor</a>{% endif %}
+        {% if perms.inventory.add_cluster %}<a href="{% url 'admin:inventory_cluster_add' %}">Add cluster</a>{% endif %}
+    </nav>
+    {% endif %}
+</div>
+{% endif %}
 <form method="POST" class="system-form">{% csrf_token %}
         {{ form|crispy }}
-        <button type="submit" class="save btn btn-default">Save</button>
+        <button type="submit" class="save btn btn-primary">Save</button>
     </form>
 
 {% endblock %}
