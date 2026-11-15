@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from django.utils import timezone
 from django.db.models import Q
@@ -23,18 +23,24 @@ def operating_systems(request, operating_system_id):
 
 @login_required
 def servers_new(request):
-	if request.method == "POST":
-		form = InventoryForm(request.POST)
-		if form.is_valid():
-			server = form.save(commit=False)
-			server.server_name = form.cleaned_data['server_name']
-			server.os = form.cleaned_data['os']
-			server.vendor = form.cleaned_data['vendor']
-			server.pub_date = timezone.now()
-			server.save()
-	else:
-		form = InventoryForm()
-	return render(request, 'inventory/server_new.html', {'form': form})
+    if request.method == "POST":
+        form = InventoryForm(request.POST)
+        if form.is_valid():
+            server = form.save(commit=False)
+            server.pub_date = timezone.now()
+            server.save()
+            return redirect('inventory:servers', server_id=server.pk)
+    else:
+        form = InventoryForm()
+    missing_reference_data = [
+        label for field, label in (
+            ('os', 'operating systems'), ('vendor', 'vendors'), ('cluster', 'clusters')
+        ) if not form.fields[field].queryset.exists()
+    ]
+    return render(request, 'inventory/server_new.html', {
+        'form': form, 'missing_reference_data': missing_reference_data,
+    })
+
 
 def search(request):
     template = 'inventory/server_list.html'

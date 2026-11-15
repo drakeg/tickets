@@ -23,6 +23,14 @@ Use Previous/Next to reach older articles; search phrases remain applied while
 paging. Search matches description, keywords, or author. Empty searches show no
 results. Existing author/staff editing and authenticated creation remain available.
 
+## Adding systems
+
+System creation requires an operating system, vendor, and cluster. If a choice
+list is empty, the form explains which reference data an administrator must add.
+Authorized staff see links to the corresponding Django admin forms. Successful
+creation redirects to the system details showing all selections and creation date;
+refreshing that page does not resubmit the form. Invalid input retains its errors.
+
 ## Project browsing
 
 All projects, My projects, Unassigned projects, and project searches show 15

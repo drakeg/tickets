@@ -265,3 +265,34 @@ Sprint 11 retrospective: #202 delivered native date controls and server-side
 schedule validation, with 85 passing tests and green master CI. Project list
 reachability is the next bounded increment. Live Docker remains on merged code
 with its LAN binding and allowed hosts preserved while this PR is reviewed.
+
+## Sprint 13 — Inventory creation feedback — In review
+
+Goal: make system creation usable on both an empty installation and a configured
+inventory. Scope: CMDB-002 (3 points). Entry: #205 merged; master CI verified green.
+CMDB-001 identifier normalization/data constraints remain separate discovery work.
+
+Acceptance criteria:
+
+- valid authenticated creation redirects to the saved system's named detail route;
+- refreshing the destination does not resubmit the creation form;
+- details show name, operating system, vendor, cluster and creation date;
+- missing reference choices identify exactly which lists need administrator setup;
+- staff with the relevant add permissions receive working Django admin setup links;
+- non-staff users receive guidance without administration links;
+- invalid reference values retain input/errors without saving; anonymous POST stays blocked;
+- missing records return 404 and rendered system names remain escaped.
+
+Tasks: apply post/redirect/get, expand system details, detect empty form querysets,
+add permission-gated setup links and request tests, and update user instructions.
+Review demo: start with no reference records, add prerequisites as administrator,
+submit a system, then refresh the detail page. No schema/dependency changes.
+Risks: setup uses existing Django admin permissions; this does not grant new
+administration rights. Read permissions and required foreign keys remain unchanged.
+Rollback: revert the PR; no migration or persisted-data changes are necessary.
+Validation: full suite, system checks, migration drift, diff checks and Docker CI.
+The live LAN instance remains on merged code until this increment is reviewed.
+
+Accessibility retrospective: #204 fixed confirmed contrast failures; #205 resolved
+three incomplete glyph checks. The actual workbench scan returned both empty
+findings and incomplete arrays. Preserve those fixes while developing inventory.
