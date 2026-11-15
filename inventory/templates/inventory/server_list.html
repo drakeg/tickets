@@ -1,27 +1,35 @@
 {% extends 'tickets/base.html' %}
 {% block search %}
     <form method="GET" action="{% url 'inventory:search' %}">
-        <input name="q" value="{{request.GET.q}}" placeholder="Search system names">
+        <label class="visually-hidden" for="system-search">Search system names</label>
+        <input id="system-search" name="q" value="{{ query }}" placeholder="Search system names">
         <button class="btn btn-primary" type="submit">
             Search
         </button>
     </form>
 {% endblock %}
 {% block content %}
-    <h1>Servers</h1>
+    <div class="page-heading"><h1>Systems</h1><a class="btn btn-primary" href="{% url 'inventory:servers_new' %}">+ Add system</a></div>
     {% if server_list %}
 	<table class="table table-striped">
-            <caption>List of servers</caption>
+            <caption>{{ page_obj.paginator.count }} matching system{{ page_obj.paginator.count|pluralize }}</caption>
             <thead>
                 <tr><th scope="col">Name</th><th scope="col">Cluster</th><th scope="col">Vendor</th><th scope="col">OS</th></tr>
             </thead>
             <tbody>
 	        {% for server in server_list %}
-		<tr><td><a href="/inventory/server/{{ server.id }}/">{{server.server_name }}</a></td><td>{{ server.cluster }}</td><td>{{ server.vendor }}</td><td>{{ server.Operating_System }}</td></tr>
+		<tr><td><a href="{% url 'inventory:servers' server.id %}">{{server.server_name }}</a></td><td>{{ server.cluster }}</td><td>{{ server.vendor }}</td><td>{{ server.os }}</td></tr>
 	        {% endfor %}
             </tbody>
         </table>
     {% else %}
 	<p>No systems are available.</p>
+    {% endif %}
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="System pages">
+        {% if page_obj.has_previous %}<a href="?q={{ query|urlencode }}&amp;page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?q={{ query|urlencode }}&amp;page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+    </nav>
     {% endif %}
 {% endblock %}

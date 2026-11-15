@@ -266,7 +266,7 @@ schedule validation, with 85 passing tests and green master CI. Project list
 reachability is the next bounded increment. Live Docker remains on merged code
 with its LAN binding and allowed hosts preserved while this PR is reviewed.
 
-## Sprint 13 — Inventory creation feedback — In review
+## Sprint 13 — Inventory creation feedback — Complete (#206)
 
 Goal: make system creation usable on both an empty installation and a configured
 inventory. Scope: CMDB-002 (3 points). Entry: #205 merged; master CI verified green.
@@ -296,3 +296,35 @@ The live LAN instance remains on merged code until this increment is reviewed.
 Accessibility retrospective: #204 fixed confirmed contrast failures; #205 resolved
 three incomplete glyph checks. The actual workbench scan returned both empty
 findings and incomplete arrays. Preserve those fixes while developing inventory.
+
+## Sprint 14 — Reachable inventory lists — In review
+
+Goal: every system stays reachable, with correct related data and bounded query
+cost. Scope: CMDB-003 (3 points). Entry: #206 merged; master CI green; local Docker
+updated and verified healthy on the existing LAN binding.
+
+Acceptance criteria:
+
+- system browsing and name search paginate at 15 and expose all matching records;
+- order is cluster ID, system name, then record ID, maintaining cluster grouping
+  while making equal-name boundaries deterministic;
+- search paging preserves the trimmed, encoded phrase and excludes nonmatches;
+- malformed/out-of-range pages recover safely and empty results show no page links;
+- operating-system values render from the actual os relationship;
+- detail links use named routes and Add system is directly discoverable;
+- cluster/vendor/OS columns are selected with the page rather than queried per row;
+- existing creation/setup and authorization coverage remains passing.
+
+Tasks: shared list renderer, pagination UI, correct OS binding, related-object
+loading, request and query-count regressions, user docs. Review demo: browse 35
+systems spread across two clusters, search with an ampersand, inspect OS values
+and follow a detail link. No schema/dependency changes or data edits.
+Risk: alphabetical ordering within a cluster replaces previously unspecified
+row order. Offset pages may shift during concurrent inserts. Rollback: revert PR.
+Performance evidence: an anonymous rendered 15-row page performs only the count
+and joined page queries. Keep this assertion scoped to the public list request.
+Local deployment remains on merged master until this increment is reviewed.
+
+Sprint 13 retrospective: the 98-test suite and master CI passed; missing reference
+data now has actionable setup guidance. Next, finish list reachability without
+mixing in speculative identifier constraints or cleanup of existing records.

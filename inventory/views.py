@@ -1,17 +1,28 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
+from django.core.paginator import Paginator
 from django.utils import timezone
-from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 
 from .models import Server
 from .forms import InventoryForm, VendorForm
 
+def _server_list(request, servers):
+    page = Paginator(
+        servers.select_related('os', 'vendor', 'cluster').order_by('cluster_id', 'server_name', 'pk'),
+        15,
+    ).get_page(request.GET.get('page'))
+    return render(request, 'inventory/server_list.html', {
+        'server_list': page.object_list,
+        'page_obj': page,
+        'query': request.GET.get('q', '').strip(),
+    })
+
+
 def index(request):
-	server_list = Server.objects.order_by('cluster')[:15]
-	context = {'server_list': server_list}
-	return render(request, 'inventory/server_list.html', context)
+    return _server_list(request, Server.objects.all())
+
 
 def servers(request, server_id):
 	server = get_object_or_404(Server, pk=server_id)
@@ -43,13 +54,11 @@ def servers_new(request):
 
 
 def search(request):
-    template = 'inventory/server_list.html'
     query = request.GET.get('q', '').strip()
-    server_list = Server.objects.none()
+    servers = Server.objects.none()
     if query:
-        server_list = Server.objects.filter(Q(server_name__icontains=query))
-    context = {'server_list': server_list}
-    return render(request, template, context)
+        servers = Server.objects.filter(server_name__icontains=query)
+    return _server_list(request, servers)
 
 @login_required
 def vendor_new(request):
