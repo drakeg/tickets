@@ -290,7 +290,7 @@ components/permissions remain in use; no theme dependency is introduced.
 Validate index, list, add form, login restrictions, priority creation, browser
 layout and contrast before delivery. Rollback theme files separately from metadata.
 
-## Sprint 15 — Team role foundation — In review
+## Sprint 15 — Team role foundation — Complete (#209)
 
 P1 RBAC-001 adds Infrastructure Team, Help Desk and Project Manager definitions
 and safe setup_roles command. Explicit permission matrix, current limitations,
@@ -302,3 +302,10 @@ Sprint 15 addition: KB-003 provides reviewed ticket-to-article publication with
 prefilled issue content, required solution, source link and duplicate protection.
 It uses the role foundation's ticket-view/article-add grants. Additive knowledge
 migration preserves existing articles; all existing role/access tests remain.
+
+## Sprint 16A — Inventory and search enforcement — In review
+
+RBAC-002A protects inventory reads/writes and reference choices, gates inventory
+navigation/counts, and replaces unrestricted global search with authorized-model
+queries. Explicit group/anonymous/no-role/revocation/multi-role tests are included.
+Remaining ticket/project/article direct-route/counter gaps stay next P1 scope.

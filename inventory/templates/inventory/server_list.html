@@ -9,7 +9,7 @@
     </form>
 {% endblock %}
 {% block content %}
-    <div class="page-heading"><h1>Systems</h1><a class="btn btn-primary" href="{% url 'inventory:servers_new' %}">+ Add system</a></div>
+    <div class="page-heading"><h1>Systems</h1>{% if perms.inventory.view_server and perms.inventory.add_server and perms.inventory.view_operating_system and perms.inventory.view_vendor and perms.inventory.view_cluster %}<a class="btn btn-primary" href="{% url 'inventory:servers_new' %}">+ Add system</a>{% endif %}</div>
     {% if server_list %}
 	<table class="table table-striped">
             <caption>{{ page_obj.paginator.count }} matching system{{ page_obj.paginator.count|pluralize }}</caption>

@@ -31,6 +31,9 @@ class DashboardMetricTests(TestCase):
             username="other-user",
             password="test-password",
         )
+        from django.contrib.auth.models import Permission
+        self.user.user_permissions.add(Permission.objects.get(
+            content_type__app_label='inventory', codename='view_server'))
         self.priority = Priority.objects.create(name="Normal")
 
         Issue.objects.create(
@@ -125,11 +128,13 @@ class DashboardAuthorizationNavigationTests(TestCase):
         self.assertNotContains(response, reverse('inventory:vendor_new'))
         self.assertNotContains(response, reverse('admin:index'))
 
-    def test_authenticated_navigation_shows_protected_actions(self):
+    def test_authorized_navigation_shows_protected_actions(self):
         user = get_user_model().objects.create_user(
             username="nav-user",
             password="test-password",
         )
+        from inventory.tests import grant_inventory_access
+        grant_inventory_access(user)
         self.client.force_login(user)
 
         response = self.client.get(reverse("dashboard:index"))
@@ -185,7 +190,7 @@ class WorkspaceNavigationTests(TestCase):
         response = self.client.get(reverse('dashboard:index'))
         self.assertContains(response, 'sign in')
         for route in ('issues:issue_new', 'projects:project_new',
-                      'inventory:servers_new', 'knowledgebase:new'):
+                      'knowledgebase:new'):
             path = reverse(route)
             self.assertContains(response, 'href="' + path + '"')
             result = self.client.get(path)
@@ -194,6 +199,8 @@ class WorkspaceNavigationTests(TestCase):
 
     def test_signed_in_create_links_open_forms_and_navigation_has_no_dead_links(self):
         user = get_user_model().objects.create_user(username='navigation-user')
+        from inventory.tests import grant_inventory_access
+        grant_inventory_access(user)
         self.client.force_login(user)
         response = self.client.get(reverse('dashboard:index'))
         self.assertNotContains(response, 'href="#"')
@@ -268,3 +275,56 @@ class WorkspaceAdminTests(TestCase):
         user = get_user_model().objects.create_user(username='nonstaff')
         self.client.force_login(user)
         self.assertEqual(self.client.get(reverse('admin:index')).status_code, 302)
+
+
+class WorkspaceSearchPermissionTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        from django.core.management import call_command
+        from django.contrib.auth.models import Group
+        from io import StringIO
+        from knowledgebase.models import Article
+        call_command('setup_roles', stdout=StringIO())
+        cls.users = {}
+        for role in ('Infrastructure Team', 'Help Desk', 'Project Manager'):
+            user = get_user_model().objects.create_user(username='search-' + role.replace(' ', '-'))
+            user.groups.add(Group.objects.get(name=role))
+            cls.users[role] = user
+        os = Operating_System.objects.create(os_name='Test OS')
+        vendor = Vendor.objects.create(vendor_name='Test vendor')
+        cluster = Cluster.objects.create(cluster_name='Test cluster')
+        cls.server = Server.objects.create(server_name='sharedmarker private system', os=os,
+            vendor=vendor, cluster=cluster, pub_date=timezone.now())
+        Issue.objects.create(requestor_name='requestor', summary='sharedmarker ticket',
+            description='description', priority=Priority.objects.create(name='Normal'), pub_date=timezone.now())
+        Project.objects.create(requestor_name='requestor', summary='sharedmarker project',
+            description='description', pub_date=timezone.now())
+        Article.objects.create(author='author', description='sharedmarker article', keywords='test',
+            solution='Searchable solution marker', pub_date=timezone.now())
+
+    def test_search_only_returns_models_each_role_can_view(self):
+        for role, user in self.users.items():
+            self.client.force_login(user)
+            response = self.client.get(reverse('watson:search'), {'q': 'sharedmarker'})
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, 'sharedmarker ticket')
+            self.assertContains(response, 'sharedmarker project')
+            self.assertContains(response, 'sharedmarker article')
+            if role == 'Project Manager':
+                self.assertNotContains(response, self.server.server_name)
+            else:
+                self.assertContains(response, self.server.server_name)
+
+    def test_search_requires_login_and_at_least_one_view_grant(self):
+        self.assertEqual(self.client.get(reverse('watson:search'), {'q': 'sharedmarker'}).status_code, 302)
+        user = get_user_model().objects.create_user(username='no-search-grants')
+        self.client.force_login(user)
+        self.assertEqual(self.client.get(reverse('watson:search'), {'q': 'sharedmarker'}).status_code, 403)
+
+    def test_empty_query_and_solution_search_work_without_permission_leaks(self):
+        self.client.force_login(self.users['Project Manager'])
+        response = self.client.get(reverse('watson:search'), {'q': '   '})
+        self.assertEqual(response.context['results'], [])
+        response = self.client.get(reverse('watson:search'), {'q': 'Searchable solution marker'})
+        self.assertContains(response, 'sharedmarker article')
+        self.assertNotContains(response, self.server.server_name)

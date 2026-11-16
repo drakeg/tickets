@@ -329,7 +329,7 @@ Sprint 13 retrospective: the 98-test suite and master CI passed; missing referen
 data now has actionable setup guidance. Next, finish list reachability without
 mixing in speculative identifier constraints or cleanup of existing records.
 
-## Sprint 15 — Team role foundation — In review
+## Sprint 15 — Team role foundation — Complete (#209)
 
 Goal: make the three requested team roles provisionable, with an explicit access
 matrix and honest enforcement boundaries. Scope: RBAC-001 (3 points). Role access
@@ -380,3 +380,31 @@ current read policy; RBAC-002 will address that gap. Rollback: keep added fields
 when reverting code; reversing the migration removes saved solution/source data
 and requires a backup/retention decision. Eight new request regressions cover the
 workflow; all existing role tests remain required.
+
+## Sprint 16A — Inventory and search enforcement — In review
+
+Goal: enforce the first module's team boundaries without leaving a global-search
+back door. RBAC-002A (5 points) is the first split of the P1 RBAC-002 epic.
+See docs/ROLES.md for current versus remaining enforcement and exact grants.
+
+Acceptance: anonymous inventory requests redirect; authenticated users without
+permissions get 403; Infrastructure can create, Help Desk can read, Project Manager
+cannot view inventory by default; staff alone grants no inventory rights; creation
+reference choices require their view grants. Hide inventory counts/navigation from
+denied users. Global search requires login and filters each model by view grants.
+Revocation and multi-role union must take effect on the next request. Preserve
+superuser recovery, existing CSRF and data-validation tests.
+
+Tasks: backend decorators, permission-sensitive inventory UI/dashboard, replace
+unrestricted Watson route with bounded authorized-model search while retaining its
+named URL, denial page, and real group/URL/search tests. No schema changes.
+The list still uses two inventory queries; request authentication adds its own
+bounded queries, which are excluded from the domain-query regression count.
+
+Review: Infrastructure non-staff user adds system/vendor without entering admin;
+Help Desk reads but cannot POST a system; Project Manager sees no system count or
+search result. No-role user cannot bypass direct URLs. Role setup assigns nobody.
+Risk: existing non-superuser accounts without grants lose inventory access by
+design. Assign groups explicitly via admin; do not auto-grant staff accounts.
+Rollback: revert route/UI enforcement (reopens previous access), retaining groups.
+Next: ticket/project/article routes and their counters, then broader role audit.

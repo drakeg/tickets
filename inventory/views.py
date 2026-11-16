@@ -2,8 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required, permission_required
 
 from .models import Server
 from .forms import InventoryForm, VendorForm
@@ -20,19 +19,26 @@ def _server_list(request, servers):
     })
 
 
+@login_required
+@permission_required('inventory.view_server', raise_exception=True)
 def index(request):
     return _server_list(request, Server.objects.all())
 
 
+@login_required
+@permission_required('inventory.view_server', raise_exception=True)
 def servers(request, server_id):
 	server = get_object_or_404(Server, pk=server_id)
 	return render(request, 'inventory/server_single.html', {'server': server})
 
+@login_required
+@permission_required('inventory.view_operating_system', raise_exception=True)
 def operating_systems(request, operating_system_id):
 	response = "You're looking at operating system %s."
 	return HttpResponse(response % operating_system_id)
 
 @login_required
+@permission_required(('inventory.view_server', 'inventory.add_server', 'inventory.view_operating_system', 'inventory.view_vendor', 'inventory.view_cluster'), raise_exception=True)
 def servers_new(request):
     if request.method == "POST":
         form = InventoryForm(request.POST)
@@ -53,6 +59,8 @@ def servers_new(request):
     })
 
 
+@login_required
+@permission_required('inventory.view_server', raise_exception=True)
 def search(request):
     query = request.GET.get('q', '').strip()
     servers = Server.objects.none()
@@ -61,9 +69,8 @@ def search(request):
     return _server_list(request, servers)
 
 @login_required
+@permission_required(('inventory.add_vendor', 'inventory.view_vendor'), raise_exception=True)
 def vendor_new(request):
-	if not request.user.is_staff:
-		raise PermissionDenied
 	if request.method == "POST":
 		form = VendorForm(request.POST)
 		if form.is_valid():

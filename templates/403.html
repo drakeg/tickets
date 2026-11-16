@@ -1,0 +1,6 @@
+{% extends 'tickets/base.html' %}
+{% block content %}
+<h1>Access not granted</h1>
+<p>Your account does not have permission for this action. Ask an administrator to review your team groups and permissions.</p>
+<a class="btn btn-primary" href="{% url 'dashboard:index' %}">Back to workspace</a>
+{% endblock %}

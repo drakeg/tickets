@@ -18,8 +18,9 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | ID | Priority | User story / outcome | Points | Sprint | State | Dependency |
 |---|---|---|---:|---|---|---|
 | KB-003 | P1 | As a technician, turn a recurring ticket and tested solution into a linked article without retyping details | 5 | 15 addition | In review | User request; source-ticket permissions |
-| RBAC-001 | P1 | As an administrator, provision named team roles with safe repeatable defaults | 3 | 15 | In review | User role requirements; docs/ROLES.md |
-| RBAC-002 | P1 | As an administrator, enforce team access across app routes, search, dashboards and navigation | 8 | 16 next | Ready for domain breakdown | RBAC-001; current permission-gap inventory |
+| RBAC-001 | P1 | As an administrator, provision named team roles with safe repeatable defaults | 3 | 15 | Done (#209) | User role requirements; docs/ROLES.md |
+| RBAC-002A | P1 | Enforce inventory routes, dashboard/nav visibility and permission-filtered global search | 5 | 16A | In review | RBAC-001 merged |
+| RBAC-002 | P1 | As an administrator, enforce team access across app routes, search, dashboards and navigation | 8 | 16B/C next | Remaining domains prioritized | RBAC-001; current permission-gap inventory |
 | RBAC-003 | P1 | As an administrator, verify membership changes, revocation and multi-role access | 5 | After 16 | Needs refinement | RBAC-002 |
 | A11Y-002 | P1 | As an auditor, verify decorative action icons without unresolved text-contrast checks | 1 | Urgent repair follow-up | Done (#205) | Exact workbench incomplete nodes reproduced |
 | A11Y-001 | P1 | As a reader, see muted text and outline controls with sufficient contrast | 1 | Urgent repair | Done (#204) | User audit color-contrast |

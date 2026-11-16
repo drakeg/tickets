@@ -48,7 +48,9 @@ to the system details and an Add system action above the list.
 
 System creation requires an operating system, vendor, and cluster. If a choice
 list is empty, the form explains which reference data an administrator must add.
-Authorized staff see links to the corresponding Django admin forms. Successful
+Authorized staff see links to the corresponding Django admin forms. Inventory
+creation requires the system add/view grants and view grants for all three
+reference lists; vendor creation uses add/view permissions rather than staff alone. Successful
 creation redirects to the system details showing all selections and creation date;
 refreshing that page does not resubmit the form. Invalid input retains its errors.
 
@@ -243,8 +245,10 @@ Infrastructure Team, Help Desk, and Project Manager defaults can be provisioned
 with `docker compose exec web python manage.py setup_roles` after migrations.
 Use `--dry-run` to preview. Assign users deliberately through Django admin.
 See [role matrix and enforcement plan](docs/ROLES.md): these groups currently
-supply native Django grants and existing ticket-triage access. Full main-app
-route enforcement is the next P1 increment; group creation alone is not full RBAC.
+supply native Django grants and existing ticket-triage access. Inventory routes now enforce those permissions, including dashboard/navigation
+visibility. Infrastructure members can create inventory without staff access;
+Help Desk can read it. Global search returns only authorized models. Remaining
+module routes/counters are the next P1 increment; this is not yet full app RBAC.
 
 ## Administration appearance
 
