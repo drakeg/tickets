@@ -328,3 +328,55 @@ Local deployment remains on merged master until this increment is reviewed.
 Sprint 13 retrospective: the 98-test suite and master CI passed; missing reference
 data now has actionable setup guidance. Next, finish list reachability without
 mixing in speculative identifier constraints or cleanup of existing records.
+
+## Sprint 15 — Team role foundation — In review
+
+Goal: make the three requested team roles provisionable, with an explicit access
+matrix and honest enforcement boundaries. Scope: RBAC-001 (3 points). Role access
+is now the next P1 epic; broader feature work yields to RBAC-002 and RBAC-003.
+
+See [role matrix and delivery sequence](ROLES.md) for default grants, setup,
+assignment, current route gaps and the Sprint 16 enforcement plan.
+
+Acceptance: Infrastructure Team, Help Desk and Project Manager groups can be
+created repeatedly; default grants contain no delete/user/group-management rights;
+custom grants/memberships remain; no user is elevated or assigned automatically;
+dry-run writes nothing; missing permissions fail before any groups are created;
+existing ticket triage recognizes group grants without staff status.
+
+Tasks: define defaults, add transactional setup command, add request/command
+regressions, document exact limits and prioritize full enforcement next. No schema
+migration. Review demo: preview setup, create roles, assign a test user deliberately,
+verify ticket permission and admin denial. Rollback: leave the groups untouched
+until administrators decide membership/grant changes; reverting the command does
+not remove permissions from users. Foundation is not full RBAC and must not be
+presented as such. Full suite, checks and Docker CI remain required.
+
+### Sprint 15 scope addition — KB-003: Ticket-to-article workflow (5 points)
+
+User-requested addition alongside the role foundation; delivered in the same PR
+to avoid conflicting role/backlog changes. On saved ticket details and triage form,
+users with view_issue plus add_article can open a prefilled knowledge form. Summary
+becomes title, full description becomes Issue / symptoms, and summary seeds editable
+keywords. Technician adds a required tested solution and reviews before publishing.
+
+Acceptance: GET creates no record; sensitive details can be removed before sharing;
+full problem/solution text is not truncated; author/time are server-controlled;
+POST/CSRF and both permissions are enforced; repeated saves reuse one source-linked
+article without overwriting it; source ticket is not changed or closed; ticket
+links to published knowledge; solution/problem are searchable and escaped; deleting
+the source ticket preserves knowledge. No automatic publication of copied data.
+
+Migration adds blank problem/solution fields and nullable unique source_issue;
+existing articles retain their existing title/keywords/author/date, with blank
+new content and no source. A migration rehearsal verifies this path. Generic
+article creation/editing also exposes the new body fields; existing articles do
+not require a retroactive solution. Conversion requires a solution explicitly.
+
+Review demo: Help Desk member opens a ticket, selects Create knowledge article,
+checks copied fields, adds solution, publishes, then follows View knowledge article.
+Save pending ticket edits before leaving triage. Knowledge remains public under the
+current read policy; RBAC-002 will address that gap. Rollback: keep added fields
+when reverting code; reversing the migration removes saved solution/source data
+and requires a backup/retention decision. Eight new request regressions cover the
+workflow; all existing role tests remain required.

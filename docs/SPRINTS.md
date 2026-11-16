@@ -281,7 +281,7 @@ links and joins related values. Five new regressions cover complete reachability
 encoded search, invalid pages/empty results, related fields and bounded queries.
 No schema changes. See detailed plan for acceptance criteria and rollback.
 
-## Admin workspace polish — In review
+## Admin workspace polish — Complete (#208)
 
 UI-004 overrides admin branding and CSS variables to match the main workspace,
 including dark mode and responsive layouts. Adds a Back to workspace link and
@@ -289,3 +289,16 @@ Priority Meta labels (priorities), with a metadata-only migration. Native admin
 components/permissions remain in use; no theme dependency is introduced.
 Validate index, list, add form, login restrictions, priority creation, browser
 layout and contrast before delivery. Rollback theme files separately from metadata.
+
+## Sprint 15 — Team role foundation — In review
+
+P1 RBAC-001 adds Infrastructure Team, Help Desk and Project Manager definitions
+and safe setup_roles command. Explicit permission matrix, current limitations,
+and backend enforcement stories RBAC-002/003 are tracked in docs/ROLES.md.
+Default setup does not elevate or assign users and preserves custom grants.
+No schema changes; full application enforcement is the next priority.
+
+Sprint 15 addition: KB-003 provides reviewed ticket-to-article publication with
+prefilled issue content, required solution, source link and duplicate protection.
+It uses the role foundation's ticket-view/article-add grants. Additive knowledge
+migration preserves existing articles; all existing role/access tests remain.

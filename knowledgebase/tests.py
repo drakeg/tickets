@@ -268,3 +268,105 @@ class ArticlePaginationTests(TestCase):
             self.assertEqual(response.context['page_obj'].paginator.count, 0)
             self.assertContains(response, 'No knowledge base articles are available.')
             self.assertNotContains(response, 'aria-label="Article pages"')
+
+
+class TicketKnowledgeTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        from django.contrib.auth.models import Group
+        from django.core.management import call_command
+        from io import StringIO
+        from issues.models import Issue, Priority
+        call_command('setup_roles', stdout=StringIO())
+        cls.user = get_user_model().objects.create_user(username='technician')
+        cls.user.groups.add(Group.objects.get(name='Help Desk'))
+        cls.issue = Issue.objects.create(requestor_name='requestor', summary='Recurring VPN failure',
+            description=('Full diagnostic detail. ' * 20).rstrip(),
+            priority=Priority.objects.create(name='Normal'), pub_date=timezone.now())
+
+    def setUp(self):
+        self.client.force_login(self.user)
+        self.url = reverse('knowledgebase:from_ticket', args=[self.issue.pk])
+        self.payload = {'description': self.issue.summary, 'problem': self.issue.description,
+                        'solution': 'Restart the VPN service.\nVerify the connection.', 'keywords': 'vpn'}
+
+    def test_prefill_copies_full_ticket_details_without_publishing(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].initial['description'], self.issue.summary)
+        self.assertEqual(response.context['form'].initial['problem'], self.issue.description)
+        self.assertEqual(Article.objects.count(), 0)
+        self.assertContains(self.client.get(reverse('issues:issue', args=[self.issue.pk])), self.url)
+        self.assertContains(self.client.get(reverse('issues:issue_edit', args=[self.issue.pk])), self.url)
+
+    def test_publish_preserves_full_content_authorship_and_source_without_modifying_ticket(self):
+        self.payload.update(author='Forged author', source_issue=999999, solution=('Tested step. ' * 300).rstrip())
+        response = self.client.post(self.url, self.payload)
+        article = Article.objects.get(source_issue=self.issue)
+        self.assertRedirects(response, reverse('knowledgebase:detail', args=[article.pk]))
+        self.assertEqual(article.author, self.user.username)
+        self.assertEqual(article.problem, self.issue.description)
+        self.assertEqual(article.solution, self.payload['solution'])
+        self.issue.refresh_from_db()
+        self.assertTrue(self.issue.issue_open)
+        self.assertEqual(self.issue.description, self.payload['problem'])
+        detail = self.client.get(reverse('issues:issue', args=[self.issue.pk]))
+        self.assertContains(detail, 'View knowledge article')
+        self.assertNotContains(detail, 'Create knowledge article')
+
+    def test_repeated_submission_reuses_article_without_overwriting_solution(self):
+        self.client.post(self.url, self.payload)
+        article = Article.objects.get(source_issue=self.issue)
+        self.client.post(self.url, dict(self.payload, solution='Do not overwrite'))
+        article.refresh_from_db()
+        self.assertEqual(Article.objects.count(), 1)
+        self.assertEqual(article.solution, self.payload['solution'])
+        self.assertRedirects(self.client.get(self.url), reverse('knowledgebase:detail', args=[article.pk]))
+
+    def test_solution_required_and_invalid_form_retains_problem(self):
+        response = self.client.post(self.url, dict(self.payload, solution=''))
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response.context['form'], 'solution', 'This field is required.')
+        self.assertContains(response, self.issue.description)
+        self.assertEqual(Article.objects.count(), 0)
+
+    def test_authentication_and_both_permissions_are_required(self):
+        from django.contrib.auth.models import Permission
+        self.client.logout()
+        response = self.client.post(self.url, self.payload)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login'), response['Location'])
+        for codename, app in [('add_article', 'knowledgebase'), ('view_issue', 'issues')]:
+            user = get_user_model().objects.create_user(username=codename)
+            user.user_permissions.add(Permission.objects.get(content_type__app_label=app, codename=codename))
+            self.client.force_login(user)
+            self.assertEqual(self.client.get(self.url).status_code, 403)
+            self.assertEqual(self.client.post(self.url, self.payload).status_code, 403)
+            self.assertNotContains(self.client.get(reverse('issues:issue', args=[self.issue.pk])), self.url)
+        self.assertEqual(Article.objects.count(), 0)
+
+    def test_missing_ticket_and_unsupported_methods(self):
+        url = reverse('knowledgebase:from_ticket', args=[999999])
+        self.assertEqual(self.client.get(url).status_code, 404)
+        self.assertEqual(self.client.post(url, self.payload).status_code, 404)
+        self.assertEqual(self.client.put(self.url).status_code, 405)
+
+    def test_solution_is_escaped_searchable_and_survives_ticket_deletion(self):
+        self.client.post(self.url, dict(self.payload, solution='<script>unsafe</script>\nReset tunnel'))
+        article = Article.objects.get(source_issue=self.issue)
+        response = self.client.get(reverse('knowledgebase:detail', args=[article.pk]))
+        self.assertContains(response, '&lt;script&gt;unsafe&lt;/script&gt;')
+        self.assertNotContains(response, '<script>unsafe</script>')
+        response = self.client.get(reverse('knowledgebase:search'), {'q': 'Reset tunnel'})
+        self.assertIn(article, response.context['knowledgebase_list'])
+        self.issue.delete()
+        article.refresh_from_db()
+        self.assertIsNone(article.source_issue)
+        self.assertIn('Reset tunnel', article.solution)
+
+    def test_conversion_requires_csrf_token(self):
+        from django.test import Client
+        client = Client(enforce_csrf_checks=True)
+        client.force_login(self.user)
+        self.assertEqual(client.post(self.url, self.payload).status_code, 403)
+        self.assertEqual(Article.objects.count(), 0)

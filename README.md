@@ -16,6 +16,20 @@ visitors are prompted to sign in before saving records. On narrow screens,
 navigation wraps above the content. The workspace styling is served locally and
 navigation works without JavaScript.
 
+## Share a ticket solution
+
+Authorized technicians can choose **Create knowledge article** on saved ticket
+details or the ticket update form. The title, complete issue description and
+keywords are prefilled. Add the tested solution, remove sensitive details, and
+review before publishing. Save any pending ticket edits before leaving its form.
+
+Publishing records the technician as author and links the article to the ticket;
+repeated clicks open the existing article. The ticket itself is not changed or
+closed. Issue/solution content is searchable and remains available if the source
+ticket is later deleted. Permission requires both `issues.view_issue` and
+`knowledgebase.add_article`. Knowledge articles currently follow the existing
+public-read policy; full role-based page access is the next P1 increment.
+
 ## Knowledge base browsing
 
 The knowledge-base list and article search show 15 results per page, newest first.
@@ -222,6 +236,15 @@ python manage.py createsuperuser
 ```
 
 Do not use shared or repository-documented default credentials.
+
+## Team roles
+
+Infrastructure Team, Help Desk, and Project Manager defaults can be provisioned
+with `docker compose exec web python manage.py setup_roles` after migrations.
+Use `--dry-run` to preview. Assign users deliberately through Django admin.
+See [role matrix and enforcement plan](docs/ROLES.md): these groups currently
+supply native Django grants and existing ticket-triage access. Full main-app
+route enforcement is the next P1 increment; group creation alone is not full RBAC.
 
 ## Administration appearance
 

@@ -9,5 +9,11 @@ class Article(models.Model):
     description = models.CharField(max_length=150)
     keywords = models.CharField(max_length=100)
     pub_date = models.DateTimeField('date_published')
+    problem = models.TextField(blank=True)
+    solution = models.TextField(blank=True)
+    source_issue = models.OneToOneField(
+        'issues.Issue', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='knowledge_article',
+    )
     def __str__(self):
         return self.author

@@ -49,4 +49,15 @@
     </nav>
     {% endif %}
     {% endif %}
+{% if perms.issues.view_issue and perms.knowledgebase.add_article %}
+<section class="workspace-panel">
+    <h2>Share the solution</h2>
+    {% if issue.knowledge_article %}
+    <a class="btn btn-outline-secondary" href="{% url 'knowledgebase:detail' issue.knowledge_article.pk %}">View knowledge article</a>
+    {% else %}
+    <p>Create a reusable article with this ticket's details already filled in.</p>
+    <a class="btn btn-outline-secondary" href="{% url 'knowledgebase:from_ticket' issue.pk %}">Create knowledge article</a>
+    {% endif %}
+</section>
+{% endif %}
 {% endblock %}

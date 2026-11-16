@@ -1,0 +1,12 @@
+{% extends 'tickets/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>Create knowledge article from ticket #{{ issue.pk }}</h1>
+<p>The issue details are filled in below. Add the tested solution and review the article before publishing. Remove sensitive ticket details that are not suitable for shared knowledge.</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Publish article</button>
+    <a class="btn btn-outline-secondary" href="{% url 'issues:issue' issue.pk %}">Cancel</a>
+</form>
+{% endblock %}
