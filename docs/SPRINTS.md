@@ -274,9 +274,18 @@ backend authentication is preserved. Regression coverage includes creation/refre
 invalid references, escaped names, missing records and empty-install setup.
 No schema changes. See the detailed delivery plan for acceptance and rollback.
 
-## Sprint 14 — Reachable inventory lists — In review
+## Sprint 14 — Reachable inventory lists — Complete (#207)
 
 CMDB-003 paginates system browsing/search, fixes the blank OS column, uses named
 links and joins related values. Five new regressions cover complete reachability,
 encoded search, invalid pages/empty results, related fields and bounded queries.
 No schema changes. See detailed plan for acceptance criteria and rollback.
+
+## Admin workspace polish — In review
+
+UI-004 overrides admin branding and CSS variables to match the main workspace,
+including dark mode and responsive layouts. Adds a Back to workspace link and
+Priority Meta labels (priorities), with a metadata-only migration. Native admin
+components/permissions remain in use; no theme dependency is introduced.
+Validate index, list, add form, login restrictions, priority creation, browser
+layout and contrast before delivery. Rollback theme files separately from metadata.
