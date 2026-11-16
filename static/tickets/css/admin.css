@@ -65,7 +65,7 @@ html[data-theme="dark"] {
     --default-button-hover-bg: #044e49;
     --servdesk-panel: #183344;
 }
-#header { min-height: 68px; box-sizing: border-box; gap: 16px; }
+#header { min-height: 68px; flex-shrink: 0; box-sizing: border-box; gap: 16px; }
 #branding #site-name { margin: 0; }
 #branding .servdesk-brand { display: flex; align-items: center; gap: 12px; color: #fff; font-size: 23px; font-weight: 750; letter-spacing: -.5px; }
 .servdesk-brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #32beb0; color: #102c3b; }
