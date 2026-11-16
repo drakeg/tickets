@@ -22,20 +22,26 @@ def _article_list(request, articles, query=""):
     })
 
 
+@login_required
+@permission_required('knowledgebase.view_article', raise_exception=True)
 def index(request):
     return _article_list(request, Article.objects.all())
 
 
+@login_required
+@permission_required('knowledgebase.view_article', raise_exception=True)
 def article_detail(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
     return render(
         request,
         "knowledgebase/knowledgebase_detail.html",
-        {"article": article},
+        {"article": article, "can_manage_article": _can_manage_article(request.user, article)},
     )
 
 
 @login_required
+@permission_required(('knowledgebase.view_article', 'knowledgebase.add_article'), raise_exception=True)
+@require_http_methods(['GET', 'POST'])
 def article_new(request):
     if request.method == "POST":
         form = ArticleForm(request.POST)
@@ -54,6 +60,8 @@ def article_new(request):
         {"form": form},
     )
 
+@login_required
+@permission_required('knowledgebase.view_article', raise_exception=True)
 def search(request):
     query = request.GET.get("q", "").strip()
     knowledgebase_list = Article.objects.none()
@@ -71,11 +79,13 @@ def search(request):
 
 def _can_manage_article(user, article):
     return user.is_authenticated and (
-        user.is_staff or article.author == user.username
+        user.is_superuser or user.is_staff or article.author == user.username
     )
 
 
 @login_required
+@permission_required(('knowledgebase.view_article', 'knowledgebase.change_article'), raise_exception=True)
+@require_http_methods(['GET', 'POST'])
 def article_edit(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
     if not _can_manage_article(request.user, article):
@@ -97,6 +107,7 @@ def article_edit(request, article_id):
 
 
 @login_required
+@permission_required(('knowledgebase.view_article', 'knowledgebase.delete_article'), raise_exception=True)
 @require_POST
 def article_delete(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
@@ -108,7 +119,7 @@ def article_delete(request, article_id):
 
 
 @login_required
-@permission_required(('issues.view_issue', 'knowledgebase.add_article'), raise_exception=True)
+@permission_required(('issues.view_issue', 'knowledgebase.view_article', 'knowledgebase.add_article'), raise_exception=True)
 @require_http_methods(['GET', 'POST'])
 def article_from_ticket(request, issue_id):
     issue = get_object_or_404(Issue, pk=issue_id)

@@ -18,17 +18,17 @@
         <nav class="workspace-nav" aria-label="Main navigation">
             <a href="{% url 'dashboard:index' %}"{% if request.resolver_match.app_name == 'dashboard' %} aria-current="page"{% endif %}>Overview</a>
 {% if perms.issues.view_issue %}            <a href="{% url 'issues:index' %}"{% if request.resolver_match.app_name == 'issues' %} aria-current="page"{% endif %}>Tickets</a>{% endif %}
-            <a href="{% url 'projects:index' %}"{% if request.resolver_match.app_name == 'projects' %} aria-current="page"{% endif %}>Projects</a>
+{% if perms.projects.view_project %}            <a href="{% url 'projects:index' %}"{% if request.resolver_match.app_name == 'projects' %} aria-current="page"{% endif %}>Projects</a>{% endif %}
 {% if perms.inventory.view_server %}            <a href="{% url 'inventory:index' %}"{% if request.resolver_match.app_name == 'inventory' %} aria-current="page"{% endif %}>Systems</a>{% endif %}
-            <a href="{% url 'knowledgebase:index' %}"{% if request.resolver_match.app_name == 'knowledgebase' %} aria-current="page"{% endif %}>Knowledge base</a>
+{% if perms.knowledgebase.view_article %}            <a href="{% url 'knowledgebase:index' %}"{% if request.resolver_match.app_name == 'knowledgebase' %} aria-current="page"{% endif %}>Knowledge base</a>{% endif %}
         </nav>
         <div class="sidebar-section">
             <p class="workspace-label">QUICK CREATE</p>
             <nav class="workspace-nav" aria-label="Create records">
 {% if perms.issues.view_issue and perms.issues.add_issue and perms.issues.view_priority %}                <a href="{% url 'issues:issue_new' %}">+ New ticket</a>{% endif %}
-                <a href="{% url 'projects:project_new' %}">+ New project</a>
+{% if perms.projects.view_project and perms.projects.add_project %}                <a href="{% url 'projects:project_new' %}">+ New project</a>{% endif %}
 {% if perms.inventory.view_server and perms.inventory.add_server and perms.inventory.view_operating_system and perms.inventory.view_vendor and perms.inventory.view_cluster %}                <a href="{% url 'inventory:servers_new' %}">+ Add system</a>{% endif %}
-                <a href="{% url 'knowledgebase:new' %}">+ Write article</a>
+{% if perms.knowledgebase.view_article and perms.knowledgebase.add_article %}                <a href="{% url 'knowledgebase:new' %}">+ Write article</a>{% endif %}
             </nav>
         </div>
         {% if perms.issues.view_issue %}<div class="sidebar-section">
@@ -49,7 +49,7 @@
             </nav>
         </div>
         {% endif %}
-        {% if user.is_authenticated %}<div class="sidebar-section"><nav class="workspace-nav" aria-label="Project queues"><a href="{% url 'projects:my_projects' %}">My projects</a><a href="{% url 'projects:unassigned_projects' %}">Unassigned projects</a></nav></div>{% endif %}
+{% if perms.projects.view_project %}        {% if user.is_authenticated %}<div class="sidebar-section"><nav class="workspace-nav" aria-label="Project queues"><a href="{% url 'projects:my_projects' %}">My projects</a><a href="{% url 'projects:unassigned_projects' %}">Unassigned projects</a></nav></div>{% endif %}{% endif %}
         <p class="sidebar-note">A clear view of your service desk.</p>
     </aside>
     <div class="main-column">
@@ -67,7 +67,7 @@
         </header>
         <main id="main-content" class="workspace-content" tabindex="-1">
             {% if not user.is_authenticated %}
-            <div class="signin-notice"><a href="{% url 'login' %}">Sign in</a> to access tickets and systems with your assigned team permissions.</div>
+            <div class="signin-notice"><a href="{% url 'login' %}">Sign in</a> to access your workspace with your assigned team permissions.</div>
             {% endif %}
             <div class="search-toolbar">
             {% block search %}
