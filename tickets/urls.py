@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path, re_path
+from dashboard.search import search as workspace_search
 
 urlpatterns = [
     re_path(r'^api/', include('djoser.urls')),
-    re_path(r"^search/", include("watson.urls", namespace="watson"), kwargs={"paginate_by":10}),
+    path('search/', include(([path('', workspace_search, name='search')], 'watson'), namespace='watson')),
     path('inventory/', include('inventory.urls')),
     path('issues/', include('issues.urls')),
     path('projects/', include('projects.urls')),

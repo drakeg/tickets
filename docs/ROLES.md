@@ -42,25 +42,44 @@ No group receives user/group management or delete permissions by default.
 
 ## What is enforced today
 
-The admin interface already honors model permissions. The ticket triage route
-requires issues.change_issue, so Help Desk and Infrastructure membership enable
-that existing workflow even for non-staff users. Ticket-to-article conversion
-requires both issues.view_issue and knowledgebase.add_article; all three default
-groups have these grants. Group setup does not change the
-rest of the application's current behavior. Most read pages are public, most
-creation pages require only login, vendor creation uses staff status, and article
-editing uses author/staff rules. A missing grant in this table is therefore not yet
-a deny rule for those main-app routes. Group setup alone is not full RBAC.
+The admin interface honors model permissions. Ticket triage requires
+issues.change_issue; ticket-to-article conversion requires view_issue and
+add_article. Inventory lists/detail/name search require view_server; the operating
+system route requires view_operating_system. System creation requires view_server,
+add_server, and view grants for OS/vendor/cluster choices. Vendor creation requires
+view_vendor and add_vendor instead of staff status. Infrastructure members therefore
+use normal application forms without admin-site access.
+
+Inventory navigation/counts are hidden without view_server. Add system appears
+only with all required grants; direct URLs independently enforce them. Anonymous
+inventory requests redirect to login; authenticated denial returns a useful 403.
+Global search is now a permission-filtered query over tickets, projects, inventory
+and knowledge articles, capped at 10 results per authorized section. No denied
+model is queried or returned. It requires login and at least one view grant.
+
+This is not yet full application RBAC: direct ticket/project/article read routes,
+most of their create flows, and their dashboard counters retain the existing
+policy. Article editing/deletion still uses author/staff rules. Those domain gaps
+remain the next P1 increments; do not interpret the matrix as a universal deny
+policy until that work is complete. No users are auto-enrolled or elevated.
 
 ## P1 delivery sequence
 
-### Sprint 15: RBAC-001 — Role foundation (in review, 3 points)
+### Sprint 15: RBAC-001 — Role foundation (complete, #209)
 
 Create the named defaults and idempotent setup command, document the matrix and
 limits, and test exact meaningful boundaries, repeat runs, dry-run, custom grant
 preservation, unchanged users and missing-permission failure. No schema migration.
 
-### Sprint 16: RBAC-002 — Enforce module access (next, 8 points; split by domain)
+### Sprint 16A: RBAC-002A — Inventory and global search (in review, 5 points)
+
+First split of the enforcement epic. Acceptance: all inventory entry points enforce
+the grants above, reference choices need view grants, denied counts/navigation stay
+hidden, global search cannot disclose unauthorized records, and next-request role
+revocation plus combined roles behave correctly. Preserve superuser access.
+
+### Sprint 16B/C: RBAC-002 — Remaining module enforcement (next P1)
+
 
 - Replace public/module reads and login-only writes with explicit model grants.
 - Cover list, detail, search, create, update, dashboard aggregates and global search.

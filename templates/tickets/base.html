@@ -19,7 +19,7 @@
             <a href="{% url 'dashboard:index' %}"{% if request.resolver_match.app_name == 'dashboard' %} aria-current="page"{% endif %}>Overview</a>
             <a href="{% url 'issues:index' %}"{% if request.resolver_match.app_name == 'issues' %} aria-current="page"{% endif %}>Tickets</a>
             <a href="{% url 'projects:index' %}"{% if request.resolver_match.app_name == 'projects' %} aria-current="page"{% endif %}>Projects</a>
-            <a href="{% url 'inventory:index' %}"{% if request.resolver_match.app_name == 'inventory' %} aria-current="page"{% endif %}>Systems</a>
+{% if perms.inventory.view_server %}            <a href="{% url 'inventory:index' %}"{% if request.resolver_match.app_name == 'inventory' %} aria-current="page"{% endif %}>Systems</a>{% endif %}
             <a href="{% url 'knowledgebase:index' %}"{% if request.resolver_match.app_name == 'knowledgebase' %} aria-current="page"{% endif %}>Knowledge base</a>
         </nav>
         <div class="sidebar-section">
@@ -27,7 +27,7 @@
             <nav class="workspace-nav" aria-label="Create records">
                 <a href="{% url 'issues:issue_new' %}">+ New ticket</a>
                 <a href="{% url 'projects:project_new' %}">+ New project</a>
-                <a href="{% url 'inventory:servers_new' %}">+ Add system</a>
+{% if perms.inventory.view_server and perms.inventory.add_server and perms.inventory.view_operating_system and perms.inventory.view_vendor and perms.inventory.view_cluster %}                <a href="{% url 'inventory:servers_new' %}">+ Add system</a>{% endif %}
                 <a href="{% url 'knowledgebase:new' %}">+ Write article</a>
             </nav>
         </div>
@@ -40,11 +40,11 @@
                 <a href="{% url 'issues:index' %}?status=closed">Closed tickets</a>
             </nav>
         </div>
-        {% if user.is_staff %}
+        {% if user.is_staff or perms.inventory.add_vendor %}
         <div class="sidebar-section">
             <nav class="workspace-nav" aria-label="Administration">
-                <a href="{% url 'admin:index' %}">Administration</a>
-                <a href="{% url 'inventory:vendor_new' %}">Add vendor</a>
+                {% if user.is_staff %}<a href="{% url 'admin:index' %}">Administration</a>{% endif %}
+{% if perms.inventory.add_vendor and perms.inventory.view_vendor %}                <a href="{% url 'inventory:vendor_new' %}">Add vendor</a>{% endif %}
             </nav>
         </div>
         {% endif %}

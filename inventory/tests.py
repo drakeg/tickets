@@ -6,6 +6,16 @@ from django.utils import timezone
 from .models import Cluster, Operating_System, Server, Vendor
 
 
+def grant_inventory_access(user, *, vendor_write=False):
+    from django.contrib.auth.models import Permission
+    from django.db.models import Q
+    permissions = Permission.objects.filter(content_type__app_label='inventory').filter(
+        Q(codename__startswith='view_') | Q(codename='add_server')
+        | (Q(codename='add_vendor') if vendor_write else Q(pk__in=[]))
+    )
+    user.user_permissions.add(*permissions)
+
+
 class InventoryWorkflowTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
@@ -17,6 +27,9 @@ class InventoryWorkflowTests(TestCase):
             password="test-password",
             is_staff=True,
         )
+        grant_inventory_access(self.user)
+        grant_inventory_access(self.staff_user, vendor_write=True)
+        self.client.force_login(self.user)
         self.os = Operating_System.objects.create(os_name="Ubuntu")
         self.vendor = Vendor.objects.create(vendor_name="Dell")
         self.cluster = Cluster.objects.create(cluster_name="Production")
@@ -64,6 +77,7 @@ class InventoryWorkflowTests(TestCase):
         self.assertContains(response, str(self.os.pk))
 
     def test_server_create_requires_authentication(self):
+        self.client.logout()
         response = self.client.get(reverse("inventory:servers_new"))
 
         self.assertEqual(response.status_code, 302)
@@ -89,19 +103,20 @@ class InventoryWorkflowTests(TestCase):
         self.assertEqual(Server.objects.filter(server_name='app-02').count(), 1)
 
     def test_vendor_create_requires_authentication(self):
+        self.client.logout()
         response = self.client.get(reverse("inventory:vendor_new"))
 
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response["Location"])
 
-    def test_vendor_create_rejects_non_staff_user(self):
+    def test_vendor_create_rejects_user_without_add_permission(self):
         self.client.force_login(self.user)
 
         response = self.client.get(reverse("inventory:vendor_new"))
 
         self.assertEqual(response.status_code, 403)
 
-    def test_staff_user_can_create_vendor(self):
+    def test_permitted_staff_user_can_create_vendor(self):
         self.client.force_login(self.staff_user)
 
         response = self.client.post(
@@ -131,6 +146,7 @@ class InventoryWorkflowTests(TestCase):
         self.assertEqual(Server.objects.count(), 1)
 
     def test_anonymous_post_cannot_create_system(self):
+        self.client.logout()
         response = self.client.post(reverse('inventory:servers_new'), {
             'server_name': 'Blocked', 'os': self.os.pk,
             'vendor': self.vendor.pk, 'cluster': self.cluster.pk,
@@ -154,6 +170,7 @@ class InventoryWorkflowTests(TestCase):
 class InventorySetupGuidanceTests(TestCase):
     def test_empty_reference_lists_explain_setup_without_exposing_admin_links(self):
         user = get_user_model().objects.create_user(username='new-operator')
+        grant_inventory_access(user)
         self.client.force_login(user)
         response = self.client.get(reverse('inventory:servers_new'))
         self.assertContains(response, 'operating systems, vendors, clusters')
@@ -187,6 +204,11 @@ class InventoryListTests(TestCase):
         ) for number in reversed(range(34))]
         Server.objects.create(server_name='Unrelated', os=cls.os, vendor=cls.vendor,
                               cluster=cls.clusters[0], pub_date=timezone.now())
+
+    def setUp(self):
+        user = get_user_model().objects.create_user(username='inventory-list-reader')
+        grant_inventory_access(user)
+        self.client.force_login(user)
 
     def test_all_systems_are_reachable_in_stable_cluster_name_id_order(self):
         ids = []
@@ -230,6 +252,100 @@ class InventoryListTests(TestCase):
         self.assertContains(response, reverse('inventory:servers', args=[server.pk]))
 
     def test_related_columns_do_not_add_queries_per_row(self):
-        with self.assertNumQueries(2):
+        from django.test.utils import CaptureQueriesContext
+        from django.db import connection
+        with CaptureQueriesContext(connection) as queries:
             response = self.client.get(reverse('inventory:index'))
+        inventory_queries = [q for q in queries if 'FROM "inventory_' in q['sql']]
+        self.assertEqual(len(inventory_queries), 2)
         self.assertEqual(len(response.context['server_list']), 15)
+
+
+class InventoryRoleBoundaryTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        from django.contrib.auth.models import Group
+        from django.core.management import call_command
+        from io import StringIO
+        call_command('setup_roles', stdout=StringIO())
+        cls.users = {}
+        for role in ('Infrastructure Team', 'Help Desk', 'Project Manager'):
+            user = get_user_model().objects.create_user(username=role.replace(' ', '-'))
+            user.groups.add(Group.objects.get(name=role))
+            cls.users[role] = user
+        cls.os = Operating_System.objects.create(os_name='Role OS')
+        cls.vendor = Vendor.objects.create(vendor_name='Role vendor')
+        cls.cluster = Cluster.objects.create(cluster_name='Role cluster')
+        cls.server = Server.objects.create(server_name='Restricted system', os=cls.os,
+            vendor=cls.vendor, cluster=cls.cluster, pub_date=timezone.now())
+
+    def read_urls(self):
+        return [reverse('inventory:index'), reverse('inventory:search') + '?q=Restricted',
+                reverse('inventory:servers', args=[self.server.pk]),
+                reverse('inventory:operating_systems', args=[self.os.pk])]
+
+    def test_each_team_has_expected_inventory_read_and_create_boundaries(self):
+        for role, user in self.users.items():
+            self.client.force_login(user)
+            expected = 403 if role == 'Project Manager' else 200
+            for url in self.read_urls():
+                self.assertEqual(self.client.get(url).status_code, expected, (role, url))
+            write_expected = 200 if role == 'Infrastructure Team' else 403
+            self.assertEqual(self.client.get(reverse('inventory:servers_new')).status_code, write_expected)
+            if role != 'Infrastructure Team':
+                self.assertEqual(self.client.post(reverse('inventory:servers_new'), {
+                    'server_name': 'Blocked', 'os': self.os.pk, 'vendor': self.vendor.pk,
+                    'cluster': self.cluster.pk,
+                }).status_code, 403)
+        self.assertEqual(Server.objects.count(), 1)
+
+    def test_infrastructure_can_create_system_and_vendor_without_staff(self):
+        user = self.users['Infrastructure Team']
+        self.assertFalse(user.is_staff)
+        self.client.force_login(user)
+        response = self.client.post(reverse('inventory:servers_new'), {
+            'server_name': 'New authorized system', 'os': self.os.pk,
+            'vendor': self.vendor.pk, 'cluster': self.cluster.pk,
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Server.objects.filter(server_name='New authorized system').exists())
+        response = self.client.post(reverse('inventory:vendor_new'), {'vendor_name': 'Authorized vendor'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Vendor.objects.filter(vendor_name='Authorized vendor').exists())
+        self.assertEqual(self.client.get(reverse('admin:index')).status_code, 302)
+
+    def test_anonymous_and_no_role_users_cannot_bypass_direct_urls(self):
+        for url in self.read_urls() + [reverse('inventory:servers_new'), reverse('inventory:vendor_new')]:
+            self.assertEqual(self.client.get(url).status_code, 302)
+        user = get_user_model().objects.create_user(username='staff-without-grants', is_staff=True)
+        self.client.force_login(user)
+        for url in self.read_urls() + [reverse('inventory:servers_new'), reverse('inventory:vendor_new')]:
+            self.assertEqual(self.client.get(url).status_code, 403)
+        self.assertEqual(self.client.post(reverse('inventory:vendor_new'), {'vendor_name': 'Denied'}).status_code, 403)
+        self.assertFalse(Vendor.objects.filter(vendor_name='Denied').exists())
+
+    def test_revocation_and_multiple_roles_take_effect_next_request(self):
+        from django.contrib.auth.models import Group
+        user = self.users['Infrastructure Team']
+        self.client.force_login(user)
+        self.assertEqual(self.client.get(reverse('inventory:index')).status_code, 200)
+        user.groups.clear()
+        self.assertEqual(self.client.get(reverse('inventory:index')).status_code, 403)
+        user.groups.add(Group.objects.get(name='Project Manager'), Group.objects.get(name='Help Desk'))
+        self.assertEqual(self.client.get(reverse('inventory:index')).status_code, 200)
+        self.assertEqual(self.client.get(reverse('inventory:servers_new')).status_code, 403)
+
+    def test_hidden_navigation_counts_and_creation_reference_permissions(self):
+        from django.contrib.auth.models import Permission
+        user = self.users['Project Manager']
+        self.client.force_login(user)
+        response = self.client.get(reverse('dashboard:index'))
+        self.assertEqual(response.context['num_systems'], 0)
+        self.assertNotContains(response, reverse('inventory:index'))
+        self.assertNotContains(response, reverse('inventory:servers_new'))
+        user = get_user_model().objects.create_user(username='partial-inventory-grants')
+        user.user_permissions.add(*Permission.objects.filter(content_type__app_label='inventory',
+            codename__in=['view_server', 'add_server']))
+        self.client.force_login(user)
+        self.assertEqual(self.client.get(reverse('inventory:servers_new')).status_code, 403)
+        self.assertNotContains(self.client.get(reverse('inventory:index')), reverse('inventory:servers_new'))

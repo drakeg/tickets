@@ -6,7 +6,7 @@ from projects.models import Project
 
 def index(request):
     max_systems = 2000
-    num_systems = Server.objects.all().count()
+    num_systems = Server.objects.count() if request.user.has_perm('inventory.view_server') else 0
     percent_systems = str(num_systems/max_systems * 100) + "%"
     max_my_issues = 100
     num_my_issues = Issue.objects.filter(issue_open=True, assigned=request.user.id).count()

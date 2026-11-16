@@ -1,0 +1,7 @@
+{% extends 'tickets/base.html' %}
+{% block content %}
+<h1>Workspace search</h1>
+<p>Up to 10 matching records per section, limited to your viewing permissions.</p>
+{% if results %}<ul>{% for result in results %}<li><span>{{ result.kind }}</span>: <a href="{{ result.url }}">{{ result.title }}</a></li>{% endfor %}</ul>
+{% else %}<p>No matching records are available.</p>{% endif %}
+{% endblock %}
