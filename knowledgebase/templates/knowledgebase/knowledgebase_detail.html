@@ -11,6 +11,9 @@
         <dt>Published</dt>
         <dd>{{ article.pub_date }}</dd>
     </dl>
+    {% if article.problem %}<h2>Issue / symptoms</h2>{{ article.problem|linebreaks }}{% endif %}
+    {% if article.solution %}<h2>Solution</h2>{{ article.solution|linebreaks }}{% endif %}
+    {% if article.source_issue and perms.issues.view_issue %}<p>Source: <a href="{% url 'issues:issue' article.source_issue_id %}">Ticket #{{ article.source_issue_id }}</a></p>{% endif %}
     {% if user.is_authenticated and user.username == article.author or user.is_staff %}
         <p>
             <a class="btn btn-primary" href="{% url 'knowledgebase:edit' article.id %}">Edit</a>

@@ -297,3 +297,8 @@ and safe setup_roles command. Explicit permission matrix, current limitations,
 and backend enforcement stories RBAC-002/003 are tracked in docs/ROLES.md.
 Default setup does not elevate or assign users and preserves custom grants.
 No schema changes; full application enforcement is the next priority.
+
+Sprint 15 addition: KB-003 provides reviewed ticket-to-article publication with
+prefilled issue content, required solution, source link and duplicate protection.
+It uses the role foundation's ticket-view/article-add grants. Additive knowledge
+migration preserves existing articles; all existing role/access tests remain.

@@ -1,12 +1,13 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.utils import timezone
 
-from .forms import ArticleForm
+from .forms import ArticleForm, TicketArticleForm
+from issues.models import Issue
 from .models import Article
 
 
@@ -59,6 +60,8 @@ def search(request):
     if query:
         knowledgebase_list = Article.objects.filter(
             Q(description__icontains=query)
+            | Q(problem__icontains=query)
+            | Q(solution__icontains=query)
             | Q(keywords__icontains=query)
             | Q(author__icontains=query)
         ).order_by("-pub_date")
@@ -102,3 +105,28 @@ def article_delete(request, article_id):
 
     article.delete()
     return redirect("knowledgebase:index")
+
+
+@login_required
+@permission_required(('issues.view_issue', 'knowledgebase.add_article'), raise_exception=True)
+@require_http_methods(['GET', 'POST'])
+def article_from_ticket(request, issue_id):
+    issue = get_object_or_404(Issue, pk=issue_id)
+    existing = Article.objects.filter(source_issue=issue).first()
+    if existing:
+        return redirect('knowledgebase:detail', article_id=existing.pk)
+    initial = {
+        'description': issue.summary,
+        'problem': issue.description,
+        'keywords': issue.summary,
+    }
+    form = TicketArticleForm(request.POST if request.method == 'POST' else None, initial=initial)
+    if request.method == 'POST' and form.is_valid():
+        # The unique source link makes repeated/concurrent submissions non-duplicating.
+        article, created = Article.objects.get_or_create(source_issue=issue, defaults={
+            **form.cleaned_data, 'author': request.user.username, 'pub_date': timezone.now(),
+        })
+        return redirect('knowledgebase:detail', article_id=article.pk)
+    return render(request, 'knowledgebase/knowledgebase_from_ticket.html', {
+        'form': form, 'issue': issue,
+    })

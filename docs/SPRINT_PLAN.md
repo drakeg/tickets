@@ -351,3 +351,32 @@ verify ticket permission and admin denial. Rollback: leave the groups untouched
 until administrators decide membership/grant changes; reverting the command does
 not remove permissions from users. Foundation is not full RBAC and must not be
 presented as such. Full suite, checks and Docker CI remain required.
+
+### Sprint 15 scope addition — KB-003: Ticket-to-article workflow (5 points)
+
+User-requested addition alongside the role foundation; delivered in the same PR
+to avoid conflicting role/backlog changes. On saved ticket details and triage form,
+users with view_issue plus add_article can open a prefilled knowledge form. Summary
+becomes title, full description becomes Issue / symptoms, and summary seeds editable
+keywords. Technician adds a required tested solution and reviews before publishing.
+
+Acceptance: GET creates no record; sensitive details can be removed before sharing;
+full problem/solution text is not truncated; author/time are server-controlled;
+POST/CSRF and both permissions are enforced; repeated saves reuse one source-linked
+article without overwriting it; source ticket is not changed or closed; ticket
+links to published knowledge; solution/problem are searchable and escaped; deleting
+the source ticket preserves knowledge. No automatic publication of copied data.
+
+Migration adds blank problem/solution fields and nullable unique source_issue;
+existing articles retain their existing title/keywords/author/date, with blank
+new content and no source. A migration rehearsal verifies this path. Generic
+article creation/editing also exposes the new body fields; existing articles do
+not require a retroactive solution. Conversion requires a solution explicitly.
+
+Review demo: Help Desk member opens a ticket, selects Create knowledge article,
+checks copied fields, adds solution, publishes, then follows View knowledge article.
+Save pending ticket edits before leaving triage. Knowledge remains public under the
+current read policy; RBAC-002 will address that gap. Rollback: keep added fields
+when reverting code; reversing the migration removes saved solution/source data
+and requires a backup/retention decision. Eight new request regressions cover the
+workflow; all existing role tests remain required.

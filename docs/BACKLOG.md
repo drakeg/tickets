@@ -17,6 +17,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 
 | ID | Priority | User story / outcome | Points | Sprint | State | Dependency |
 |---|---|---|---:|---|---|---|
+| KB-003 | P1 | As a technician, turn a recurring ticket and tested solution into a linked article without retyping details | 5 | 15 addition | In review | User request; source-ticket permissions |
 | RBAC-001 | P1 | As an administrator, provision named team roles with safe repeatable defaults | 3 | 15 | In review | User role requirements; docs/ROLES.md |
 | RBAC-002 | P1 | As an administrator, enforce team access across app routes, search, dashboards and navigation | 8 | 16 next | Ready for domain breakdown | RBAC-001; current permission-gap inventory |
 | RBAC-003 | P1 | As an administrator, verify membership changes, revocation and multi-role access | 5 | After 16 | Needs refinement | RBAC-002 |

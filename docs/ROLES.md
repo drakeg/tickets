@@ -44,7 +44,9 @@ No group receives user/group management or delete permissions by default.
 
 The admin interface already honors model permissions. The ticket triage route
 requires issues.change_issue, so Help Desk and Infrastructure membership enable
-that existing workflow even for non-staff users. Group setup does not change the
+that existing workflow even for non-staff users. Ticket-to-article conversion
+requires both issues.view_issue and knowledgebase.add_article; all three default
+groups have these grants. Group setup does not change the
 rest of the application's current behavior. Most read pages are public, most
 creation pages require only login, vendor creation uses staff status, and article
 editing uses author/staff rules. A missing grant in this table is therefore not yet
