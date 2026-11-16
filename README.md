@@ -223,6 +223,15 @@ python manage.py createsuperuser
 
 Do not use shared or repository-documented default credentials.
 
+## Team roles
+
+Infrastructure Team, Help Desk, and Project Manager defaults can be provisioned
+with `docker compose exec web python manage.py setup_roles` after migrations.
+Use `--dry-run` to preview. Assign users deliberately through Django admin.
+See [role matrix and enforcement plan](docs/ROLES.md): these groups currently
+supply native Django grants and existing ticket-triage access. Full main-app
+route enforcement is the next P1 increment; group creation alone is not full RBAC.
+
 ## Administration appearance
 
 Django admin uses the ServDesk workspace branding, palette and panel styling,

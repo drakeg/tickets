@@ -328,3 +328,26 @@ Local deployment remains on merged master until this increment is reviewed.
 Sprint 13 retrospective: the 98-test suite and master CI passed; missing reference
 data now has actionable setup guidance. Next, finish list reachability without
 mixing in speculative identifier constraints or cleanup of existing records.
+
+## Sprint 15 — Team role foundation — In review
+
+Goal: make the three requested team roles provisionable, with an explicit access
+matrix and honest enforcement boundaries. Scope: RBAC-001 (3 points). Role access
+is now the next P1 epic; broader feature work yields to RBAC-002 and RBAC-003.
+
+See [role matrix and delivery sequence](ROLES.md) for default grants, setup,
+assignment, current route gaps and the Sprint 16 enforcement plan.
+
+Acceptance: Infrastructure Team, Help Desk and Project Manager groups can be
+created repeatedly; default grants contain no delete/user/group-management rights;
+custom grants/memberships remain; no user is elevated or assigned automatically;
+dry-run writes nothing; missing permissions fail before any groups are created;
+existing ticket triage recognizes group grants without staff status.
+
+Tasks: define defaults, add transactional setup command, add request/command
+regressions, document exact limits and prioritize full enforcement next. No schema
+migration. Review demo: preview setup, create roles, assign a test user deliberately,
+verify ticket permission and admin denial. Rollback: leave the groups untouched
+until administrators decide membership/grant changes; reverting the command does
+not remove permissions from users. Foundation is not full RBAC and must not be
+presented as such. Full suite, checks and Docker CI remain required.

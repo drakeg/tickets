@@ -17,9 +17,12 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 
 | ID | Priority | User story / outcome | Points | Sprint | State | Dependency |
 |---|---|---|---:|---|---|---|
+| RBAC-001 | P1 | As an administrator, provision named team roles with safe repeatable defaults | 3 | 15 | In review | User role requirements; docs/ROLES.md |
+| RBAC-002 | P1 | As an administrator, enforce team access across app routes, search, dashboards and navigation | 8 | 16 next | Ready for domain breakdown | RBAC-001; current permission-gap inventory |
+| RBAC-003 | P1 | As an administrator, verify membership changes, revocation and multi-role access | 5 | After 16 | Needs refinement | RBAC-002 |
 | A11Y-002 | P1 | As an auditor, verify decorative action icons without unresolved text-contrast checks | 1 | Urgent repair follow-up | Done (#205) | Exact workbench incomplete nodes reproduced |
 | A11Y-001 | P1 | As a reader, see muted text and outline controls with sufficient contrast | 1 | Urgent repair | Done (#204) | User audit color-contrast |
-| UI-004 | P1 | As an administrator, use consistent workspace branding and correct model labels | 2 | Admin polish | In review | User feedback |
+| UI-004 | P1 | As an administrator, use consistent workspace branding and correct model labels | 2 | Admin polish | Done (#208) | User feedback |
 | UI-003 | P1 | As a user, navigate and find create actions on desktop/mobile with readable dashboard styling | 5 | Urgent repair | Done (#199) | User-reported blocker |
 | TKT-001 | P1 | As an agent, reach every ticket in stable newest-first pages | 3 | 6 | Done (#196) | #195 merged |
 | TKT-002 | P1 | As an agent, filter all, assigned, unassigned, and search queues by status | 3 | 6 | Done (#196) | TKT-001 |
