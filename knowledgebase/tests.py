@@ -1,9 +1,15 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from .models import Article
+
+
+def grant_article_access(user, *codenames):
+    user.user_permissions.add(*Permission.objects.filter(
+        content_type__app_label='knowledgebase', codename__in=codenames))
 
 
 class KnowledgeBaseTests(TestCase):
@@ -12,6 +18,8 @@ class KnowledgeBaseTests(TestCase):
             username="kb-user",
             password="test-password",
         )
+        grant_article_access(self.user, 'view_article', 'add_article', 'change_article', 'delete_article')
+        self.client.force_login(self.user)
         self.article = Article.objects.create(
             author="Support",
             description="Reset a locked account",
@@ -40,6 +48,7 @@ class KnowledgeBaseTests(TestCase):
         self.assertContains(response, "Reset a locked account")
 
     def test_create_article_requires_authentication(self):
+        self.client.logout()
         response = self.client.get(reverse("knowledgebase:new"))
 
         self.assertEqual(response.status_code, 302)
@@ -141,6 +150,7 @@ class KnowledgeBaseTests(TestCase):
             keywords="owner",
             pub_date=timezone.now(),
         )
+        grant_article_access(other, 'view_article', 'change_article', 'delete_article')
         self.client.force_login(other)
 
         response = self.client.get(
@@ -155,6 +165,7 @@ class KnowledgeBaseTests(TestCase):
             password="test-password",
             is_staff=True,
         )
+        grant_article_access(staff, 'view_article', 'change_article')
         self.client.force_login(staff)
 
         response = self.client.post(
@@ -215,6 +226,7 @@ class KnowledgeBaseTests(TestCase):
             keywords="protected",
             pub_date=timezone.now(),
         )
+        grant_article_access(other, 'view_article', 'change_article', 'delete_article')
         self.client.force_login(other)
 
         response = self.client.post(
@@ -234,6 +246,11 @@ class ArticlePaginationTests(TestCase):
             keywords='network,vpn', pub_date=now,
         ) for number in range(34)]
         Article.objects.create(author='Other', description='Unrelated', keywords='other', pub_date=now)
+
+    def setUp(self):
+        user = get_user_model().objects.create_user(username='article-reader')
+        grant_article_access(user, 'view_article')
+        self.client.force_login(user)
 
     def test_every_article_is_reachable_in_stable_newest_first_order(self):
         ids = []

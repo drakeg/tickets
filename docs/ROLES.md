@@ -1,6 +1,6 @@
 # Team roles and access-control delivery
 
-Priority: P1. This is an active delivery epic, not a completed security boundary.
+Priority: P1. Module enforcement is delivered incrementally; Sprint 16C is in review.
 
 ## Default groups
 
@@ -44,7 +44,7 @@ No group receives user/group management or delete permissions by default.
 
 The admin interface honors model permissions. All ticket lists, queues, detail
 and local search require view_issue. Creation requires view_issue, add_issue and
-view_priority; triage requires view_issue, change_issue and view_priority; ticket-to-article conversion requires view_issue and
+view_priority; triage requires view_issue, change_issue and view_priority; ticket-to-article conversion requires view_issue, view_article and
 add_article. Inventory lists/detail/name search require view_server; the operating
 system route requires view_operating_system. System creation requires view_server,
 add_server, and view grants for OS/vendor/cluster choices. Vendor creation requires
@@ -65,10 +65,31 @@ counts. Anonymous ticket requests redirect to login and authenticated denials re
 do not substitute for model grants. Users without grants need an administrator to
 assign a role explicitly; registration grants no role.
 
-This is not yet full application RBAC: direct project/article read routes,
-their create flows, and project dashboard counters retain the existing policy. Article editing/deletion still uses author/staff rules. Those domain gaps
-remain the next P1 increments; do not interpret the matrix as a universal deny
-policy until that work is complete. No users are auto-enrolled or elevated.
+Project lists, personal/unassigned queues, details and local search require
+view_project. Creation requires view_project plus add_project. Project navigation
+and dashboard counts follow view_project; denied requests issue no project count
+query. Project tasks have model grants for future workflows but no separate task
+application routes today; Django admin continues to check model permissions.
+
+Knowledge lists, detail and search require view_article. Creation requires both
+view_article and add_article. Ticket conversion requires view_issue, view_article
+and add_article, including when redirecting to an existing linked article.
+Editing requires view_article plus change_article AND author/staff eligibility;
+deletion requires view_article plus delete_article AND author/staff eligibility.
+The UI checks each action separately; superusers can recover any article. No
+named default group receives change_article or delete_article. Even an author
+needs the relevant explicit grant; staff status alone does not grant model access.
+To allow a technician to maintain their own articles, assign change_article
+deliberately. To moderate other authors' articles, grant staff plus the relevant
+model permissions. No new group grants are silently introduced.
+
+These boundaries cover the existing inventory, ticket, project, knowledge and
+global-search app routes. RBAC-003 remains the next verification/administration
+increment. Permissions are global within each model, not tenant/team/record scopes;
+article ownership still compares a legacy author-name string and is additionally
+restricted by grants. Username-to-author relation migration, self-service policy,
+and audit-retention policy remain separate backlog work. No users are auto-enrolled
+or elevated. Registered users see guidance to ask an administrator for a team role.
 
 ## P1 delivery sequence
 
@@ -85,26 +106,22 @@ the grants above, reference choices need view grants, denied counts/navigation s
 hidden, global search cannot disclose unauthorized records, and next-request role
 revocation plus combined roles behave correctly. Preserve superuser access.
 
-### Sprint 16B: RBAC-002B — Ticket enforcement (in review, 5 points)
+### Sprint 16B: RBAC-002B — Ticket enforcement (complete, #211, 5 points)
 
 Enforce the ticket rules above on GET and POST, hide counts/links consistently,
 and verify role defaults, no-role/anonymous denial, missing reference/view grants,
 revocation, multi-role union and superuser recovery. Ticket editing retains its
 transactional history and CSRF behavior; no new grants or schema changes.
 
-### Sprint 16C: RBAC-002 — Project/article enforcement (next P1)
+### Sprint 16C: RBAC-002C — Project/article enforcement (in review, 5 points)
 
-
-- Replace public/module reads and login-only writes with explicit model grants.
-- Cover list, detail, search, create, update, dashboard aggregates and global search.
-- Make navigation reflect backend permissions while direct URLs enforce them.
-- Login redirects anonymous users; authenticated users without grants receive 403.
-- Preserve superuser recovery/admin access and POST/CSRF protections.
-- Add real request tests for each group, a no-role user, anonymous users and a
-  multi-role user. Verify direct URLs and search/aggregate output, not just menus.
-- Reconcile vendor staff-only and article author/staff policies with model grants;
-  keep authorship stable. Do not silently enable deletion or user administration.
-- Do not automatically assign roles to existing users or publicly registered users.
+Protect all existing project/article app reads and writes with the grants above,
+including article management and ticket conversion. Gate navigation and counters,
+avoid denied model queries and require destination view permissions. Eleven new
+request regressions cover all groups, anonymous/no-role users, write-only grants,
+author/staff restrictions, denied mutations, CSRF, next-request revocation/union
+and superuser recovery. Preserve authorship and existing content. No migration,
+new default grant or automatic membership. See detailed sprint plan for rollback.
 
 ### RBAC-003 — Permission administration and verification (P1 follow-up, 5 points)
 

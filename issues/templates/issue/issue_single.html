@@ -49,7 +49,7 @@
     </nav>
     {% endif %}
     {% endif %}
-{% if perms.issues.view_issue and perms.knowledgebase.add_article %}
+{% if perms.issues.view_issue and perms.knowledgebase.view_article and perms.knowledgebase.add_article %}
 <section class="workspace-panel">
     <h2>Share the solution</h2>
     {% if issue.knowledge_article %}

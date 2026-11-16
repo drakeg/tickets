@@ -409,7 +409,7 @@ design. Assign groups explicitly via admin; do not auto-grant staff accounts.
 Rollback: revert route/UI enforcement (reopens previous access), retaining groups.
 Next: ticket/project/article routes and their counters, then broader role audit.
 
-## Sprint 16B — Ticket role enforcement — In review
+## Sprint 16B — Ticket role enforcement — Complete (#211)
 
 Goal: complete RBAC-002B (5 points), making ticket entry points enforce the team
 matrix. Reads require view_issue; creation additionally requires add_issue and
@@ -429,3 +429,36 @@ dependency. Review: Help Desk creates/triages, Infrastructure triages but cannot
 create, Project Manager reads only. Admin assignment is deliberate; existing users
 without grants lose access by design. Rollback reverts guards/UI but reopens prior
 access; keep groups and data. Next sprint addresses project/article route policies.
+
+## Sprint 16C — Project and knowledge permissions — In review
+
+Goal: RBAC-002C (5 points) closes the remaining project/article route gaps in the
+module enforcement epic. Project reads/queues/search require view_project;
+creation also requires add_project. Knowledge reads/search require view_article;
+creation also requires add_article; edit/delete additionally require their model
+grant AND existing author/staff eligibility. Superusers retain recovery access.
+Ticket conversion requires view_issue, view_article and add_article. Model grants
+remain site-wide; project tasks have no separate application workflow yet.
+
+Acceptance: all anonymous direct requests redirect; logged-in denials return 403
+before record lookup/form construction; no denied writes; no project count query
+or denied model search query; each role can read both domains, only Project Manager
+creates projects, each role can publish articles, none receives edit/delete grants.
+Partial write-only grants cannot bypass destination view requirements. Authorship
+and staff status alone grant nothing; management permissions do not bypass the
+existing owner/staff rule. Next-request revocation/combined roles, CSRF, method
+restrictions and superuser recovery must pass request tests.
+
+Tasks: route guards, matching shared/domain navigation and dashboard controls,
+article controls for each independent grant, role-assignment guidance for accounts
+without access, explicit behavioral fixtures and 11 new boundary regressions.
+Run full tests, Django checks, migration drift check, Docker suite/smoke and CI.
+No dependencies, migrations, group grant changes or automatic memberships.
+
+Review: Help Desk reads projects but cannot create; Project Manager creates; all
+three publish knowledge. An article author must receive change_article explicitly
+to edit, or delete_article to delete. An administrator reviewing others' articles
+needs staff status plus those grants. Existing accounts without grants need a
+role assigned deliberately in admin. Rollback reverts route/UI guards (reopening
+prior access); retain groups and content. Next: RBAC-003 operator verification and
+review of author identity strings/record-level scope as separate policy work.

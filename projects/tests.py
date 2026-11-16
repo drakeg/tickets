@@ -1,11 +1,17 @@
 import datetime
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from .models import Project
+
+
+def grant_project_access(user, *codenames):
+    user.user_permissions.add(*Permission.objects.filter(
+        content_type__app_label='projects', codename__in=codenames))
 
 
 class ProjectWorkflowTests(TestCase):
@@ -14,6 +20,8 @@ class ProjectWorkflowTests(TestCase):
             username="project-user",
             password="test-password",
         )
+        grant_project_access(self.user, 'view_project', 'add_project')
+        self.client.force_login(self.user)
         self.project = Project.objects.create(
             requestor_name="project-user",
             summary="Upgrade servers",
@@ -52,12 +60,14 @@ class ProjectWorkflowTests(TestCase):
         self.assertEqual(list(response.context["project_list"]), [])
 
     def test_project_create_requires_authentication(self):
+        self.client.logout()
         response = self.client.get(reverse("projects:project_new"))
 
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response["Location"])
 
     def test_my_projects_requires_authentication(self):
+        self.client.logout()
         response = self.client.get(reverse("projects:my_projects"))
 
         self.assertEqual(response.status_code, 302)
@@ -141,6 +151,7 @@ class ProjectWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_anonymous_project_post_cannot_create_record(self):
+        self.client.logout()
         response = self.client.post(reverse('projects:project_new'), {
             'summary': 'Blocked', 'description': 'Blocked',
         })
@@ -152,6 +163,7 @@ class ProjectWorkflowTests(TestCase):
 class ProjectSchedulingTests(TestCase):
     def setUp(self):
         user = get_user_model().objects.create_user(username='scheduler')
+        grant_project_access(user, 'view_project', 'add_project')
         self.client.force_login(user)
         self.url = reverse('projects:project_new')
         self.payload = {'summary': 'Scheduled project', 'description': 'Keep this description'}
@@ -221,6 +233,10 @@ class ProjectListTests(TestCase):
             pub_date=now, assigned=cls.other,
         )
 
+    def setUp(self):
+        grant_project_access(self.user, 'view_project')
+        self.client.force_login(self.user)
+
     def test_all_projects_are_reachable_with_stable_ordering(self):
         ids = []
         for number in (1, 2, 3):
@@ -267,6 +283,6 @@ class ProjectListTests(TestCase):
         self.assertContains(response, 'Not scheduled')
         self.assertContains(response, 'Unassigned')
         self.assertContains(response, self.foreign.summary)
-        self.assertContains(response, reverse('projects:project_new'))
+        self.assertNotContains(response, reverse('projects:project_new'))
         self.assertNotContains(response, 'Closed/Opened')
         self.assertNotContains(response, 'type="checkbox"')

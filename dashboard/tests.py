@@ -36,6 +36,8 @@ class DashboardMetricTests(TestCase):
             content_type__app_label='inventory', codename='view_server'))
         self.user.user_permissions.add(Permission.objects.get(
             content_type__app_label='issues', codename='view_issue'))
+        self.user.user_permissions.add(Permission.objects.get(
+            content_type__app_label='projects', codename='view_project'))
         self.priority = Priority.objects.create(name="Normal")
 
         Issue.objects.create(
@@ -139,6 +141,10 @@ class DashboardAuthorizationNavigationTests(TestCase):
         grant_inventory_access(user)
         from issues.tests import grant_ticket_access
         grant_ticket_access(user, 'view_issue', 'add_issue', 'view_priority')
+        from projects.tests import grant_project_access
+        from knowledgebase.tests import grant_article_access
+        grant_project_access(user, 'view_project', 'add_project')
+        grant_article_access(user, 'view_article', 'add_article')
         self.client.force_login(user)
 
         response = self.client.get(reverse("dashboard:index"))
@@ -197,7 +203,7 @@ class WorkspaceNavigationTests(TestCase):
         self.assertEqual(self.client.get(reverse('issues:issue_new')).status_code, 302)
         for route in ('projects:project_new', 'knowledgebase:new'):
             path = reverse(route)
-            self.assertContains(response, 'href="' + path + '"')
+            self.assertNotContains(response, 'href="' + path + '"')
             result = self.client.get(path)
             self.assertEqual(result.status_code, 302)
             self.assertIn(reverse('login'), result['Location'])
@@ -208,6 +214,10 @@ class WorkspaceNavigationTests(TestCase):
         grant_inventory_access(user)
         from issues.tests import grant_ticket_access
         grant_ticket_access(user, 'view_issue', 'add_issue', 'view_priority')
+        from projects.tests import grant_project_access
+        from knowledgebase.tests import grant_article_access
+        grant_project_access(user, 'view_project', 'add_project')
+        grant_article_access(user, 'view_article', 'add_article')
         self.client.force_login(user)
         response = self.client.get(reverse('dashboard:index'))
         self.assertNotContains(response, 'href="#"')

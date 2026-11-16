@@ -310,7 +310,7 @@ navigation/counts, and replaces unrestricted global search with authorized-model
 queries. Explicit group/anonymous/no-role/revocation/multi-role tests are included.
 Remaining ticket/project/article direct-route/counter gaps stay next P1 scope.
 
-## Sprint 16B — Ticket role enforcement — In review
+## Sprint 16B — Ticket role enforcement — Complete (#211)
 
 RBAC-002B protects every ticket read/write route, gates ticket links and counts,
 and avoids unauthorized dashboard count queries. Explicit grants replace implicit
@@ -318,3 +318,13 @@ public/login-only access. Seven new role-boundary regressions cover direct URLs,
 denied writes, partial grants, dashboard disclosures, revocation/union and recovery.
 Existing workflow/history/CSRF tests use explicit grants. Project/article policies
 remain next P1 scope. No schema changes or automatic membership changes.
+
+## Sprint 16C — Project and knowledge permissions — In review
+
+RBAC-002C closes public project/article reads and login-only creation; model grants
+now protect direct routes and matching navigation. Project counts and global
+search avoid unauthorized model queries. Article edit/delete require their model
+grant plus existing author/staff eligibility. Conversion requires destination view
+access. Defaults grant no management rights; no schema or membership changes.
+Eleven new regressions cover actual role/partial-grant/ownership/CSRF/revocation
+boundaries and recovery. Operator verification (RBAC-003) is next P1 scope.

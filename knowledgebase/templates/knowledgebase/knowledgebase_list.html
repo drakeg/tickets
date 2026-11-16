@@ -17,7 +17,7 @@
         </div>
     </form>
 
-    {% if user.is_authenticated %}
+    {% if perms.knowledgebase.view_article and perms.knowledgebase.add_article %}
         <p>
             <a class="btn btn-primary" href="{% url 'knowledgebase:new' %}">Create Article</a>
         </p>

@@ -9,7 +9,7 @@
     </form>
 {% endblock %}
 {% block content %}
-    <div class="page-heading"><h1>{{ queue_title }}</h1><a class="btn btn-primary" href="{% url 'projects:project_new' %}">+ New project</a></div>
+    <div class="page-heading"><h1>{{ queue_title }}</h1>{% if perms.projects.view_project and perms.projects.add_project %}<a class="btn btn-primary" href="{% url 'projects:project_new' %}">+ New project</a>{% endif %}</div>
     {% if project_list %}
 	<table class="table table-striped">
             <caption>{{ page_obj.paginator.count }} matching project{{ page_obj.paginator.count|pluralize }}</caption>

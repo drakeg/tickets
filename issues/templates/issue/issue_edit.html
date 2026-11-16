@@ -8,7 +8,7 @@
     <button type="submit" class="btn btn-primary">Save changes</button>
     <a class="btn btn-secondary" href="{% url 'issues:issue' issue.pk %}">Cancel</a>
 </form>
-{% if perms.issues.view_issue and perms.knowledgebase.add_article %}
+{% if perms.issues.view_issue and perms.knowledgebase.view_article and perms.knowledgebase.add_article %}
 <section class="workspace-panel">
     <h2>Share the solution</h2>
     {% if issue.knowledge_article %}

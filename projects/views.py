@@ -2,7 +2,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+
+from django.views.decorators.http import require_http_methods
 
 from .models import Project 
 from .forms import ProjectForm
@@ -20,25 +22,34 @@ def _project_list(request, projects, title):
     })
 
 
+@login_required
+@permission_required('projects.view_project', raise_exception=True)
 def index(request):
     return _project_list(request, Project.objects.all(), 'All projects')
 
 
+@login_required
+@permission_required('projects.view_project', raise_exception=True)
 def project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     return render(request, 'projects/project_single.html', {'project': project})
 
 
 @login_required
+@permission_required('projects.view_project', raise_exception=True)
 def my_projects(request):
     return _project_list(request, Project.objects.filter(assigned=request.user), 'My projects')
 
 
+@login_required
+@permission_required('projects.view_project', raise_exception=True)
 def unassigned_projects(request):
     return _project_list(request, Project.objects.filter(assigned__isnull=True), 'Unassigned projects')
 
 
 @login_required
+@permission_required(('projects.view_project', 'projects.add_project'), raise_exception=True)
+@require_http_methods(['GET', 'POST'])
 def project_new(request):
     if request.method == "POST":
         form = ProjectForm(request.POST)
@@ -53,6 +64,8 @@ def project_new(request):
     return render(request, 'projects/project_new.html', {'form': form})
 
 
+@login_required
+@permission_required('projects.view_project', raise_exception=True)
 def search(request):
     query = request.GET.get('q', '').strip()
     project_list = Project.objects.none()
