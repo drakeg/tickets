@@ -381,7 +381,7 @@ when reverting code; reversing the migration removes saved solution/source data
 and requires a backup/retention decision. Eight new request regressions cover the
 workflow; all existing role tests remain required.
 
-## Sprint 16A — Inventory and search enforcement — In review
+## Sprint 16A — Inventory and search enforcement — Complete (#210)
 
 Goal: enforce the first module's team boundaries without leaving a global-search
 back door. RBAC-002A (5 points) is the first split of the P1 RBAC-002 epic.
@@ -408,3 +408,24 @@ Risk: existing non-superuser accounts without grants lose inventory access by
 design. Assign groups explicitly via admin; do not auto-grant staff accounts.
 Rollback: revert route/UI enforcement (reopens previous access), retaining groups.
 Next: ticket/project/article routes and their counters, then broader role audit.
+
+## Sprint 16B — Ticket role enforcement — In review
+
+Goal: complete RBAC-002B (5 points), making ticket entry points enforce the team
+matrix. Reads require view_issue; creation additionally requires add_issue and
+view_priority; triage additionally requires change_issue and view_priority. The
+priority grant permits reference choices; assignee selection retains existing
+site-wide behavior. Grants remain global rather than per-ticket ownership.
+
+Acceptance: anonymous redirects, authenticated 403 before record lookup/form
+construction, no denied POST mutation/history, no staff/assignee bypass, role union
+and revocation effective next request, superuser recovery, hidden ticket links and
+no ticket count query for unauthorized dashboards. Preserve pagination, validation,
+transactional audit and CSRF. Full suite and CI must pass.
+
+Tasks: backend decorators, matching navigation/dashboard gates, authorized fixtures,
+seven real role regressions and current policy documentation. No migration or new
+dependency. Review: Help Desk creates/triages, Infrastructure triages but cannot
+create, Project Manager reads only. Admin assignment is deliberate; existing users
+without grants lose access by design. Rollback reverts guards/UI but reopens prior
+access; keep groups and data. Next sprint addresses project/article route policies.

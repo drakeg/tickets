@@ -34,6 +34,8 @@ class DashboardMetricTests(TestCase):
         from django.contrib.auth.models import Permission
         self.user.user_permissions.add(Permission.objects.get(
             content_type__app_label='inventory', codename='view_server'))
+        self.user.user_permissions.add(Permission.objects.get(
+            content_type__app_label='issues', codename='view_issue'))
         self.priority = Priority.objects.create(name="Normal")
 
         Issue.objects.create(
@@ -124,7 +126,7 @@ class DashboardAuthorizationNavigationTests(TestCase):
     def test_anonymous_navigation_explains_authentication_for_create_actions(self):
         response = self.client.get(reverse("dashboard:index"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'sign in')
+        self.assertContains(response, 'Sign in')
         self.assertNotContains(response, reverse('inventory:vendor_new'))
         self.assertNotContains(response, reverse('admin:index'))
 
@@ -135,6 +137,8 @@ class DashboardAuthorizationNavigationTests(TestCase):
         )
         from inventory.tests import grant_inventory_access
         grant_inventory_access(user)
+        from issues.tests import grant_ticket_access
+        grant_ticket_access(user, 'view_issue', 'add_issue', 'view_priority')
         self.client.force_login(user)
 
         response = self.client.get(reverse("dashboard:index"))
@@ -188,9 +192,10 @@ class NavbarMarkupRegressionTests(TestCase):
 class WorkspaceNavigationTests(TestCase):
     def test_signed_out_create_links_lead_to_login(self):
         response = self.client.get(reverse('dashboard:index'))
-        self.assertContains(response, 'sign in')
-        for route in ('issues:issue_new', 'projects:project_new',
-                      'knowledgebase:new'):
+        self.assertContains(response, 'Sign in')
+        self.assertNotContains(response, 'href="' + reverse('issues:issue_new') + '"')
+        self.assertEqual(self.client.get(reverse('issues:issue_new')).status_code, 302)
+        for route in ('projects:project_new', 'knowledgebase:new'):
             path = reverse(route)
             self.assertContains(response, 'href="' + path + '"')
             result = self.client.get(path)
@@ -201,6 +206,8 @@ class WorkspaceNavigationTests(TestCase):
         user = get_user_model().objects.create_user(username='navigation-user')
         from inventory.tests import grant_inventory_access
         grant_inventory_access(user)
+        from issues.tests import grant_ticket_access
+        grant_ticket_access(user, 'view_issue', 'add_issue', 'view_priority')
         self.client.force_login(user)
         response = self.client.get(reverse('dashboard:index'))
         self.assertNotContains(response, 'href="#"')

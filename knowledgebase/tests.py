@@ -342,7 +342,8 @@ class TicketKnowledgeTests(TestCase):
             self.client.force_login(user)
             self.assertEqual(self.client.get(self.url).status_code, 403)
             self.assertEqual(self.client.post(self.url, self.payload).status_code, 403)
-            self.assertNotContains(self.client.get(reverse('issues:issue', args=[self.issue.pk])), self.url)
+            detail = self.client.get(reverse('issues:issue', args=[self.issue.pk]))
+            self.assertNotContains(detail, self.url, status_code=200 if codename == 'view_issue' else 403)
         self.assertEqual(Article.objects.count(), 0)
 
     def test_missing_ticket_and_unsupported_methods(self):

@@ -303,9 +303,18 @@ prefilled issue content, required solution, source link and duplicate protection
 It uses the role foundation's ticket-view/article-add grants. Additive knowledge
 migration preserves existing articles; all existing role/access tests remain.
 
-## Sprint 16A — Inventory and search enforcement — In review
+## Sprint 16A — Inventory and search enforcement — Complete (#210)
 
 RBAC-002A protects inventory reads/writes and reference choices, gates inventory
 navigation/counts, and replaces unrestricted global search with authorized-model
 queries. Explicit group/anonymous/no-role/revocation/multi-role tests are included.
 Remaining ticket/project/article direct-route/counter gaps stay next P1 scope.
+
+## Sprint 16B — Ticket role enforcement — In review
+
+RBAC-002B protects every ticket read/write route, gates ticket links and counts,
+and avoids unauthorized dashboard count queries. Explicit grants replace implicit
+public/login-only access. Seven new role-boundary regressions cover direct URLs,
+denied writes, partial grants, dashboard disclosures, revocation/union and recovery.
+Existing workflow/history/CSRF tests use explicit grants. Project/article policies
+remain next P1 scope. No schema changes or automatic membership changes.

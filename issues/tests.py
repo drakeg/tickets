@@ -1,9 +1,15 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from .models import Issue, Priority
+
+
+def grant_ticket_access(user, *codenames):
+    user.user_permissions.add(*Permission.objects.filter(
+        content_type__app_label='issues', codename__in=codenames))
 
 
 class IssueWorkflowTests(TestCase):
@@ -12,6 +18,8 @@ class IssueWorkflowTests(TestCase):
             username="issue-user",
             password="test-password",
         )
+        grant_ticket_access(self.user, 'view_issue', 'add_issue', 'view_priority')
+        self.client.force_login(self.user)
         self.priority = Priority.objects.create(name="Normal")
         self.issue = Issue.objects.create(
             requestor_name="issue-user",
@@ -45,12 +53,14 @@ class IssueWorkflowTests(TestCase):
         self.assertEqual(list(response.context["issue_list"]), [])
 
     def test_issue_create_requires_authentication(self):
+        self.client.logout()
         response = self.client.get(reverse("issues:issue_new"))
 
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response["Location"])
 
     def test_my_issues_requires_authentication(self):
+        self.client.logout()
         response = self.client.get(reverse("issues:my_issues"))
 
         self.assertEqual(response.status_code, 302)
@@ -113,6 +123,7 @@ class IssueWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_anonymous_submission_cannot_create_ticket(self):
+        self.client.logout()
         response = self.client.post(reverse("issues:issue_new"), {
             "summary": "Unauthorized", "description": "Blocked", "priority": self.priority.pk,
         })
@@ -138,6 +149,10 @@ class IssueQueueTests(TestCase):
             requestor_name='other', summary='Other queue', description='Other',
             priority=priority, pub_date=now, assigned=cls.other,
         )
+
+    def setUp(self):
+        grant_ticket_access(self.user, 'view_issue')
+        self.client.force_login(self.user)
 
     def test_all_tickets_are_reachable_with_stable_newest_first_order(self):
         ids = []
@@ -199,9 +214,9 @@ class IssueTriageTests(TestCase):
     def setUpTestData(cls):
         from django.contrib.auth.models import Permission
         cls.agent = get_user_model().objects.create_user(username='agent')
-        cls.agent.user_permissions.add(Permission.objects.get(
-            content_type__app_label='issues', codename='change_issue'))
+        grant_ticket_access(cls.agent, 'view_issue', 'change_issue', 'view_priority')
         cls.other = get_user_model().objects.create_user(username='unprivileged', is_staff=True)
+        grant_ticket_access(cls.other, 'view_issue')
         cls.priority = Priority.objects.create(name='Normal')
         cls.urgent = Priority.objects.create(name='Urgent')
         cls.issue = Issue.objects.create(
@@ -282,7 +297,7 @@ class IssueTriageTests(TestCase):
 
     def test_controls_follow_permissions_and_dashboard_reflects_changes(self):
         detail = reverse('issues:issue', args=[self.issue.pk])
-        self.assertNotContains(self.client.get(detail), 'Update ticket')
+        self.assertEqual(self.client.get(detail).status_code, 302)
         self.client.force_login(self.other)
         self.assertNotContains(self.client.get(detail), 'Update ticket')
         self.client.force_login(self.agent)
@@ -364,7 +379,7 @@ class IssueHistoryTests(TestCase):
         self.client.force_login(self.other)
         self.assertNotContains(self.client.get(self.detail), 'Change history')
         self.client.logout()
-        self.assertNotContains(self.client.get(self.detail), 'Change history')
+        self.assertEqual(self.client.get(self.detail).status_code, 302)
 
     def test_history_pagination_is_stable_and_scoped_to_ticket(self):
         from .models import IssueChange
@@ -385,3 +400,127 @@ class IssueHistoryTests(TestCase):
             description='Other', priority=self.priority, pub_date=timestamp)
         self.assertContains(self.client.get(reverse('issues:issue', args=[other_issue.pk])),
                             'No recorded changes.')
+
+
+class TicketRoleBoundaryTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        from django.contrib.auth.models import Group
+        from django.core.management import call_command
+        from io import StringIO
+        call_command('setup_roles', stdout=StringIO())
+        cls.users = {}
+        for role in ('Infrastructure Team', 'Help Desk', 'Project Manager'):
+            user = get_user_model().objects.create_user(username=role.replace(' ', '-'))
+            user.groups.add(Group.objects.get(name=role))
+            cls.users[role] = user
+        cls.no_role = get_user_model().objects.create_user(username='no-role', is_staff=True)
+        cls.priority = Priority.objects.create(name='Normal')
+        cls.ticket = Issue.objects.create(requestor_name='private requestor',
+            summary='Private ticket marker', description='Private details',
+            priority=cls.priority, pub_date=timezone.now(), assigned=cls.no_role)
+
+    def routes(self):
+        return [reverse('issues:' + name) for name in
+                ('index', 'my_issues', 'unassigned_issues', 'search')] + [
+                    reverse('issues:issue', args=[self.ticket.pk])]
+
+    def payload(self):
+        return {'summary': 'New request', 'description': 'Details',
+                'priority': self.priority.pk, 'issue_open': 'closed', 'assigned': ''}
+
+    def test_anonymous_and_no_role_cannot_read_any_ticket_entry_point(self):
+        for url in self.routes():
+            self.assertEqual(self.client.get(url, {'q': 'Private'}).status_code, 302)
+        self.client.force_login(self.no_role)
+        for url in self.routes():
+            response = self.client.get(url, {'q': 'Private'})
+            self.assertEqual(response.status_code, 403)
+            self.assertNotContains(response, self.ticket.summary, status_code=403)
+        # Even an assigned staff user has no implicit ticket grant.
+        response = self.client.get(reverse('issues:issue', args=[999999]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_named_roles_can_read_but_only_granted_roles_can_write(self):
+        create = reverse('issues:issue_new')
+        edit = reverse('issues:issue_edit', args=[self.ticket.pk])
+        for role, user in self.users.items():
+            self.client.force_login(user)
+            for url in self.routes():
+                self.assertEqual(self.client.get(url).status_code, 200)
+            self.assertEqual(self.client.get(create).status_code, 200 if role == 'Help Desk' else 403)
+            self.assertEqual(self.client.get(edit).status_code, 403 if role == 'Project Manager' else 200)
+            before = Issue.objects.count()
+            response = self.client.post(create, self.payload())
+            self.assertEqual(response.status_code, 302 if role == 'Help Desk' else 403)
+            self.assertEqual(Issue.objects.count(), before + (role == 'Help Desk'))
+            response = self.client.post(edit, self.payload())
+            self.assertEqual(response.status_code, 403 if role == 'Project Manager' else 302)
+        self.assertEqual(self.client.get(reverse('admin:index')).status_code, 302)
+
+    def test_denied_posts_do_not_write_ticket_or_history(self):
+        self.client.force_login(self.no_role)
+        self.assertEqual(self.client.post(reverse('issues:issue_new'), self.payload()).status_code, 403)
+        self.assertEqual(self.client.post(reverse('issues:issue_edit', args=[self.ticket.pk]),
+                                         self.payload()).status_code, 403)
+        self.ticket.refresh_from_db()
+        self.assertTrue(self.ticket.issue_open)
+        self.assertFalse(self.ticket.changes.exists())
+        self.assertEqual(Issue.objects.count(), 1)
+
+    def test_write_and_reference_grants_do_not_replace_ticket_view_permission(self):
+        grant_ticket_access(self.no_role, 'add_issue', 'change_issue', 'view_priority')
+        self.client.force_login(self.no_role)
+        for url in [reverse('issues:issue_new'), reverse('issues:issue_edit', args=[self.ticket.pk])]:
+            self.assertEqual(self.client.get(url).status_code, 403)
+            self.assertEqual(self.client.post(url, self.payload()).status_code, 403)
+        grant_ticket_access(self.no_role, 'view_issue')
+        self.no_role.user_permissions.remove(Permission.objects.get(
+            content_type__app_label='issues', codename='view_priority'))
+        for url in [reverse('issues:issue_new'), reverse('issues:issue_edit', args=[self.ticket.pk])]:
+            self.assertEqual(self.client.get(url).status_code, 403)
+            self.assertEqual(self.client.post(url, self.payload()).status_code, 403)
+        self.assertNotContains(self.client.get(reverse('issues:issue', args=[self.ticket.pk])), 'Update ticket')
+
+    def test_dashboard_hides_ticket_counts_links_and_queries_without_view_grant(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        self.client.force_login(self.no_role)
+        with CaptureQueriesContext(connection) as queries:
+            response = self.client.get(reverse('dashboard:index'))
+        self.assertEqual(response.context['num_open_issues'], 0)
+        self.assertEqual(response.context['num_my_issues'], 0)
+        self.assertFalse(any('"issues_issue"' in query['sql'] for query in queries))
+        for url in self.routes() + [reverse('issues:issue_new')]:
+            self.assertNotContains(response, 'href="' + url)
+        self.client.force_login(self.users['Project Manager'])
+        response = self.client.get(reverse('dashboard:index'))
+        self.assertContains(response, 'href="' + reverse('issues:index'))
+        self.assertNotContains(response, 'href="' + reverse('issues:issue_new'))
+        self.assertEqual(response.context['num_open_issues'], 1)
+        self.client.force_login(self.users['Help Desk'])
+        self.assertContains(self.client.get(reverse('dashboard:index')),
+                            'href="' + reverse('issues:issue_new'))
+
+    def test_revocation_and_combined_roles_apply_on_next_request(self):
+        from django.contrib.auth.models import Group
+        user = self.users['Project Manager']
+        self.client.force_login(user)
+        create = reverse('issues:issue_new')
+        self.assertEqual(self.client.get(create).status_code, 403)
+        user.groups.add(Group.objects.get(name='Help Desk'))
+        self.assertEqual(self.client.get(create).status_code, 200)
+        user.groups.remove(Group.objects.get(name='Help Desk'))
+        self.assertEqual(self.client.get(create).status_code, 403)
+        self.assertEqual(self.client.get(self.routes()[0]).status_code, 200)
+        user.groups.clear()
+        self.assertEqual(self.client.get(self.routes()[0]).status_code, 403)
+        self.assertNotContains(self.client.get(reverse('dashboard:index')),
+                               'href="' + reverse('issues:index'))
+
+    def test_superuser_can_recover_without_group_membership(self):
+        user = get_user_model().objects.create_superuser(username='recovery', password='test-only')
+        self.client.force_login(user)
+        self.assertEqual(self.client.get(self.routes()[0]).status_code, 200)
+        self.assertEqual(self.client.get(reverse('issues:issue_new')).status_code, 200)
+        self.assertEqual(self.client.get(reverse('issues:issue_edit', args=[self.ticket.pk])).status_code, 200)

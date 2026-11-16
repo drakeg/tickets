@@ -9,10 +9,10 @@ def index(request):
     num_systems = Server.objects.count() if request.user.has_perm('inventory.view_server') else 0
     percent_systems = str(num_systems/max_systems * 100) + "%"
     max_my_issues = 100
-    num_my_issues = Issue.objects.filter(issue_open=True, assigned=request.user.id).count()
+    num_my_issues = Issue.objects.filter(issue_open=True, assigned=request.user.id).count() if request.user.has_perm('issues.view_issue') else 0
     percent_my_issues = str(num_my_issues/max_my_issues * 100) + "%"
     max_open_issues = 100
-    num_open_issues = Issue.objects.filter(issue_open=True).count()
+    num_open_issues = Issue.objects.filter(issue_open=True).count() if request.user.has_perm('issues.view_issue') else 0
     percent_open_issues = str(num_open_issues/max_open_issues * 100) + "%"
     max_open_projects = 100
     num_open_projects = Project.objects.filter(end_date__gte=datetime.date.today()).count()
