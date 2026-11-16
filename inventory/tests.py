@@ -173,3 +173,63 @@ class InventorySetupGuidanceTests(TestCase):
         Cluster.objects.create(cluster_name='Production')
         response = self.client.get(reverse('inventory:servers_new'))
         self.assertNotContains(response, 'Before adding a system')
+
+
+class InventoryListTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.os = Operating_System.objects.create(os_name='Ubuntu test OS')
+        cls.vendor = Vendor.objects.create(vendor_name='Test vendor')
+        cls.clusters = [Cluster.objects.create(cluster_name=name) for name in ('Production', 'Staging')]
+        cls.servers = [Server.objects.create(
+            server_name=f'Network & app-{number:02}', os=cls.os, vendor=cls.vendor,
+            cluster=cls.clusters[number % 2], pub_date=timezone.now(),
+        ) for number in reversed(range(34))]
+        Server.objects.create(server_name='Unrelated', os=cls.os, vendor=cls.vendor,
+                              cluster=cls.clusters[0], pub_date=timezone.now())
+
+    def test_all_systems_are_reachable_in_stable_cluster_name_id_order(self):
+        ids = []
+        for number in (1, 2, 3):
+            response = self.client.get(reverse('inventory:index'), {'page': number})
+            self.assertEqual(response.status_code, 200)
+            ids.extend(server.pk for server in response.context['server_list'])
+        self.assertEqual(ids, list(Server.objects.order_by('cluster_id', 'server_name', 'pk')
+                                   .values_list('pk', flat=True)))
+        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_search_preserves_encoded_query_and_only_matches_system_names(self):
+        ids = []
+        for number in (1, 2, 3):
+            response = self.client.get(reverse('inventory:search'), {
+                'q': ' Network & ', 'page': number,
+            })
+            self.assertContains(response, 'q=Network%20%26')
+            self.assertEqual(response.context['query'], 'Network &')
+            ids.extend(server.pk for server in response.context['server_list'])
+        self.assertEqual(ids, list(Server.objects.filter(server_name__icontains='Network &')
+                                   .order_by('cluster_id', 'server_name', 'pk')
+                                   .values_list('pk', flat=True)))
+
+    def test_invalid_pages_and_empty_search_results_are_safe(self):
+        for value, expected in [('bad', 1), ('999', 3), ('0', 3)]:
+            response = self.client.get(reverse('inventory:index'), {'page': value})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.context['page_obj'].number, expected)
+        for query in ('', '   ', 'no-match'):
+            response = self.client.get(reverse('inventory:search'), {'q': query, 'page': 99})
+            self.assertContains(response, 'No systems are available.')
+            self.assertNotContains(response, 'aria-label="System pages"')
+
+    def test_operating_system_and_named_detail_links_render(self):
+        response = self.client.get(reverse('inventory:index'))
+        self.assertContains(response, self.os.os_name)
+        self.assertContains(response, self.vendor.vendor_name)
+        self.assertContains(response, reverse('inventory:servers_new'))
+        server = response.context['server_list'][0]
+        self.assertContains(response, reverse('inventory:servers', args=[server.pk]))
+
+    def test_related_columns_do_not_add_queries_per_row(self):
+        with self.assertNumQueries(2):
+            response = self.client.get(reverse('inventory:index'))
+        self.assertEqual(len(response.context['server_list']), 15)

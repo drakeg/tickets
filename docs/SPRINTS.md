@@ -266,10 +266,17 @@ glyphs with decorative SVGs; preserve visible card labels and existing colors.
 Reproduce and verify both findings and incomplete output with the actual scanner.
 No schema or dependency changes. Existing audit history is not rewritten.
 
-## Sprint 13 — Inventory creation feedback — In review
+## Sprint 13 — Inventory creation feedback — Complete (#206)
 
 CMDB-002 redirects successful system creation, expands saved details and explains
 missing prerequisite lists. Setup links are gated by staff and model permissions;
 backend authentication is preserved. Regression coverage includes creation/refresh,
 invalid references, escaped names, missing records and empty-install setup.
 No schema changes. See the detailed delivery plan for acceptance and rollback.
+
+## Sprint 14 — Reachable inventory lists — In review
+
+CMDB-003 paginates system browsing/search, fixes the blank OS column, uses named
+links and joins related values. Five new regressions cover complete reachability,
+encoded search, invalid pages/empty results, related fields and bounded queries.
+No schema changes. See detailed plan for acceptance criteria and rollback.

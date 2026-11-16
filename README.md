@@ -23,6 +23,13 @@ Use Previous/Next to reach older articles; search phrases remain applied while
 paging. Search matches description, keywords, or author. Empty searches show no
 results. Existing author/staff editing and authenticated creation remain available.
 
+## Inventory browsing
+
+System lists and system-name search show 15 records per page, grouped by cluster
+and ordered by system name and ID within each cluster. Previous/Next retains
+search text. Each row shows its cluster, vendor and operating system, with a link
+to the system details and an Add system action above the list.
+
 ## Adding systems
 
 System creation requires an operating system, vendor, and cluster. If a choice
