@@ -30,10 +30,14 @@ def _issue_list(request, queryset, title):
     })
 
 
+@login_required
+@permission_required('issues.view_issue', raise_exception=True)
 def index(request):
     return _issue_list(request, Issue.objects.all(), 'All tickets')
 
 
+@login_required
+@permission_required('issues.view_issue', raise_exception=True)
 def issues(request, issue_id):
     issue = get_object_or_404(Issue, pk=issue_id)
     history = None
@@ -43,15 +47,20 @@ def issues(request, issue_id):
 
 
 @login_required
+@permission_required('issues.view_issue', raise_exception=True)
 def my_issues(request):
     return _issue_list(request, Issue.objects.filter(assigned=request.user), 'Assigned to me')
 
 
+@login_required
+@permission_required('issues.view_issue', raise_exception=True)
 def unassigned_issues(request):
     return _issue_list(request, Issue.objects.filter(assigned__isnull=True), 'Unassigned tickets')
 
 
 @login_required
+@permission_required(('issues.view_issue', 'issues.add_issue', 'issues.view_priority'), raise_exception=True)
+@require_http_methods(['GET', 'POST'])
 def issue_new(request):
     if request.method == "POST":
         form = IssueForm(request.POST)
@@ -66,6 +75,8 @@ def issue_new(request):
     return render(request, 'issue/issue_new.html', {'form': form})
 
 
+@login_required
+@permission_required('issues.view_issue', raise_exception=True)
 def search(request):
     query = request.GET.get('q', '').strip()
     issue_list = Issue.objects.none()
@@ -77,7 +88,7 @@ def search(request):
 
 
 @login_required
-@permission_required('issues.change_issue', raise_exception=True)
+@permission_required(('issues.view_issue', 'issues.change_issue', 'issues.view_priority'), raise_exception=True)
 @require_http_methods(['GET', 'POST'])
 def issue_edit(request, issue_id):
     issue = get_object_or_404(Issue, pk=issue_id)

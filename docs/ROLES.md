@@ -42,8 +42,9 @@ No group receives user/group management or delete permissions by default.
 
 ## What is enforced today
 
-The admin interface honors model permissions. Ticket triage requires
-issues.change_issue; ticket-to-article conversion requires view_issue and
+The admin interface honors model permissions. All ticket lists, queues, detail
+and local search require view_issue. Creation requires view_issue, add_issue and
+view_priority; triage requires view_issue, change_issue and view_priority; ticket-to-article conversion requires view_issue and
 add_article. Inventory lists/detail/name search require view_server; the operating
 system route requires view_operating_system. System creation requires view_server,
 add_server, and view grants for OS/vendor/cluster choices. Vendor creation requires
@@ -57,9 +58,15 @@ Global search is now a permission-filtered query over tickets, projects, invento
 and knowledge articles, capped at 10 results per authorized section. No denied
 model is queried or returned. It requires login and at least one view grant.
 
-This is not yet full application RBAC: direct ticket/project/article read routes,
-most of their create flows, and their dashboard counters retain the existing
-policy. Article editing/deletion still uses author/staff rules. Those domain gaps
+Ticket navigation and dashboard counters require view_issue; creation links use
+the same three grants as the backend. Denied dashboard requests do not query ticket
+counts. Anonymous ticket requests redirect to login and authenticated denials return
+403 before looking up records or constructing forms. Assignment and staff status
+do not substitute for model grants. Users without grants need an administrator to
+assign a role explicitly; registration grants no role.
+
+This is not yet full application RBAC: direct project/article read routes,
+their create flows, and project dashboard counters retain the existing policy. Article editing/deletion still uses author/staff rules. Those domain gaps
 remain the next P1 increments; do not interpret the matrix as a universal deny
 policy until that work is complete. No users are auto-enrolled or elevated.
 
@@ -71,14 +78,21 @@ Create the named defaults and idempotent setup command, document the matrix and
 limits, and test exact meaningful boundaries, repeat runs, dry-run, custom grant
 preservation, unchanged users and missing-permission failure. No schema migration.
 
-### Sprint 16A: RBAC-002A — Inventory and global search (in review, 5 points)
+### Sprint 16A: RBAC-002A — Inventory and global search (complete, #210, 5 points)
 
 First split of the enforcement epic. Acceptance: all inventory entry points enforce
 the grants above, reference choices need view grants, denied counts/navigation stay
 hidden, global search cannot disclose unauthorized records, and next-request role
 revocation plus combined roles behave correctly. Preserve superuser access.
 
-### Sprint 16B/C: RBAC-002 — Remaining module enforcement (next P1)
+### Sprint 16B: RBAC-002B — Ticket enforcement (in review, 5 points)
+
+Enforce the ticket rules above on GET and POST, hide counts/links consistently,
+and verify role defaults, no-role/anonymous denial, missing reference/view grants,
+revocation, multi-role union and superuser recovery. Ticket editing retains its
+transactional history and CSRF behavior; no new grants or schema changes.
+
+### Sprint 16C: RBAC-002 — Project/article enforcement (next P1)
 
 
 - Replace public/module reads and login-only writes with explicit model grants.
