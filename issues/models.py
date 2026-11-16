@@ -6,6 +6,11 @@ from django.conf import settings
 
 class Priority(models.Model):
     name = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name = 'priority'
+        verbose_name_plural = 'priorities'
+
     def __str__(self):
         return self.name
 

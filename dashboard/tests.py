@@ -229,3 +229,42 @@ class WorkspaceContrastTests(TestCase):
             with self.subTest(foreground=foreground, background=background):
                 light, dark = sorted((luminance(foreground), luminance(background)), reverse=True)
                 self.assertGreaterEqual((light + 0.05) / (dark + 0.05), 4.5)
+
+
+class WorkspaceAdminTests(TestCase):
+    def setUp(self):
+        self.admin = get_user_model().objects.create_superuser(
+            username='theme-admin', password='test-password',
+        )
+
+    def test_admin_index_and_change_form_share_workspace_branding(self):
+        self.client.force_login(self.admin)
+        for route in ('admin:index', 'admin:issues_priority_changelist', 'admin:issues_priority_add'):
+            response = self.client.get(reverse(route))
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, 'ServDesk')
+            self.assertContains(response, '/static/tickets/css/admin.css')
+            self.assertContains(response, 'Back to workspace')
+            self.assertContains(response, reverse('dashboard:index'))
+        response = self.client.get(reverse('admin:index'))
+        self.assertContains(response, 'Priorities')
+        self.assertNotContains(response, 'Prioritys')
+        self.assertNotContains(response, 'Prioritsy')
+
+    def test_priority_metadata_and_admin_creation_remain_correct(self):
+        from issues.models import Priority
+        self.assertEqual(Priority._meta.verbose_name_plural, 'priorities')
+        self.client.force_login(self.admin)
+        response = self.client.post(reverse('admin:issues_priority_add'), {'name': 'Urgent'})
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Priority.objects.filter(name='Urgent').exists())
+
+    def test_theme_preserves_anonymous_and_nonstaff_admin_restrictions(self):
+        response = self.client.get(reverse('admin:index'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('admin:login'), response['Location'])
+        response = self.client.get(reverse('admin:login'))
+        self.assertContains(response, '/static/tickets/css/admin.css')
+        user = get_user_model().objects.create_user(username='nonstaff')
+        self.client.force_login(user)
+        self.assertEqual(self.client.get(reverse('admin:index')).status_code, 302)

@@ -222,3 +222,11 @@ python manage.py createsuperuser
 ```
 
 Do not use shared or repository-documented default credentials.
+
+## Administration appearance
+
+Django admin uses the ServDesk workspace branding, palette and panel styling,
+with a Back to workspace link. Native forms, model permissions, actions, theme
+switching and responsive navigation remain available. The Priority model's plural
+label is explicitly set to Priorities. Apply migrations on upgrade; the label
+migration changes Django model options without altering saved records.

@@ -1,0 +1,9 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block title %}{{ title }} | ServDesk administration{% endblock %}
+{% block branding %}
+<div id="site-name"><a class="servdesk-brand" href="{% url 'admin:index' %}"><span class="servdesk-brand-mark" aria-hidden="true">S</span> ServDesk <span class="servdesk-admin-label">Administration</span></a></div>
+{% if user.is_anonymous %}{% include "admin/color_theme_toggle.html" %}{% endif %}
+{% endblock %}
+{% block nav-global %}<nav class="servdesk-workspace-link" aria-label="Workspace"><a href="{% url 'dashboard:index' %}">Back to workspace</a></nav>{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'tickets/css/admin.css' %}">{% endblock %}

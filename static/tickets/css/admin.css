@@ -1,0 +1,121 @@
+/* Match the workspace palette while retaining Django admin's native components. */
+:root, html[data-theme="light"] {
+    --primary: #087f79;
+    --secondary: #142b3c;
+    --accent: #fff;
+    --primary-fg: #fff;
+    --body-fg: #182c40;
+    --body-bg: #f3f6fa;
+    --body-quiet-color: #526579;
+    --body-medium-color: #526579;
+    --body-loud-color: #182c40;
+    --header-color: #fff;
+    --header-branding-color: #fff;
+    --header-bg: #142b3c;
+    --header-link-color: #fff;
+    --breadcrumbs-fg: #526579;
+    --breadcrumbs-link-fg: #08746f;
+    --breadcrumbs-bg: #fff;
+    --link-fg: #08746f;
+    --link-hover-color: #065c57;
+    --link-selected-fg: #065c57;
+    --hairline-color: #dfe7ee;
+    --border-color: #c9d5df;
+    --darkened-bg: #eaf0f5;
+    --selected-bg: #e4f3f1;
+    --selected-row: #e4f3f1;
+    --button-bg: #087f79;
+    --button-hover-bg: #066760;
+    --default-button-bg: #066760;
+    --default-button-hover-bg: #044e49;
+    --close-button-bg: #526579;
+    --close-button-hover-bg: #354b60;
+    --object-tools-bg: #526579;
+    --object-tools-hover-bg: #354b60;
+    --font-family-primary: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --servdesk-panel: #fff;
+}
+html[data-theme="dark"] {
+    --primary: #087f79;
+    --secondary: #142b3c;
+    --primary-fg: #fff;
+    --header-bg: #142b3c;
+    --header-color: #fff;
+    --header-branding-color: #fff;
+    --header-link-color: #fff;
+    --body-bg: #102330;
+    --body-fg: #e0e9f0;
+    --body-loud-color: #fff;
+    --body-quiet-color: #b2c3d1;
+    --body-medium-color: #b2c3d1;
+    --link-fg: #67d7cc;
+    --link-hover-color: #9ce8e0;
+    --link-selected-fg: #9ce8e0;
+    --breadcrumbs-bg: #183344;
+    --breadcrumbs-fg: #b2c3d1;
+    --breadcrumbs-link-fg: #9ce8e0;
+    --darkened-bg: #183344;
+    --selected-bg: #24475c;
+    --selected-row: #24475c;
+    --hairline-color: #355163;
+    --border-color: #526b7c;
+    --button-bg: #087f79;
+    --button-hover-bg: #066760;
+    --default-button-bg: #066760;
+    --default-button-hover-bg: #044e49;
+    --servdesk-panel: #183344;
+}
+#header { min-height: 68px; box-sizing: border-box; gap: 16px; }
+#branding #site-name { margin: 0; }
+#branding .servdesk-brand { display: flex; align-items: center; gap: 12px; color: #fff; font-size: 23px; font-weight: 750; letter-spacing: -.5px; }
+.servdesk-brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #32beb0; color: #102c3b; }
+.servdesk-admin-label { font-size: 13px; font-weight: 500; letter-spacing: 0; color: #d1dce6; }
+.servdesk-workspace-link a { color: #fff; font-size: 13px; white-space: nowrap; }
+#content h1 { color: var(--body-loud-color); font-weight: 700; letter-spacing: -.5px; }
+.module, #changelist, .inline-group { border: 1px solid var(--hairline-color); border-radius: 10px; background: var(--servdesk-panel); overflow: hidden; }
+.module h2, .module caption, .inline-group h2 { padding: 13px 16px; font-weight: 650; }
+.module td, .module th { padding: 12px; }
+#content-related { border-radius: 10px; border: 1px solid var(--hairline-color); background: var(--servdesk-panel); }
+.submit-row { border-radius: 9px; }
+input[type=submit], .button, a.button, .object-tools a { border-radius: 7px; }
+input, textarea, select { border-radius: 6px; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid #ba7a04; outline-offset: 3px; }
+@media (max-width: 767px) {
+    #header { padding: 16px; }
+    #branding .servdesk-brand { font-size: 21px; flex-wrap: wrap; }
+    .servdesk-admin-label { font-size: 12px; }
+    .servdesk-workspace-link { width: 100%; text-align: center; }
+}
+
+@media (prefers-color-scheme: dark) {
+html[data-theme="auto"]:root {
+    --primary: #087f79;
+    --secondary: #142b3c;
+    --primary-fg: #fff;
+    --header-bg: #142b3c;
+    --header-color: #fff;
+    --header-branding-color: #fff;
+    --header-link-color: #fff;
+    --body-bg: #102330;
+    --body-fg: #e0e9f0;
+    --body-loud-color: #fff;
+    --body-quiet-color: #b2c3d1;
+    --body-medium-color: #b2c3d1;
+    --link-fg: #67d7cc;
+    --link-hover-color: #9ce8e0;
+    --link-selected-fg: #9ce8e0;
+    --breadcrumbs-bg: #183344;
+    --breadcrumbs-fg: #b2c3d1;
+    --breadcrumbs-link-fg: #9ce8e0;
+    --darkened-bg: #183344;
+    --selected-bg: #24475c;
+    --selected-row: #24475c;
+    --hairline-color: #355163;
+    --border-color: #526b7c;
+    --button-bg: #087f79;
+    --button-hover-bg: #066760;
+    --default-button-bg: #066760;
+    --default-button-hover-bg: #044e49;
+    --servdesk-panel: #183344;
+}
+}
