@@ -524,3 +524,78 @@ class TicketRoleBoundaryTests(TestCase):
         self.assertEqual(self.client.get(self.routes()[0]).status_code, 200)
         self.assertEqual(self.client.get(reverse('issues:issue_new')).status_code, 200)
         self.assertEqual(self.client.get(reverse('issues:issue_edit', args=[self.ticket.pk])).status_code, 200)
+
+
+
+class IssueAdminAuditTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.admin_user = get_user_model().objects.create_superuser(
+            username='audit-admin', password='test-password',
+        )
+        cls.assignee = get_user_model().objects.create_user(username='assignee')
+        cls.normal = Priority.objects.create(name='Normal')
+        cls.urgent = Priority.objects.create(name='Urgent')
+        cls.issue = Issue.objects.create(
+            requestor_name='requestor', summary='Original', description='Original',
+            priority=cls.normal, pub_date=timezone.now(), assigned=cls.assignee,
+        )
+
+    def setUp(self):
+        from django.contrib import admin
+        from django.test import RequestFactory
+        self.issue_admin = admin.site._registry[Issue]
+        self.request = RequestFactory().post('/admin/issues/issue/')
+        self.request.user = self.admin_user
+
+    def test_admin_triage_change_records_snapshot_and_actor(self):
+        changed = Issue.objects.get(pk=self.issue.pk)
+        changed.issue_open = False
+        changed.priority = self.urgent
+        changed.assigned = None
+        self.issue_admin.save_model(self.request, changed, None, change=True)
+        event = self.issue.changes.get()
+        self.assertEqual(event.actor, self.admin_user)
+        self.assertEqual(event.actor_name, 'audit-admin')
+        self.assertEqual(event.before['status'], 'Open')
+        self.assertEqual(event.after['status'], 'Closed')
+        self.assertEqual(event.before['priority']['name'], 'Normal')
+        self.assertEqual(event.after['priority']['name'], 'Urgent')
+        self.assertEqual(event.after['assigned']['id'], None)
+
+    def test_content_only_and_noop_edits_do_not_create_triage_history(self):
+        changed = Issue.objects.get(pk=self.issue.pk)
+        changed.summary = 'Edited by admin'
+        self.issue_admin.save_model(self.request, changed, None, change=True)
+        self.issue_admin.save_model(self.request, changed, None, change=True)
+        self.assertEqual(self.issue.changes.count(), 0)
+        self.issue.refresh_from_db()
+        self.assertEqual(self.issue.summary, 'Edited by admin')
+
+    def test_admin_create_does_not_record_a_preexisting_state(self):
+        created = Issue(
+            requestor_name='requestor', summary='New', description='New',
+            priority=self.normal, pub_date=timezone.now(),
+        )
+        self.issue_admin.save_model(self.request, created, None, change=False)
+        self.assertIsNotNone(created.pk)
+        self.assertFalse(created.changes.exists())
+
+    def test_event_failure_rolls_back_admin_ticket_update(self):
+        from unittest.mock import patch
+        from django.db import IntegrityError
+        changed = Issue.objects.get(pk=self.issue.pk)
+        changed.issue_open = False
+        with patch('issues.admin.IssueChange.objects.create',
+                   side_effect=IntegrityError('audit failure')):
+            with self.assertRaises(IntegrityError):
+                self.issue_admin.save_model(self.request, changed, None, change=True)
+        self.issue.refresh_from_db()
+        self.assertTrue(self.issue.issue_open)
+        self.assertFalse(self.issue.changes.exists())
+
+    def test_nonstaff_cannot_access_admin_change_form(self):
+        self.client.force_login(self.assignee)
+        response = self.client.get(reverse('admin:issues_issue_change', args=[self.issue.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(self.issue.changes.exists())
