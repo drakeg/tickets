@@ -329,7 +329,7 @@ access. Defaults grant no management rights; no schema or membership changes.
 Eleven new regressions cover actual role/partial-grant/ownership/CSRF/revocation
 boundaries and recovery. Operator verification (RBAC-003) is next P1 scope.
 
-## Sprint 17 — Role and access visibility — In review
+## Sprint 17 — Role and access visibility — Complete (#213)
 
 RBAC-003 replaces the inert profile tabs with truthful account/group/effective
 capability details and adds a read-only staff role overview. Requires both staff
@@ -339,6 +339,20 @@ default groups without changing anything. Eight request regressions cover access
 privacy, partial grants, revocation/union, no writes, escaping and superuser recovery.
 No schema, grant, membership or credential changes.
 
-## Sprint 5 carryover — Generated-file repository hygiene — In review
+## Sprint 5 carryover — Generated-file repository hygiene — Complete (#214)
 
 UI-001 removes 23 committed artifacts (21 obsolete Python 3.6 bytecode files and two macOS `.DS_Store` files). The existing `.gitignore` already excludes these paths, so no runtime code, settings, migrations, dependencies, or behavior change. Review the deletion-only diff and confirm CI remains green; this does not complete UI-002's frontend dependency audit.
+
+## Sprint 18A — Django admin ticket triage audit — In review
+
+TKT-008 first increment extends the existing transactional ticket change history to
+individual Django admin edits of status, priority, or assignment. No-op and
+content-only saves create no triage events; creation produces no before/after
+transition. The actor and historical value snapshots are preserved; an audit
+failure rolls back the ticket write. Admin staff restrictions stay enforced.
+
+Review: edit an existing ticket's status/priority/assignee in Django admin and
+confirm a single event is visible in the ticket detail to an authorized editor.
+Run all tests, Django checks, migration checks and Docker CI. No schema changes.
+Follow-up: decide and implement bulk-update audit paths and retention rules
+separately, including a policy for destructive deletes before writing code.
