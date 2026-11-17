@@ -328,3 +328,7 @@ grant plus existing author/staff eligibility. Conversion requires destination vi
 access. Defaults grant no management rights; no schema or membership changes.
 Eleven new regressions cover actual role/partial-grant/ownership/CSRF/revocation
 boundaries and recovery. Operator verification (RBAC-003) is next P1 scope.
+
+## Sprint 5 carryover — Generated-file repository hygiene — In review
+
+UI-001 removes 23 committed artifacts (21 obsolete Python 3.6 bytecode files and two macOS `.DS_Store` files). The existing `.gitignore` already excludes these paths, so no runtime code, settings, migrations, dependencies, or behavior change. Review the deletion-only diff and confirm CI remains green; this does not complete UI-002's frontend dependency audit.
