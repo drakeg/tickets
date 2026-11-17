@@ -44,6 +44,7 @@
         {% if user.is_staff or perms.inventory.add_vendor %}
         <div class="sidebar-section">
             <nav class="workspace-nav" aria-label="Administration">
+                {% if user.is_staff and perms.auth.view_group %}<a href="{% url 'account:roles' %}">Team roles</a>{% endif %}
                 {% if user.is_staff %}<a href="{% url 'admin:index' %}">Administration</a>{% endif %}
 {% if perms.inventory.add_vendor and perms.inventory.view_vendor %}                <a href="{% url 'inventory:vendor_new' %}">Add vendor</a>{% endif %}
             </nav>
