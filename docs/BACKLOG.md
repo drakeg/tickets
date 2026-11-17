@@ -45,7 +45,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | 10 | Done (#201) | Workflow audit complete |
 | PRJ-002 | P2 | As a project owner, choose dates with native controls and reject reversed schedules | 3 | 11 | Done (#202) | PRJ-001 merged |
 | PRJ-003 | P2 | As a project reader, reach every project and search result while keeping assignment scope | 3 | 12 | Done (#203) | PRJ-001/002 merged |
-| UI-001 | P2 | As a maintainer, remove remaining tracked OS artifacts | 1 | 5 carryover | Ready | Usage audit |
+| UI-001 | P2 | As a maintainer, remove remaining tracked OS artifacts | 1 | 5 carryover | In review | Legacy bytecode and Finder metadata removed in cleanup PR |
 | UI-002 | P2 | As a user, use date inputs without obsolete runtime assets | 5 | 5 carryover | Needs discovery | Date parsing/browser audit |
 | OPS-001 | P2 | As an operator, follow tested backup/restore and production setup instructions | 5 | Unscheduled | Needs refinement | Deployment/storage choices |
 | API-001 | P3 | As an integration developer, use scoped authenticated ticket endpoints | 8 | Unscheduled | Discovery only | Access, rate-limit, paid API policy |

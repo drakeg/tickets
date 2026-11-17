@@ -338,3 +338,7 @@ Reports configured group capabilities, missing defaults, extra grants and absent
 default groups without changing anything. Eight request regressions cover access,
 privacy, partial grants, revocation/union, no writes, escaping and superuser recovery.
 No schema, grant, membership or credential changes.
+
+## Sprint 5 carryover — Generated-file repository hygiene — In review
+
+UI-001 removes 23 committed artifacts (21 obsolete Python 3.6 bytecode files and two macOS `.DS_Store` files). The existing `.gitignore` already excludes these paths, so no runtime code, settings, migrations, dependencies, or behavior change. Review the deletion-only diff and confirm CI remains green; this does not complete UI-002's frontend dependency audit.
