@@ -23,7 +23,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | RBAC-002B | P1 | Enforce ticket routes, writes, dashboard counts and navigation | 5 | 16B | Done (#211) | RBAC-002A merged |
 | RBAC-002C | P1 | Enforce project/article routes, management grants, dashboard and navigation | 5 | 16C | Done (#212) | RBAC-002B merged |
 | RBAC-002 | P1 | As an administrator, enforce team access across app routes, search, dashboards and navigation | 8 | 16A–C | Done (#210–#212) | RBAC-001; current permission-gap inventory |
-| RBAC-003 | P1 | As an administrator, verify membership changes, revocation and multi-role access | 5 | 17 | In review | RBAC-002 merged |
+| RBAC-003 | P1 | As an administrator, verify membership changes, revocation and multi-role access | 5 | 17 | Done (#213) | RBAC-002 merged |
 | A11Y-002 | P1 | As an auditor, verify decorative action icons without unresolved text-contrast checks | 1 | Urgent repair follow-up | Done (#205) | Exact workbench incomplete nodes reproduced |
 | A11Y-001 | P1 | As a reader, see muted text and outline controls with sufficient contrast | 1 | Urgent repair | Done (#204) | User audit color-contrast |
 | UI-004 | P1 | As an administrator, use consistent workspace branding and correct model labels | 2 | Admin polish | Done (#208) | User feedback |
@@ -35,7 +35,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Done (#197) | Explicit issues.change_issue permission |
 | TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Done (#197) | TKT-005 permission policy |
 | TKT-007 | P2 | As a reviewer, see who changed status/assignment and when | 5 | 8 | Done (#198) | TKT-005/006 merged; additive migration |
-| TKT-008 | P2 | As an operator, cover admin/bulk change paths and define audit retention | 5 | Unscheduled | Needs refinement | TKT-007; admin workflow policy |
+| TKT-008 | P2 | As an operator, cover admin/bulk change paths and define audit retention | 5 | 18A/next | Admin path in review; bulk/retention pending | TKT-007; bulk operations and retention policy |
 | KB-001 | P2 | As a reader, search and page through all knowledge articles | 3 | 9 | Done (#200) | Existing search workflow |
 | KB-002 | P2 | As an authorized author/staff member, edit articles with explicit model grants | 5 | 16C | Done (#212) | change_article plus author/staff eligibility |
 | DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |
@@ -45,7 +45,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | 10 | Done (#201) | Workflow audit complete |
 | PRJ-002 | P2 | As a project owner, choose dates with native controls and reject reversed schedules | 3 | 11 | Done (#202) | PRJ-001 merged |
 | PRJ-003 | P2 | As a project reader, reach every project and search result while keeping assignment scope | 3 | 12 | Done (#203) | PRJ-001/002 merged |
-| UI-001 | P2 | As a maintainer, remove remaining tracked OS artifacts | 1 | 5 carryover | In review | Legacy bytecode and Finder metadata removed in cleanup PR |
+| UI-001 | P2 | As a maintainer, remove remaining tracked OS artifacts | 1 | 5 carryover | Done (#214) | Merged deletion of tracked generated files |
 | UI-002 | P2 | As a user, use date inputs without obsolete runtime assets | 5 | 5 carryover | Needs discovery | Date parsing/browser audit |
 | OPS-001 | P2 | As an operator, follow tested backup/restore and production setup instructions | 5 | Unscheduled | Needs refinement | Deployment/storage choices |
 | API-001 | P3 | As an integration developer, use scoped authenticated ticket endpoints | 8 | Unscheduled | Discovery only | Access, rate-limit, paid API policy |
