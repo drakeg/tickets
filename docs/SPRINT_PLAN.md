@@ -430,7 +430,7 @@ create, Project Manager reads only. Admin assignment is deliberate; existing use
 without grants lose access by design. Rollback reverts guards/UI but reopens prior
 access; keep groups and data. Next sprint addresses project/article route policies.
 
-## Sprint 16C — Project and knowledge permissions — In review
+## Sprint 16C — Project and knowledge permissions — Complete (#212)
 
 Goal: RBAC-002C (5 points) closes the remaining project/article route gaps in the
 module enforcement epic. Project reads/queues/search require view_project;
@@ -462,3 +462,29 @@ needs staff status plus those grants. Existing accounts without grants need a
 role assigned deliberately in admin. Rollback reverts route/UI guards (reopening
 prior access); retain groups and content. Next: RBAC-003 operator verification and
 review of author identity strings/record-level scope as separate policy work.
+
+## Sprint 17 — Role administration and verification — In review
+
+Goal: RBAC-003 (5 points) gives users and operators a reviewable view of existing
+access after module enforcement. Each signed-in user sees only their own account,
+groups and effective capabilities, including direct grants and multi-role union.
+The role overview requires staff AND auth.view_group; it lists actual configured
+groups, capability combinations, missing/extra default grants and missing groups.
+Custom groups are labelled without an invented default. No membership directory
+is exposed. Editing remains in Django admin with its normal permissions/logging.
+
+Acceptance: anonymous redirects; ordinary users and staff without view_group are
+denied; a nonstaff user with view_group is denied; authorized GET/HEAD only; no
+mutation or auto-repair; action summaries require every route grant. Group edit
+and user administration links require change_group and view_user respectively.
+Knowledge ownership restrictions and site-wide scope are explained. Self access
+reflects next-request revocation/union; query parameters cannot select other users.
+Default/custom/missing group reports must preserve data and escape names.
+
+Tasks: access summaries, profile replacement, protected role view, navigation,
+eight request tests and operator documentation. Full suite, Django/migration
+checks, Docker verification and CI required. No migration/dependency changes.
+Review: sign in as admin, open Team roles, compare configured/default grants;
+review a nonstaff user's own profile and next-request role changes. Rollback
+reverts read-only pages/navigation; no data reversal or membership changes needed.
+Next refinement: OPS-001 backup/restore workflow and legacy author identity links.
