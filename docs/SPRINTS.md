@@ -319,7 +319,7 @@ denied writes, partial grants, dashboard disclosures, revocation/union and recov
 Existing workflow/history/CSRF tests use explicit grants. Project/article policies
 remain next P1 scope. No schema changes or automatic membership changes.
 
-## Sprint 16C — Project and knowledge permissions — In review
+## Sprint 16C — Project and knowledge permissions — Complete (#212)
 
 RBAC-002C closes public project/article reads and login-only creation; model grants
 now protect direct routes and matching navigation. Project counts and global
@@ -328,6 +328,16 @@ grant plus existing author/staff eligibility. Conversion requires destination vi
 access. Defaults grant no management rights; no schema or membership changes.
 Eleven new regressions cover actual role/partial-grant/ownership/CSRF/revocation
 boundaries and recovery. Operator verification (RBAC-003) is next P1 scope.
+
+## Sprint 17 — Role and access visibility — In review
+
+RBAC-003 replaces the inert profile tabs with truthful account/group/effective
+capability details and adds a read-only staff role overview. Requires both staff
+status and auth.view_group; edit/user-admin links require their own permissions.
+Reports configured group capabilities, missing defaults, extra grants and absent
+default groups without changing anything. Eight request regressions cover access,
+privacy, partial grants, revocation/union, no writes, escaping and superuser recovery.
+No schema, grant, membership or credential changes.
 
 ## Sprint 5 carryover — Generated-file repository hygiene — In review
 

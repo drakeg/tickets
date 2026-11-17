@@ -1,0 +1,22 @@
+{% extends 'tickets/base.html' %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">ACCESS ADMINISTRATION</p><h1>Team roles</h1><p class="text-muted">Review configured groups and differences from the default roles.</p></div></section>
+<section class="workspace-panel">
+<p>This page is read-only. Role permissions combine with other memberships and direct user grants. Superusers retain full model access. Staff status alone grants no model access.</p>
+<p>Knowledge management also requires author/staff eligibility. Inventory/project change grants may be used in Django admin; this table summarizes existing workspace actions.</p>
+{% if perms.auth.view_user %}<p><a href="{% url 'admin:auth_user_changelist' %}">Review user memberships in administration</a></p>{% endif %}
+{% if missing_groups %}<h2>Default groups not configured</h2><ul>{% for name in missing_groups %}<li>{{ name }}</li>{% endfor %}</ul><p>An operator can provision the default groups using the documented role setup command. This page creates no groups or memberships.</p>{% endif %}
+</section>
+{% for row in role_rows %}<section class="workspace-panel">
+<h2>{{ row.group.name }}</h2>
+<p>{% if row.is_default %}Default team role{% else %}Custom group; no default comparison{% endif %}</p>
+{% if perms.auth.change_group %}<p><a href="{% url 'admin:auth_group_change' row.group.pk %}">Edit group in administration</a></p>{% endif %}
+<div class="table-responsive"><table class="table"><caption>Configured workspace capabilities for {{ row.group.name }}</caption><thead><tr><th scope="col">Action</th><th scope="col">Group grant</th></tr></thead><tbody>{% for capability in row.capabilities %}<tr><th scope="row">{{ capability.label }}</th><td>{% if capability.allowed %}Granted{% else %}Not granted{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{% if row.is_default %}
+<h3>Missing default grants</h3><ul>{% for grant in row.missing %}<li><code>{{ grant }}</code></li>{% empty %}<li>None</li>{% endfor %}</ul>
+<h3>Additional grants</h3><ul>{% for grant in row.additional %}<li><code>{{ grant }}</code></li>{% empty %}<li>None</li>{% endfor %}</ul>
+<p>Additional grants may widen access. Setup preserves custom grants; review them deliberately in administration.</p>
+{% endif %}
+<details><summary>All configured permissions</summary><ul>{% for grant in row.grants %}<li><code>{{ grant }}</code></li>{% empty %}<li>No permissions</li>{% endfor %}</ul></details>
+</section>{% empty %}<p>No groups configured.</p>{% endfor %}
+{% endblock %}

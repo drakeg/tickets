@@ -1,6 +1,6 @@
 # Team roles and access-control delivery
 
-Priority: P1. Module enforcement is delivered incrementally; Sprint 16C is in review.
+Priority: P1. Module enforcement is delivered incrementally; Module enforcement through Sprint 16C is merged (#212).
 
 ## Default groups
 
@@ -113,7 +113,7 @@ and verify role defaults, no-role/anonymous denial, missing reference/view grant
 revocation, multi-role union and superuser recovery. Ticket editing retains its
 transactional history and CSRF behavior; no new grants or schema changes.
 
-### Sprint 16C: RBAC-002C — Project/article enforcement (in review, 5 points)
+### Sprint 16C: RBAC-002C — Project/article enforcement (complete, #212, 5 points)
 
 Protect all existing project/article app reads and writes with the grants above,
 including article management and ticket conversion. Gate navigation and counters,
@@ -137,3 +137,31 @@ it can open ticket triage but cannot access Django admin. The foundation adds no
 user membership and needs no database schema changes. Removing a configured group
 would remove its granted capabilities from members; setup intentionally does not
 delete groups or reconcile custom grants destructively.
+
+## Reviewing access in the application (Sprint 17, in review)
+
+Select your username in the top bar to see your own groups and effective workspace
+capabilities. The summary combines all group and direct grants, requiring the
+same grant combinations as the existing routes. It does not promise per-record
+access: article editing/deletion also needs author/staff eligibility. The old fake
+profile settings, password form and logout tabs are removed; the shared sign-out
+button continues to use protected POST. No credential change is performed.
+
+**Team roles** appears in the administration sidebar only for staff with
+auth.view_group. It is read-only and independently enforces both requirements.
+It shows actual configured group grants and compares named defaults to
+accounts/roles.py, including missing default groups. Missing grants do not
+automatically get repaired; additional grants are preserved and may widen access.
+Custom groups have no default comparison. These are group-only capabilities;
+users may gain more from other memberships/direct grants or superuser status.
+
+Links to edit groups require auth.change_group; a link to review user memberships
+requires auth.view_user. Those native admin pages independently enforce their
+permissions. This page grants nothing, edits no membership and lists no users.
+Existing Django admin logging records actual administration changes.
+
+Verification: review default matrix, deliberately modify a test group's grants
+in admin, confirm missing/additional entries, then inspect a nonstaff test user's
+profile and authorized app routes. Remove a role and repeat the request to verify
+revocation. Do not modify production memberships merely to exercise the page.
+No setup command runs while browsing and no new admin permissions are assigned.

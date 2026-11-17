@@ -21,9 +21,9 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | RBAC-001 | P1 | As an administrator, provision named team roles with safe repeatable defaults | 3 | 15 | Done (#209) | User role requirements; docs/ROLES.md |
 | RBAC-002A | P1 | Enforce inventory routes, dashboard/nav visibility and permission-filtered global search | 5 | 16A | Done (#210) | RBAC-001 merged |
 | RBAC-002B | P1 | Enforce ticket routes, writes, dashboard counts and navigation | 5 | 16B | Done (#211) | RBAC-002A merged |
-| RBAC-002C | P1 | Enforce project/article routes, management grants, dashboard and navigation | 5 | 16C | In review | RBAC-002B merged |
-| RBAC-002 | P1 | As an administrator, enforce team access across app routes, search, dashboards and navigation | 8 | 16A–C | Final increment in review | RBAC-001; current permission-gap inventory |
-| RBAC-003 | P1 | As an administrator, verify membership changes, revocation and multi-role access | 5 | After 16 | Needs refinement | RBAC-002 |
+| RBAC-002C | P1 | Enforce project/article routes, management grants, dashboard and navigation | 5 | 16C | Done (#212) | RBAC-002B merged |
+| RBAC-002 | P1 | As an administrator, enforce team access across app routes, search, dashboards and navigation | 8 | 16A–C | Done (#210–#212) | RBAC-001; current permission-gap inventory |
+| RBAC-003 | P1 | As an administrator, verify membership changes, revocation and multi-role access | 5 | 17 | In review | RBAC-002 merged |
 | A11Y-002 | P1 | As an auditor, verify decorative action icons without unresolved text-contrast checks | 1 | Urgent repair follow-up | Done (#205) | Exact workbench incomplete nodes reproduced |
 | A11Y-001 | P1 | As a reader, see muted text and outline controls with sufficient contrast | 1 | Urgent repair | Done (#204) | User audit color-contrast |
 | UI-004 | P1 | As an administrator, use consistent workspace branding and correct model labels | 2 | Admin polish | Done (#208) | User feedback |
@@ -37,7 +37,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | TKT-007 | P2 | As a reviewer, see who changed status/assignment and when | 5 | 8 | Done (#198) | TKT-005/006 merged; additive migration |
 | TKT-008 | P2 | As an operator, cover admin/bulk change paths and define audit retention | 5 | Unscheduled | Needs refinement | TKT-007; admin workflow policy |
 | KB-001 | P2 | As a reader, search and page through all knowledge articles | 3 | 9 | Done (#200) | Existing search workflow |
-| KB-002 | P2 | As an authorized author/staff member, edit articles with explicit model grants | 5 | 16C | Hardened in review | change_article plus author/staff eligibility |
+| KB-002 | P2 | As an authorized author/staff member, edit articles with explicit model grants | 5 | 16C | Done (#212) | change_article plus author/staff eligibility |
 | DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |
 | CMDB-003 | P2 | As an operator, browse every system and search result with correct related fields | 3 | 14 | Done (#207) | CMDB-002 merged |
 | CMDB-002 | P2 | As an operator, complete system creation with clear setup guidance and useful saved details | 3 | 13 | Done (#206) | Existing inventory workflow |
