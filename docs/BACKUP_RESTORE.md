@@ -52,3 +52,31 @@ python3 -m unittest discover -s tests -p 'test_sqlite_backup.py' -v
 ```
 
 All test records are synthetic SQLite data created in temporary directories.
+
+## Django-level isolated restore verification (Sprint 19B.2)
+
+After creating a snapshot, verify **Django migrations, system checks, core ORM
+models and their foreign-key joins** against a disposable copy:
+
+```bash
+# From a local Python environment with requirements.txt installed:
+python scripts/django_restore_smoke.py --snapshot backups/tickets-YYYYMMDDTHHMMSSZ.sqlite3
+
+# Or inside an isolated test container with an explicitly mounted snapshot.
+```
+
+This verification creates a **temporary copy**, points `DJANGO_DB_PATH` at the
+copy before Django initializes, and reads it without modifying the original
+snapshot or the live Compose volume. It does not print customer records or
+credentials. Pending migrations, broken foreign keys or ORM schema errors cause
+failure. The snapshot must correspond to the application code/migrations being
+tested.
+
+The synthetic CI rehearsal creates a temporary migrated Django database,
+populates one ticket, asset, project and knowledge article, takes an online
+backup, validates the restored ORM queries, and confirms the source was unchanged.
+It does not modify production or local persistent database files.
+
+A complete operator disaster-recovery rehearsal still needs a separate isolated
+web container, functional login/UI checks, backup scheduling and approved
+retention rules. Do not substitute the integrity test for that full drill.

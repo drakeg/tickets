@@ -124,7 +124,7 @@ Project development follows documented sprint, coding, testing, and pull-request
 - [Detailed sprint delivery plan](docs/SPRINT_PLAN.md)
 - [Sprint process and history](docs/SPRINTS.md)
 - [Coding standards](docs/CODING_STANDARDS.md)
-- [Testing standards](docs/TESTING.md)\n- [SQLite backup and restore rehearsal](docs/BACKUP_RESTORE.md)
+- [Testing standards](docs/TESTING.md)\n- [SQLite backup and isolated Django recovery rehearsal](docs/BACKUP_RESTORE.md)
 
 These documents should be updated alongside the code whenever project workflow, quality gates, or sprint scope changes.
 
