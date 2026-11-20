@@ -599,3 +599,109 @@ class IssueAdminAuditTests(TestCase):
         response = self.client.get(reverse('admin:issues_issue_change', args=[self.issue.pk]))
         self.assertEqual(response.status_code, 302)
         self.assertFalse(self.issue.changes.exists())
+
+
+
+class BulkTicketAuditTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.operator = get_user_model().objects.create_superuser(
+            username='bulk-operator', password='test-password',
+        )
+        cls.restricted = get_user_model().objects.create_user(
+            username='restricted', is_staff=True,
+        )
+        priority = Priority.objects.create(name='Normal')
+        cls.first = Issue.objects.create(
+            requestor_name='a', summary='First', description='A',
+            priority=priority, pub_date=timezone.now(),
+        )
+        cls.second = Issue.objects.create(
+            requestor_name='b', summary='Second', description='B',
+            priority=priority, pub_date=timezone.now(), issue_open=False,
+        )
+        cls.third = Issue.objects.create(
+            requestor_name='c', summary='Third', description='C',
+            priority=priority, pub_date=timezone.now(),
+        )
+
+    def setUp(self):
+        from django.contrib import admin
+        from django.test import RequestFactory
+        self.issue_admin = admin.site._registry[Issue]
+        self.request = RequestFactory().post('/admin/issues/issue/')
+        self.request.user = self.operator
+
+    def test_selected_tickets_only_and_idempotent_history(self):
+        from .services import bulk_update_ticket_status
+        selected = Issue.objects.filter(pk__in=[self.first.pk, self.second.pk])
+        self.assertEqual(bulk_update_ticket_status(selected, False, self.operator), 1)
+        self.first.refresh_from_db()
+        self.third.refresh_from_db()
+        self.assertFalse(self.first.issue_open)
+        self.assertTrue(self.third.issue_open)
+        self.assertFalse(self.second.changes.exists())
+        event = self.first.changes.get()
+        self.assertEqual(event.actor, self.operator)
+        self.assertEqual(event.before['status'], 'Open')
+        self.assertEqual(event.after['status'], 'Closed')
+        self.assertEqual(event.before['priority'], event.after['priority'])
+        self.assertEqual(bulk_update_ticket_status(selected, False, self.operator), 0)
+        self.assertEqual(self.first.changes.count(), 1)
+        self.assertEqual(bulk_update_ticket_status(selected, True, self.operator), 2)
+        self.assertEqual(self.first.changes.count(), 2)
+        self.assertEqual(self.second.changes.count(), 1)
+
+    def test_audit_failure_rolls_back_all_bulk_statuses(self):
+        from django.db import IntegrityError
+        from unittest.mock import patch
+        from .services import bulk_update_ticket_status
+        with patch('issues.services.IssueChange.objects.create',
+                   side_effect=[None, IntegrityError('audit failed')]):
+            with self.assertRaises(IntegrityError):
+                bulk_update_ticket_status(
+                    Issue.objects.filter(pk__in=[self.first.pk, self.third.pk]),
+                    False, self.operator,
+                )
+        self.first.refresh_from_db()
+        self.third.refresh_from_db()
+        self.assertTrue(self.first.issue_open)
+        self.assertTrue(self.third.issue_open)
+        self.assertFalse(self.first.changes.exists())
+
+    def test_admin_action_checks_change_permission(self):
+        from django.core.exceptions import PermissionDenied
+        self.request.user = self.restricted
+        with self.assertRaises(PermissionDenied):
+            self.issue_admin.close_selected_tickets(
+                self.request, Issue.objects.filter(pk=self.first.pk),
+            )
+        self.first.refresh_from_db()
+        self.assertTrue(self.first.issue_open)
+        self.assertFalse(self.first.changes.exists())
+
+    def test_admin_action_reports_changed_count(self):
+        from unittest.mock import patch
+        with patch.object(self.issue_admin, 'message_user') as message:
+            self.issue_admin.close_selected_tickets(
+                self.request, Issue.objects.filter(
+                    pk__in=[self.first.pk, self.second.pk],
+                ),
+            )
+            message.assert_called_once()
+            self.assertIn('1 ticket(s)', message.call_args.args[1])
+        self.assertEqual(self.first.changes.count(), 1)
+        self.assertFalse(self.second.changes.exists())
+
+    def test_nonstaff_cannot_post_admin_bulk_action(self):
+        outsider = get_user_model().objects.create_user(username='outsider')
+        self.client.force_login(outsider)
+        response = self.client.post(reverse('admin:issues_issue_changelist'), {
+            'action': 'close_selected_tickets',
+            '_selected_action': [self.first.pk],
+            'index': 0,
+        })
+        self.assertEqual(response.status_code, 302)
+        self.first.refresh_from_db()
+        self.assertTrue(self.first.issue_open)
+        self.assertFalse(self.first.changes.exists())
