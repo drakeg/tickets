@@ -12,6 +12,10 @@ import sqlite3
 import sys
 import tempfile
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from scripts.sqlite_backup import _integrity_check
 
 
@@ -28,7 +32,7 @@ def rehearse(snapshot):
         os.environ["DJANGO_DB_PATH"] = str(restored)
         os.environ.setdefault("DJANGO_DEBUG", "true")
         os.environ.setdefault("DJANGO_SECRET_KEY", "temporary-restore-check-only")
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tickets.settings")
+        os.environ["DJANGO_SETTINGS_MODULE"] = "tickets.settings"
         import django
         django.setup()
 
