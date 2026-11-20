@@ -45,6 +45,9 @@ jobs:
       - name: Run functional tests
         run: python manage.py test --verbosity 2
 
+      - name: Verify isolated Django snapshot recovery
+        run: python -m unittest discover -s tests -p 'test_django_restore_smoke.py' -v
+
   docker-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
