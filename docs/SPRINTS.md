@@ -343,7 +343,7 @@ No schema, grant, membership or credential changes.
 
 UI-001 removes 23 committed artifacts (21 obsolete Python 3.6 bytecode files and two macOS `.DS_Store` files). The existing `.gitignore` already excludes these paths, so no runtime code, settings, migrations, dependencies, or behavior change. Review the deletion-only diff and confirm CI remains green; this does not complete UI-002's frontend dependency audit.
 
-## Sprint 18A — Django admin ticket triage audit — In review
+## Sprint 18A — Django admin ticket triage audit — Complete (#215)
 
 TKT-008 first increment extends the existing transactional ticket change history to
 individual Django admin edits of status, priority, or assignment. No-op and
@@ -356,3 +356,48 @@ confirm a single event is visible in the ticket detail to an authorized editor.
 Run all tests, Django checks, migration checks and Docker CI. No schema changes.
 Follow-up: decide and implement bulk-update audit paths and retention rules
 separately, including a policy for destructive deletes before writing code.
+
+ 
+## Sprint 18B — Audited bulk ticket status actions — Complete (#217)
+
+Add explicit Close selected and Reopen selected Django admin actions, restricted
+to authorized change operators. Each changed ticket gets one actor-attributed
+before/after event, and unchanged records get no event. Only selected rows are
+touched. A transaction rolls back every update when audit writing fails, using
+deterministic row locks rather than QuerySet.update().
+
+Acceptance: selection boundaries, no-op/retry safety, close/reopen, actor,
+rollback, permission denial, and admin action display. CI must validate Django
+tests and Compose smoke checks. No schema or dependency changes. Audit-retention
+rules and destructive bulk deletion remain separate policy work.
+
+## Sprint 19A — Standards adoption and LAN setup — In review
+
+Goal: apply project-specific Mad Mallard repository standards without touching
+active Sprint 18B or any local persisted database. Inspect actual Django/Python,
+Bootstrap, SQLite, Compose, GitHub Actions, licensing and release evidence.
+
+Deliver: bounded truthful README badges, AGENTS.md, RELEASES.md, corrected
+security policy, maintained CONTRIBUTING guidance, and configurable trusted LAN
+hosts. Add CI validation of badge structure and supported documentation.
+
+Acceptance: no invented license/release badges, valid official dynamic CI badges,
+no secrets or data deletion, Compose port mapping retained, complete Django CI
+and CodeQL successful. Deployment is only verified when an environment is
+actually exercised. Sprint 18B remains an independent PR.
+
+## Sprint 19B — SMB pilot readiness — Planned
+
+Goal: shorten the path from local ServDesk to a credible small-MSP pilot.
+First, rehearse isolated SQLite backup/restore without touching the user's local
+volume, establish a reproducible login/ticket/asset/article smoke test, and
+record setup friction. Then obtain real feedback from candidate SMB operators.
+An initial two-to-ten-agent pilot and any price are hypotheses, not validation.
+
+## Sprint 19B.1 — SQLite backup safety and restore integrity — In review
+
+Add an explicit operator CLI for online SQLite snapshots from the named Compose
+volume, no destination overwrite, restrictive snapshot permissions and isolated
+restore/integrity verification. Test only synthetic databases in temporary
+locations; do not touch the user's persistent volume in CI. Preserve the
+full application restore drill and off-device retention policy as follow-ups.

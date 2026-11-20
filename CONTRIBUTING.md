@@ -49,3 +49,20 @@ A change is complete when:
 ## Security
 
 Do not commit passwords, API keys, production secret keys, personal access tokens, or other credentials. See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance.
+
+## Mad Mallard standards and badge maintenance
+
+Follow the application-specific [AGENTS.md](AGENTS.md), then refer to the
+[central repository standards](https://github.com/drakeg/madmallard-repository-standards)
+for optional shared tooling. Never import the template wholesale or override
+project security, deployment constraints, or existing data.
+
+Maintain the bounded badge block immediately below the README H1. Verify every
+technology/version claim from tracked dependencies, workflows, and Docker files.
+Use live GitHub Actions, issues and PR badges; never hardcode success. Add license
+or release badges only after an actual project license or published release is
+verified. The validation script checks the required badge structure on every PR.
+
+Keep `docs/SPRINTS.md`, `docs/BACKLOG.md`, `RELEASES.md`, and PR test evidence
+current. Implement, test, fix and continue to the next ready independent task.
+Do not imply a local deployment occurred solely because CI passed.

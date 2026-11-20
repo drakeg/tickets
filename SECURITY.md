@@ -1,21 +1,27 @@
 # Security Policy
 
-## Supported Versions
+## Supported versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+ServDesk has not yet published a versioned stable release. The current
+`master` branch is the development line receiving security fixes. No older
+versions are promised ongoing support. Once releases are published, supported
+versions will be documented here and in `RELEASES.md`.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+## Reporting vulnerabilities
 
-## Reporting a Vulnerability
+Please use [GitHub's private vulnerability reporting](https://github.com/drakeg/tickets/security/advisories/new)
+when enabled, or contact the repository maintainer privately using GitHub's
+profile contact information. Do not disclose exploit details in a public issue.
 
-Use this section to tell people how to report a vulnerability.
+Never include production credentials, tokens, personal data, or customer records
+in reports. Include reproduction steps, affected revision, and impact with
+redacted examples. The maintainer will triage and coordinate disclosure; no
+response-time SLA is currently promised.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+## Deployment note
+
+Docker Compose defaults to a development Django server and SQLite. It is not
+a hardened public production deployment. Use trusted LAN access only for
+development; before internet exposure, set `DJANGO_DEBUG=false`, configure a
+unique secret and allowed hosts, TLS/reverse proxy, backups, and a supported
+production WSGI/ASGI server.
