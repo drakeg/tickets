@@ -371,7 +371,7 @@ rollback, permission denial, and admin action display. CI must validate Django
 tests and Compose smoke checks. No schema or dependency changes. Audit-retention
 rules and destructive bulk deletion remain separate policy work.
 
-## Sprint 19A — Standards adoption and LAN setup — In review
+## Sprint 19A — Standards adoption and LAN setup — Complete (#218)
 
 Goal: apply project-specific Mad Mallard repository standards without touching
 active Sprint 18B or any local persisted database. Inspect actual Django/Python,
@@ -394,10 +394,24 @@ volume, establish a reproducible login/ticket/asset/article smoke test, and
 record setup friction. Then obtain real feedback from candidate SMB operators.
 An initial two-to-ten-agent pilot and any price are hypotheses, not validation.
 
-## Sprint 19B.1 — SQLite backup safety and restore integrity — In review
+## Sprint 19B.1 — SQLite backup safety and restore integrity — Complete (#219)
 
 Add an explicit operator CLI for online SQLite snapshots from the named Compose
 volume, no destination overwrite, restrictive snapshot permissions and isolated
 restore/integrity verification. Test only synthetic databases in temporary
 locations; do not touch the user's persistent volume in CI. Preserve the
 full application restore drill and off-device retention policy as follow-ups.
+
+## Sprint 19B.2 — Isolated Django recovery rehearsal — In review
+
+Goal: verify snapshot recovery beyond SQLite integrity checks without accessing
+the active database or running destructive migrations against it. The recovery
+script copies the supplied snapshot into a temporary directory and checks Django
+system configuration, migration compatibility, SQLite foreign keys, and read-only
+ORM joins across ticket, asset, knowledge article and project modules.
+
+Two synthetic subprocess tests create migrated data and assert restored ORM
+compatibility, plus fail-closed rejection of an unmigrated database. These run in
+the Django CI job after dependency installation. No schema changes, environment
+changes or production data writes. Application login/UI recovery remains an
+explicit next deliverable, not a claimed test result.
