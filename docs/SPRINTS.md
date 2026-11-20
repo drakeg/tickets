@@ -441,7 +441,7 @@ Confirm isolated Django regression tests, migration drift, Compose smoke and Cod
 Follow-up: inspect historical duplicates and choose safe uniqueness/concurrency
 semantics before introducing a database uniqueness constraint, if needed.
 
-## Sprint 20B — Read-only legacy asset name audit — In review
+## Sprint 20B — Read-only legacy asset name audit — Complete (#223)
 
 Provide an operator command to count blank, whitespace-padded and
 case-insensitive same-cluster duplicate system names in existing data without
@@ -454,3 +454,16 @@ collisions, whitespace and blank records, privacy-by-default output and
 non-destructive behavior. No migrations or production data cleanup. Any future
 uniqueness constraint requires a separate data review and explicit migration
 policy.
+
+## Sprint 20C — Django admin system-name validation — In review
+
+Apply the same blank and same-cluster case-insensitive duplicate checks to
+Django admin without removing any existing admin fields. Permit edits that do
+not introduce an identity conflict, including existing duplicate names and
+blank-name historical rows. No schema changes or automatic cleanup.
+
+Acceptance: admin registration uses the protected form; duplicate/whitespace
+and blank new entries are rejected; the same name in another cluster remains
+valid; editing legacy duplicates and blank records is possible; renaming a
+record into a conflict is denied. Confirm targeted/full Django regression tests,
+CodeQL and Docker smoke checks before merging.
