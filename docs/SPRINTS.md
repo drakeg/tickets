@@ -356,3 +356,26 @@ confirm a single event is visible in the ticket detail to an authorized editor.
 Run all tests, Django checks, migration checks and Docker CI. No schema changes.
 Follow-up: decide and implement bulk-update audit paths and retention rules
 separately, including a policy for destructive deletes before writing code.
+
+## Sprint 19A — Standards adoption and LAN setup — In review
+
+Goal: apply project-specific Mad Mallard repository standards without touching
+active Sprint 18B or any local persisted database. Inspect actual Django/Python,
+Bootstrap, SQLite, Compose, GitHub Actions, licensing and release evidence.
+
+Deliver: bounded truthful README badges, AGENTS.md, RELEASES.md, corrected
+security policy, maintained CONTRIBUTING guidance, and configurable trusted LAN
+hosts. Add CI validation of badge structure and supported documentation.
+
+Acceptance: no invented license/release badges, valid official dynamic CI badges,
+no secrets or data deletion, Compose port mapping retained, complete Django CI
+and CodeQL successful. Deployment is only verified when an environment is
+actually exercised. Sprint 18B remains an independent PR.
+
+## Sprint 19B — SMB pilot readiness — Planned
+
+Goal: shorten the path from local ServDesk to a credible small-MSP pilot.
+First, rehearse isolated SQLite backup/restore without touching the user's local
+volume, establish a reproducible login/ticket/asset/article smoke test, and
+record setup friction. Then obtain real feedback from candidate SMB operators.
+An initial two-to-ten-agent pilot and any price are hypotheses, not validation.
