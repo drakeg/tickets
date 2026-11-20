@@ -42,6 +42,23 @@ Use Previous/Next to reach older articles; search phrases remain applied while
 paging. Search matches description, keywords, or author. Empty searches show no
 results. Existing author/staff editing and authenticated creation remain available.
 
+## Auditing existing asset names
+
+After deploying, administrators can use a **read-only** command to review
+historical asset-name problems without changing existing records:
+
+```bash
+docker compose exec -T web python manage.py audit_asset_names
+# To see affected record IDs for manual review (names remain hidden):
+docker compose exec -T web python manage.py audit_asset_names --show-record-ids
+```
+
+The command reports empty names, names with surrounding whitespace, and
+case-insensitive duplicate system names within one cluster. It does not
+remove or rename existing assets. An optional `--fail-on-issues` flag returns
+an error status for explicit maintenance checks; it is not part of application
+startup. Review existing records before considering a uniqueness migration.
+
 ## Inventory browsing
 
 System lists and system-name search show 15 records per page, grouped by cluster
