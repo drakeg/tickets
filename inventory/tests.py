@@ -349,3 +349,83 @@ class InventoryRoleBoundaryTests(TestCase):
         self.client.force_login(user)
         self.assertEqual(self.client.get(reverse('inventory:servers_new')).status_code, 403)
         self.assertNotContains(self.client.get(reverse('inventory:index')), reverse('inventory:servers_new'))
+
+
+
+class InventoryIdentifierValidationTests(TestCase):
+    """CMDB-001: validate new writes without modifying historical assets."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.os = Operating_System.objects.create(os_name='Ubuntu')
+        cls.vendor = Vendor.objects.create(vendor_name='Dell')
+        cls.primary = Cluster.objects.create(cluster_name='Production')
+        cls.secondary = Cluster.objects.create(cluster_name='Staging')
+        cls.existing = Server.objects.create(
+            server_name='VPN-gateway', os=cls.os, vendor=cls.vendor,
+            cluster=cls.primary, pub_date=timezone.now(),
+        )
+        cls.author = get_user_model().objects.create_user(username='cmdb-author')
+        grant_inventory_access(cls.author)
+
+    def setUp(self):
+        self.client.force_login(self.author)
+
+    def post_system(self, name, cluster=None):
+        return self.client.post(reverse('inventory:servers_new'), {
+            'server_name': name, 'os': self.os.pk, 'vendor': self.vendor.pk,
+            'cluster': cluster or self.primary.pk,
+        })
+
+    def test_duplicate_name_in_same_cluster_is_rejected_case_insensitively(self):
+        response = self.post_system('vpn-GATEWAY')
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context['form'], 'server_name',
+            'A system with this name already exists in the selected cluster.',
+        )
+        self.assertEqual(Server.objects.count(), 1)
+
+    def test_whitespace_is_trimmed_before_duplicate_check(self):
+        response = self.post_system('  VPN-gateway  ')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('server_name', response.context['form'].errors)
+        self.assertEqual(Server.objects.count(), 1)
+
+    def test_blank_or_whitespace_only_name_does_not_create_asset(self):
+        for name in ('', '   '):
+            response = self.post_system(name)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('server_name', response.context['form'].errors)
+        self.assertEqual(Server.objects.count(), 1)
+
+    def test_same_name_in_different_cluster_is_permitted(self):
+        response = self.post_system('VPN-gateway', self.secondary.pk)
+        self.assertEqual(response.status_code, 302)
+        created = Server.objects.get(cluster=self.secondary)
+        self.assertEqual(created.server_name, 'VPN-gateway')
+        self.assertEqual(Server.objects.count(), 2)
+
+    def test_new_name_is_saved_without_outer_whitespace(self):
+        response = self.post_system('  web-02  ')
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Server.objects.filter(
+            cluster=self.primary, server_name='web-02',
+        ).exists())
+
+    def test_missing_reference_data_still_rejected(self):
+        response = self.post_system('web-02', 9999999)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('cluster', response.context['form'].errors)
+        self.assertEqual(Server.objects.count(), 1)
+
+    def test_historical_duplicate_rows_are_not_modified(self):
+        second = Server.objects.create(
+            server_name='VPN-gateway', os=self.os, vendor=self.vendor,
+            cluster=self.primary, pub_date=timezone.now(),
+        )
+        response = self.post_system('VPN-GATEWAY')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Server.objects.filter(cluster=self.primary).count(), 2)
+        second.refresh_from_db()
+        self.assertEqual(second.server_name, 'VPN-gateway')
