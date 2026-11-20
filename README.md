@@ -125,6 +125,7 @@ Project development follows documented sprint, coding, testing, and pull-request
 - [Sprint process and history](docs/SPRINTS.md)
 - [Coding standards](docs/CODING_STANDARDS.md)
 - [Testing standards](docs/TESTING.md)\n- [SQLite backup and isolated Django recovery rehearsal](docs/BACKUP_RESTORE.md)
+- [SMB demo and pilot workflow](docs/SMB_DEMO.md)
 
 These documents should be updated alongside the code whenever project workflow, quality gates, or sprint scope changes.
 
