@@ -13,3 +13,6 @@ venv
 env
 htmlcov
 .coverage
+
+backups/
+*.sqlite3

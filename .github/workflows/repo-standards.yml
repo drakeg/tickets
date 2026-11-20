@@ -16,3 +16,5 @@ jobs:
       - uses: actions/checkout@v7
       - name: Verify required docs and badge structure
         run: python3 scripts/check_repo_standards.py
+      - name: Rehearse isolated SQLite backup and restore
+        run: python3 -m unittest discover -s tests -p 'test_sqlite_backup.py' -v

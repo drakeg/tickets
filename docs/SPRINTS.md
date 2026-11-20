@@ -393,3 +393,11 @@ First, rehearse isolated SQLite backup/restore without touching the user's local
 volume, establish a reproducible login/ticket/asset/article smoke test, and
 record setup friction. Then obtain real feedback from candidate SMB operators.
 An initial two-to-ten-agent pilot and any price are hypotheses, not validation.
+
+## Sprint 19B.1 — SQLite backup safety and restore integrity — In review
+
+Add an explicit operator CLI for online SQLite snapshots from the named Compose
+volume, no destination overwrite, restrictive snapshot permissions and isolated
+restore/integrity verification. Test only synthetic databases in temporary
+locations; do not touch the user's persistent volume in CI. Preserve the
+full application restore drill and off-device retention policy as follow-ups.
