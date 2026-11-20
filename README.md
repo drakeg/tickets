@@ -109,8 +109,7 @@ renames do not rewrite the record; deleted actors retain their recorded name.
 
 Run `python manage.py migrate` when upgrading (Compose applies migrations on
 startup). Existing tickets start with no recorded changes. History covers the application triage form and individual Django admin edits;
-raw shell/ORM updates bypass this history. Audited bulk status actions are in
-PR #217 and will apply only after merge. Deleting a ticket deletes its history. History is an operational record,
+raw shell/ORM updates bypass this history. Audited bulk close/reopen status actions are available in Django admin (#217). Deleting a ticket deletes its history. History is an operational record,
 not a tamper-proof audit ledger. SQLite does not provide row locks; deployments
 requiring concurrent write serialization should use a database with row locking.
 

@@ -35,7 +35,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Done (#197) | Explicit issues.change_issue permission |
 | TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Done (#197) | TKT-005 permission policy |
 | TKT-007 | P2 | As a reviewer, see who changed status/assignment and when | 5 | 8 | Done (#198) | TKT-005/006 merged; additive migration |
-| TKT-008 | P2 | As an operator, cover admin/bulk change paths and define audit retention | 5 | 18A/next | Admin path in review; bulk/retention pending | TKT-007; bulk operations and retention policy |
+| TKT-008 | P2 | As an operator, cover admin/bulk change paths and define audit retention | 5 | 18A–B | Admin audit merged (#215); audited bulk status merged (#217); retention pending | TKT-007; retention and delete policy |
 | KB-001 | P2 | As a reader, search and page through all knowledge articles | 3 | 9 | Done (#200) | Existing search workflow |
 | KB-002 | P2 | As an authorized author/staff member, edit articles with explicit model grants | 5 | 16C | Done (#212) | change_article plus author/staff eligibility |
 | DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |

@@ -31,3 +31,24 @@ def update_ticket(issue_id, data, actor):
                 before=before, after=after,
             )
     return form
+
+
+@transaction.atomic
+def bulk_update_ticket_status(queryset, is_open, actor):
+    """Change selected ticket statuses and atomically record every transition."""
+    changed = 0
+    for issue in queryset.order_by('pk').select_for_update().select_related(
+        'priority', 'assigned',
+    ):
+        if issue.issue_open == is_open:
+            continue
+        before = triage_snapshot(issue)
+        issue.issue_open = is_open
+        after = triage_snapshot(issue)
+        issue.save(update_fields=['issue_open'])
+        IssueChange.objects.create(
+            issue=issue, actor=actor, actor_name=actor.get_username(),
+            before=before, after=after,
+        )
+        changed += 1
+    return changed

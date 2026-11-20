@@ -17,7 +17,7 @@ Scope: **only** `drakeg/tickets`. Use [Mad Mallard Repository Standards](https:/
 
 ## Current delivery state
 
-Sprint 18B audited bulk ticket status actions: PR #217 (review/CI).
+Sprint 18B audited bulk ticket status actions: complete (#217).
 Sprint 19A standards/README/agent/release/CI validation: independent PR.
 Next: isolate and prove a backup/restore rehearsal, then validate an SMB operator demo.
 

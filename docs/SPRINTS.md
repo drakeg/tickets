@@ -343,7 +343,7 @@ No schema, grant, membership or credential changes.
 
 UI-001 removes 23 committed artifacts (21 obsolete Python 3.6 bytecode files and two macOS `.DS_Store` files). The existing `.gitignore` already excludes these paths, so no runtime code, settings, migrations, dependencies, or behavior change. Review the deletion-only diff and confirm CI remains green; this does not complete UI-002's frontend dependency audit.
 
-## Sprint 18A — Django admin ticket triage audit — In review
+## Sprint 18A — Django admin ticket triage audit — Complete (#215)
 
 TKT-008 first increment extends the existing transactional ticket change history to
 individual Django admin edits of status, priority, or assignment. No-op and
@@ -356,6 +356,20 @@ confirm a single event is visible in the ticket detail to an authorized editor.
 Run all tests, Django checks, migration checks and Docker CI. No schema changes.
 Follow-up: decide and implement bulk-update audit paths and retention rules
 separately, including a policy for destructive deletes before writing code.
+
+ 
+## Sprint 18B — Audited bulk ticket status actions — Complete (#217)
+
+Add explicit Close selected and Reopen selected Django admin actions, restricted
+to authorized change operators. Each changed ticket gets one actor-attributed
+before/after event, and unchanged records get no event. Only selected rows are
+touched. A transaction rolls back every update when audit writing fails, using
+deterministic row locks rather than QuerySet.update().
+
+Acceptance: selection boundaries, no-op/retry safety, close/reopen, actor,
+rollback, permission denial, and admin action display. CI must validate Django
+tests and Compose smoke checks. No schema or dependency changes. Audit-retention
+rules and destructive bulk deletion remain separate policy work.
 
 ## Sprint 19A — Standards adoption and LAN setup — In review
 
