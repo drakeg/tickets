@@ -41,7 +41,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |
 | CMDB-003 | P2 | As an operator, browse every system and search result with correct related fields | 3 | 14 | Done (#207) | CMDB-002 merged |
 | CMDB-002 | P2 | As an operator, complete system creation with clear setup guidance and useful saved details | 3 | 13 | Done (#206) | Existing inventory workflow |
-| CMDB-001 | P2 | As an operator, validate asset identifiers and required fields | 5 | 20A | New-asset form validation in review; historical duplicates and concurrency need follow-up | Existing-data audit before DB uniqueness constraint |
+| CMDB-001 | P2 | As an operator, validate asset identifiers and required fields | 5 | 20A–B | Creation validation done (#222); historical name audit in review | Review duplicate counts before any DB constraint |
 | PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | 10 | Done (#201) | Workflow audit complete |
 | PRJ-002 | P2 | As a project owner, choose dates with native controls and reject reversed schedules | 3 | 11 | Done (#202) | PRJ-001 merged |
 | PRJ-003 | P2 | As a project reader, reach every project and search result while keeping assignment scope | 3 | 12 | Done (#203) | PRJ-001/002 merged |

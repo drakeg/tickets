@@ -426,7 +426,7 @@ anonymous access. Tests run against the framework's isolated test database, not
 the persistent Compose volume. Document a repeatable manual demo and future
 customer discovery. Do not claim a customer, revenue or willingness-to-pay result.
 
-## Sprint 20A — CMDB system-name validation — In review
+## Sprint 20A — CMDB system-name validation — Complete (#222)
 
 Require nonblank trimmed names on new system creation and prevent a case-insensitive
 name collision within the same cluster. The same name may legitimately exist in
@@ -440,3 +440,17 @@ Confirm isolated Django regression tests, migration drift, Compose smoke and Cod
 
 Follow-up: inspect historical duplicates and choose safe uniqueness/concurrency
 semantics before introducing a database uniqueness constraint, if needed.
+
+## Sprint 20B — Read-only legacy asset name audit — In review
+
+Provide an operator command to count blank, whitespace-padded and
+case-insensitive same-cluster duplicate system names in existing data without
+modification. By default reveal counts only; display record/cluster IDs only
+when explicitly requested. Opt-in nonzero exit code supports maintenance
+checks without making existing legacy data block ordinary application startup.
+
+Acceptance: empty data, cross-cluster legal duplicates, same-cluster casefold
+collisions, whitespace and blank records, privacy-by-default output and
+non-destructive behavior. No migrations or production data cleanup. Any future
+uniqueness constraint requires a separate data review and explicit migration
+policy.
