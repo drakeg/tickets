@@ -415,3 +415,13 @@ compatibility, plus fail-closed rejection of an unmigrated database. These run i
 the Django CI job after dependency installation. No schema changes, environment
 changes or production data writes. Application login/UI recovery remains an
 explicit next deliverable, not a claimed test result.
+
+## Sprint 19B.3 — SMB demo workflow smoke — In review
+
+Goal: prove ticket-to-knowledge reuse plus inventory and project workflows under
+the real named-role permission model. Add synthetic Django request tests for
+Help Desk ticket creation, audited triage and linked KB publication; Infrastructure
+Team asset creation; Project Manager project creation; and denied cross-role and
+anonymous access. Tests run against the framework's isolated test database, not
+the persistent Compose volume. Document a repeatable manual demo and future
+customer discovery. Do not claim a customer, revenue or willingness-to-pay result.
