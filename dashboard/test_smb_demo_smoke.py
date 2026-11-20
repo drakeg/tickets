@@ -6,7 +6,6 @@ from django.contrib.auth.models import Group
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
-from django.utils import timezone
 
 from inventory.models import Cluster, Operating_System, Server, Vendor
 from issues.models import Issue, IssueChange, Priority
