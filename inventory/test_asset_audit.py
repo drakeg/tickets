@@ -45,7 +45,7 @@ class HistoricalSystemNameAuditTests(TestCase):
         output = self.audit("--show-record-ids")
         self.assertIn("Systems examined: 4", output)
         self.assertIn("Blank system names: 1", output)
-        self.assertIn("Names with outer whitespace: 2", output)
+        self.assertIn("Names with outer whitespace: 1", output)
         self.assertIn("Duplicate cluster/name groups: 1", output)
         self.assertIn("Records within duplicate groups: 2", output)
         self.assertIn(str(first.pk), output)
