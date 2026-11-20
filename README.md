@@ -55,7 +55,9 @@ docker compose exec -T web python manage.py audit_asset_names --show-record-ids
 
 The command reports empty names, names with surrounding whitespace, and
 case-insensitive duplicate system names within one cluster. It does not
-remove or rename existing assets. An optional `--fail-on-issues` flag returns
+remove or rename existing assets. The Django admin system editor also checks
+new names for same-cluster duplicates while preserving unrelated edits to
+legacy records. An optional `--fail-on-issues` flag returns
 an error status for explicit maintenance checks; it is not part of application
 startup. Review existing records before considering a uniqueness migration.
 
