@@ -1,0 +1,18 @@
+name: Repository Standards
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify required docs and badge structure
+        run: python3 scripts/check_repo_standards.py

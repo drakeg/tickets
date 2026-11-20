@@ -1,6 +1,6 @@
 # Product backlog
 
-Updated: 2026-11-18. Product: ServDesk (`drakeg/tickets`).
+Updated: 2026-11-19. Product: ServDesk (`drakeg/tickets`).
 
 ## Product goal
 
@@ -35,7 +35,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Done (#197) | Explicit issues.change_issue permission |
 | TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Done (#197) | TKT-005 permission policy |
 | TKT-007 | P2 | As a reviewer, see who changed status/assignment and when | 5 | 8 | Done (#198) | TKT-005/006 merged; additive migration |
-| TKT-008 | P2 | As an operator, cover admin/bulk change paths and define audit retention | 5 | 18A–B | Admin audit merged (#215); audited bulk status in review; retention pending | TKT-007; retention and delete policy |
+| TKT-008 | P2 | As an operator, cover admin/bulk change paths and define audit retention | 5 | 18A–B | Admin audit merged (#215); audited bulk status merged (#217); retention pending | TKT-007; retention and delete policy |
 | KB-001 | P2 | As a reader, search and page through all knowledge articles | 3 | 9 | Done (#200) | Existing search workflow |
 | KB-002 | P2 | As an authorized author/staff member, edit articles with explicit model grants | 5 | 16C | Done (#212) | change_article plus author/staff eligibility |
 | DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |
@@ -63,3 +63,18 @@ actual capacity. During delivery, move items through Ready → In progress → I
 review → Done; Blocked records a reason and next action. Done means merged with
 passing checks, not merely implemented. Reference PRs in sprint evidence. New
 security/build defects take priority and displace named scope explicitly.
+
+## Standards and commercialization workstream
+
+| ID | Priority | Outcome | Sprint | State |
+|---|---|---|---|---|
+| STD-001 | P1 | Verify stack, add true README badges, agent and release guidance, remove inaccurate security placeholders | 19A | In review |
+| OPS-002 | P1 | Document configurable LAN host access without risking existing SQLite data | 19A | In review |
+| SMB-001 | P1 | Validate a small MSP/help-desk pilot: 2–10 agents, tickets/asset/knowledge flows, setup friction and willingness to pay | 19B | Ready for customer discovery; no demand claims |
+| OPS-001 | P2 | Verified backup/restore rehearsal with isolated persistent volume and restore checks | 19B | Planned; do not touch current data |
+| STD-002 | P2 | Release-readiness gate, badge drift validation, repeatable demo smoke test | 19B | Planned |
+
+Commercialization hypothesis: independent IT support providers and small internal
+help desks need affordable ticket triage, asset lookup and reusable solutions.
+Hypothetical pilot: one tenant, 2–10 agents; validate workflows and purchasing
+criteria with actual operators before setting price or claiming demand.

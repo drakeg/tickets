@@ -1,4 +1,10 @@
-[![CodeQL](https://github.com/drakeg/tickets/actions/workflows/codeql.yml/badge.svg)](https://github.com/drakeg/tickets/actions/workflows/codeql.yml)
+# ServDesk — SMB Service Desk
+
+<!-- madmallard-badges:start -->
+[![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://github.com/drakeg/tickets/blob/master/.github/workflows/django-ci.yml) [![Django](https://img.shields.io/badge/Django-6.1-092E20?logo=django&logoColor=white)](https://github.com/drakeg/tickets/blob/master/requirements.txt) [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.3-7952B3?logo=bootstrap&logoColor=white)](https://github.com/drakeg/tickets/tree/master/static/tickets) [![SQLite](https://img.shields.io/badge/SQLite-local%20database-003B57?logo=sqlite&logoColor=white)](https://github.com/drakeg/tickets/blob/master/docker-compose.yml) [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://github.com/drakeg/tickets/blob/master/docker-compose.yml)
+
+[![Django CI](https://github.com/drakeg/tickets/actions/workflows/django-ci.yml/badge.svg)](https://github.com/drakeg/tickets/actions/workflows/django-ci.yml) [![CodeQL](https://github.com/drakeg/tickets/actions/workflows/codeql.yml/badge.svg)](https://github.com/drakeg/tickets/actions/workflows/codeql.yml) [![Issues](https://img.shields.io/github/issues/drakeg/tickets)](https://github.com/drakeg/tickets/issues) [![Pull requests](https://img.shields.io/github/issues-pr/drakeg/tickets)](https://github.com/drakeg/tickets/pulls)
+<!-- madmallard-badges:end -->
 
 A simpler ServiceNow-style ticketing system.
 
@@ -27,8 +33,7 @@ Publishing records the technician as author and links the article to the ticket;
 repeated clicks open the existing article. The ticket itself is not changed or
 closed. Issue/solution content is searchable and remains available if the source
 ticket is later deleted. Permission requires both `issues.view_issue` and
-`knowledgebase.add_article`. Knowledge articles currently follow the existing
-public-read policy; full role-based page access is the next P1 increment.
+`knowledgebase.add_article`. Knowledge article access follows the module view permissions; review grants before publishing.
 
 ## Knowledge base browsing
 
@@ -103,9 +108,8 @@ and history writes commit together. Actor and field names are snapshots, so late
 renames do not rewrite the record; deleted actors retain their recorded name.
 
 Run `python manage.py migrate` when upgrading (Compose applies migrations on
-startup). Existing tickets start with no recorded changes. History covers the
-application triage form; direct admin, shell, or bulk ORM updates are outside this
-increment. Deleting a ticket deletes its history. History is an operational record,
+startup). Existing tickets start with no recorded changes. History covers the application triage form and individual Django admin edits;
+raw shell/ORM updates bypass this history. Audited bulk close/reopen status actions are available in Django admin (#217). Deleting a ticket deletes its history. History is an operational record,
 not a tamper-proof audit ledger. SQLite does not provide row locks; deployments
 requiring concurrent write serialization should use a database with row locking.
 
@@ -113,7 +117,9 @@ requiring concurrent write serialization should use a database with row locking.
 
 Project development follows documented sprint, coding, testing, and pull-request standards:
 
+- [Agent instructions](AGENTS.md)
 - [Contributing workflow](CONTRIBUTING.md)
+- [Release policy](RELEASES.md)
 - [Prioritized product backlog](docs/BACKLOG.md)
 - [Detailed sprint delivery plan](docs/SPRINT_PLAN.md)
 - [Sprint process and history](docs/SPRINTS.md)
@@ -132,7 +138,11 @@ Start the application:
 docker compose up --build
 ```
 
-The site is available at `http://localhost:8000` by default.
+The site is available at `http://localhost:8000` by default. For LAN testing,
+set `DJANGO_ALLOWED_HOSTS` to include the machine's LAN IP or hostname and use
+`http://<host-LAN-IP>:<APP_PORT>` from another device. Docker publishes to all
+interfaces by default; restrict access using host firewall rules and use a
+strong, unique secret outside an isolated test network.
 
 ### Configure ports with a .env file
 
@@ -169,7 +179,9 @@ To change the port Django listens on inside the container as well:
 CONTAINER_PORT=9000 APP_PORT=9000 docker compose up --build
 ```
 
-The two values may differ. For example, this publishes host port 8080 to container port 9000:
+- `DJANGO_ALLOWED_HOSTS` defines the accepted hostnames/IPs in Compose (comma-separated).
+
+The two port values may differ. For example, this publishes host port 8080 to container port 9000:
 
 ```bash
 APP_PORT=8080 CONTAINER_PORT=9000 docker compose up --build
