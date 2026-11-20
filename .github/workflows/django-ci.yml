@@ -42,7 +42,7 @@ jobs:
       - name: Check migrations
         run: python manage.py makemigrations --check --dry-run
 
-      - name: Run functional tests
+      - name: Run functional tests (including SMB demo smoke)
         run: python manage.py test --verbosity 2
 
       - name: Verify isolated Django snapshot recovery
