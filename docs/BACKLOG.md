@@ -1,6 +1,6 @@
 # Product backlog
 
-Updated: 2026-11-19. Product: ServDesk (`drakeg/tickets`).
+Updated: 2026-11-20. Product: ServDesk (`drakeg/tickets`).
 
 ## Product goal
 
@@ -68,10 +68,10 @@ security/build defects take priority and displace named scope explicitly.
 
 | ID | Priority | Outcome | Sprint | State |
 |---|---|---|---|---|
-| STD-001 | P1 | Verify stack, add true README badges, agent and release guidance, remove inaccurate security placeholders | 19A | In review |
-| OPS-002 | P1 | Document configurable LAN host access without risking existing SQLite data | 19A | In review |
+| STD-001 | P1 | Verify stack, add true README badges, agent and release guidance, remove inaccurate security placeholders | 19A | Done (#218) |
+| OPS-002 | P1 | Document configurable LAN host access without risking existing SQLite data | 19A | Done (#218); LAN HTTP checked |
 | SMB-001 | P1 | Validate a small MSP/help-desk pilot: 2–10 agents, tickets/asset/knowledge flows, setup friction and willingness to pay | 19B | Ready for customer discovery; no demand claims |
-| OPS-001 | P2 | Safe SQLite backup and isolated restore-integrity verification | 19B | In review; full application restore drill still planned |
+| OPS-001 | P2 | Safe SQLite backup and isolated Django schema/ORM recovery checks | 19B | Snapshot utility done (#219); Django smoke in review; full web restore pending |
 | STD-002 | P2 | Release-readiness gate, badge drift validation, repeatable demo smoke test | 19B | Planned |
 
 Commercialization hypothesis: independent IT support providers and small internal
