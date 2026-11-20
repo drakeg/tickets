@@ -1,6 +1,6 @@
 # Product backlog
 
-Updated: 2026-11-16. Product: ServDesk (`drakeg/tickets`).
+Updated: 2026-11-19. Product: ServDesk (`drakeg/tickets`).
 
 ## Product goal
 
@@ -63,3 +63,18 @@ actual capacity. During delivery, move items through Ready → In progress → I
 review → Done; Blocked records a reason and next action. Done means merged with
 passing checks, not merely implemented. Reference PRs in sprint evidence. New
 security/build defects take priority and displace named scope explicitly.
+
+## Standards and commercialization workstream
+
+| ID | Priority | Outcome | Sprint | State |
+|---|---|---|---|---|
+| STD-001 | P1 | Verify stack, add true README badges, agent and release guidance, remove inaccurate security placeholders | 19A | In review |
+| OPS-002 | P1 | Document configurable LAN host access without risking existing SQLite data | 19A | In review |
+| SMB-001 | P1 | Validate a small MSP/help-desk pilot: 2–10 agents, tickets/asset/knowledge flows, setup friction and willingness to pay | 19B | Ready for customer discovery; no demand claims |
+| OPS-001 | P2 | Verified backup/restore rehearsal with isolated persistent volume and restore checks | 19B | Planned; do not touch current data |
+| STD-002 | P2 | Release-readiness gate, badge drift validation, repeatable demo smoke test | 19B | Planned |
+
+Commercialization hypothesis: independent IT support providers and small internal
+help desks need affordable ticket triage, asset lookup and reusable solutions.
+Hypothetical pilot: one tenant, 2–10 agents; validate workflows and purchasing
+criteria with actual operators before setting price or claiming demand.
