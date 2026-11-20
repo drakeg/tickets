@@ -425,3 +425,18 @@ Team asset creation; Project Manager project creation; and denied cross-role and
 anonymous access. Tests run against the framework's isolated test database, not
 the persistent Compose volume. Document a repeatable manual demo and future
 customer discovery. Do not claim a customer, revenue or willingness-to-pay result.
+
+## Sprint 20A — CMDB system-name validation — In review
+
+Require nonblank trimmed names on new system creation and prevent a case-insensitive
+name collision within the same cluster. The same name may legitimately exist in
+different clusters. Existing systems, including historical duplicate records,
+are not rewritten or deleted; the model schema and database are unchanged.
+
+Acceptance: duplicate same-cluster names yield clear inline form errors; case and
+leading/trailing whitespace cannot bypass validation; different clusters remain
+allowed; invalid references cannot create records; no invalid form causes writes.
+Confirm isolated Django regression tests, migration drift, Compose smoke and CodeQL.
+
+Follow-up: inspect historical duplicates and choose safe uniqueness/concurrency
+semantics before introducing a database uniqueness constraint, if needed.

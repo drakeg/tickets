@@ -51,7 +51,9 @@ to the system details and an Add system action above the list.
 
 ## Adding systems
 
-System creation requires an operating system, vendor, and cluster. If a choice
+System creation requires an operating system, vendor, and cluster. Names must
+not be blank or duplicate an existing system in the same cluster (case-insensitive);
+leading and trailing spaces are removed. Different clusters may share a name. If a choice
 list is empty, the form explains which reference data an administrator must add.
 Authorized staff see links to the corresponding Django admin forms. Inventory
 creation requires the system add/view grants and view grants for all three
