@@ -348,3 +348,10 @@ permission as the queue. CSV includes ticket descriptions and requester names,
 so store files securely and share only with authorized recipients. Potential
 spreadsheet formulas in user-supplied fields are prefixed to prevent execution
 when opened in spreadsheet applications. This action does not modify tickets.
+
+
+### Ticket queue ordering
+
+Use the **Order** selector to choose newest-first (default) or oldest-first
+when triaging aging requests. Current priority, status, assignee and search
+filters continue to apply. The CSV export uses the same ordering as the queue.
