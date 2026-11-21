@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
 
-from .models import Issue
+from .models import Issue, Priority
 from .forms import IssueForm, IssueTriageForm
 from .services import update_ticket
 
@@ -16,6 +16,12 @@ def _issue_list(request, queryset, title):
         status = 'all'
     if status != 'all':
         queryset = queryset.filter(issue_open=(status == 'open'))
+    priority = request.GET.get('priority', '')
+    priorities = Priority.objects.order_by('name', 'pk')
+    if priority and priority.isdecimal() and priorities.filter(pk=priority).exists():
+        queryset = queryset.filter(priority_id=priority)
+    else:
+        priority = ''
     page = Paginator(
         queryset.select_related('assigned', 'priority').order_by('-pub_date', '-pk'), 15
     ).get_page(request.GET.get('page'))
@@ -26,6 +32,8 @@ def _issue_list(request, queryset, title):
         'page_obj': page,
         'queue_title': title,
         'status': status,
+        'priority': priority,
+        'priorities': priorities,
         'pagination_query': params.urlencode(),
     })
 
