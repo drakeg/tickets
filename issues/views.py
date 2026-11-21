@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -11,6 +12,10 @@ from .forms import IssueForm, IssueTriageForm
 from .services import update_ticket
 
 def _issue_list(request, queryset, title):
+    # Offer only users who have assignments within the current queue scope.
+    assignees = get_user_model().objects.filter(
+        pk__in=queryset.exclude(assigned__isnull=True).values('assigned_id')
+    ).order_by('username', 'pk')
     status = request.GET.get('status', 'all')
     if status not in ('all', 'open', 'closed'):
         status = 'all'
@@ -22,6 +27,16 @@ def _issue_list(request, queryset, title):
         queryset = queryset.filter(priority_id=priority)
     else:
         priority = ''
+    assignee = request.GET.get('assignee', '')
+    if assignee == 'unassigned':
+        queryset = queryset.filter(assigned__isnull=True)
+    elif (
+        assignee.isdecimal() and len(assignee) <= 18
+        and assignees.filter(pk=assignee).exists()
+    ):
+        queryset = queryset.filter(assigned_id=assignee)
+    else:
+        assignee = ''
     page = Paginator(
         queryset.select_related('assigned', 'priority').order_by('-pub_date', '-pk'), 15
     ).get_page(request.GET.get('page'))
@@ -34,6 +49,8 @@ def _issue_list(request, queryset, title):
         'status': status,
         'priority': priority,
         'priorities': priorities,
+        'assignee': assignee,
+        'assignees': assignees,
         'pagination_query': params.urlencode(),
     })
 

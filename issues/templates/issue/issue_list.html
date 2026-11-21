@@ -4,6 +4,7 @@
         <label class="visually-hidden" for="ticket-search">Search tickets by summary, description, requester, assignee or priority</label>
         {% if status != 'all' %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
         {% if priority %}<input type="hidden" name="priority" value="{{ priority }}">{% endif %}
+        {% if assignee %}<input type="hidden" name="assignee" value="{{ assignee }}">{% endif %}
         <input id="ticket-search" name="q" value="{{ request.GET.q }}" placeholder="Search tickets, people or priorities">
         <button class="btn btn-primary" type="submit">
             Search
@@ -25,6 +26,14 @@
             <option value="">All priorities</option>
             {% for option in priorities %}
             <option value="{{ option.pk }}"{% if priority == option.pk|stringformat:"s" %} selected{% endif %}>{{ option.name }}</option>
+            {% endfor %}
+        </select>
+        <label for="ticket-assignee">Assigned to</label>
+        <select name="assignee" id="ticket-assignee">
+            <option value="">All agents</option>
+            <option value="unassigned"{% if assignee == 'unassigned' %} selected{% endif %}>Unassigned</option>
+            {% for person in assignees %}
+            <option value="{{ person.pk }}"{% if assignee == person.pk|stringformat:"s" %} selected{% endif %}>{{ person.get_username }}</option>
             {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary">Filter</button>
