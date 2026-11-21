@@ -572,7 +572,7 @@ drift, Compose smoke, CodeQL and standards checks. No migrations or dependency
 changes.
 
 
-## Sprint 23B — Priority filters across ticket queues — In review
+## Sprint 23B — Priority filters across ticket queues — Complete (#233)
 
 Help agents focus on high-priority work without manually searching for priority
 names. Add a dropdown listing configured priorities alongside the existing
@@ -585,3 +585,19 @@ Acceptance: combined status/priority filtering, queue assignment scoping,
 text-search combination, pagination query retention, invalid ID handling,
 accessible label and no schema changes. Pass focused/full Django test suite,
 Compose smoke, CodeQL and repository standards.
+
+
+## Sprint 23C — Assignee filters in ticket queues — In review
+
+Give authorized ticket readers a dropdown for all assignees, unassigned
+tickets, or a specific assigned agent, composable with existing status,
+priority and text search filters. Options list only agents with tickets in
+the current queue scope, not the entire user directory. Preserve current
+assignment boundaries for personal/unassigned queues, safe query parsing,
+GET-only filtering, pagination and no-data behavior.
+
+Acceptance: selection by agent and unassigned, combinations with other
+filters, search and pagination retention, no other-user choices in scoped
+queues, invalid values fallback without exposing tickets, and authorization
+checks unchanged. All test coverage and CI/Compose/CodeQL checks must pass;
+no schema change or stored-data mutation.
