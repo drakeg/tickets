@@ -587,7 +587,7 @@ accessible label and no schema changes. Pass focused/full Django test suite,
 Compose smoke, CodeQL and repository standards.
 
 
-## Sprint 23C — Assignee filters in ticket queues — In review
+## Sprint 23C — Assignee filters in ticket queues — Complete (#234)
 
 Give authorized ticket readers a dropdown for all assignees, unassigned
 tickets, or a specific assigned agent, composable with existing status,
@@ -601,3 +601,22 @@ filters, search and pagination retention, no other-user choices in scoped
 queues, invalid values fallback without exposing tickets, and authorization
 checks unchanged. All test coverage and CI/Compose/CodeQL checks must pass;
 no schema change or stored-data mutation.
+
+
+## Sprint 24A — Safe filtered ticket CSV export — In review
+
+Let authorized ticket readers download the currently filtered queue as a
+streamed CSV without exposing data from other user/assignment scopes.
+Reuse the exact status/priority/assignee/text query restrictions used by the
+normal list. Include ticket ID, summary, requester, description, priority,
+assignee, status and ISO-8601 creation timestamp. Export **all** matching
+rows rather than just the visible 15-row page. Protect spreadsheet consumers
+against formula injection in user-controlled text cells, use attachment
+headers and disable response caching.
+
+Acceptance: normal and filtered CSV rows match queue scope/order; read-only
+GET endpoint gated by existing view permission; no unfiltered export bypass;
+formula injection prevention including leading whitespace; stable UTF-8
+CSV quoting, no full queryset materialization, and empty exports contain a
+header. Django CI, Compose, CodeQL and standards must pass. No migration,
+dependency or persistent-data changes.
