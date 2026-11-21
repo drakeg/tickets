@@ -55,7 +55,7 @@ class QueueReadabilityTests(TestCase):
                 ),
                 html=True,
             )
-        self.assertContains(response, 'High', count=2)
+        self.assertContains(response, '<td>High</td>', count=2, html=True)
         self.assertContains(response, 'queue-agent')
         self.assertContains(response, 'Unassigned')
         self.assertContains(response, 'Open')
