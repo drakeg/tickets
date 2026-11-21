@@ -1,8 +1,10 @@
+import csv
+
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.core.paginator import Paginator
-from django.http import Http404
+from django.http import Http404, StreamingHttpResponse
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
@@ -10,6 +12,48 @@ from django.views.decorators.http import require_http_methods
 from .models import Issue, Priority
 from .forms import IssueForm, IssueTriageForm
 from .services import update_ticket
+
+def _safe_spreadsheet_cell(value):
+    """Avoid formula execution in CSV readers such as Excel or Sheets."""
+    text = str(value) if value is not None else ''
+    if text.lstrip(' \\t\\r\\n').startswith(('=', '+', '-', '@')):
+        return "'" + text
+    return text
+
+
+class _CSVWriter:
+    def write(self, value):
+        return value
+
+
+def _ticket_csv(queryset):
+    writer = csv.writer(_CSVWriter())
+
+    def rows():
+        yield writer.writerow((
+            'Ticket ID', 'Summary', 'Requestor', 'Description',
+            'Priority', 'Assignee', 'Status', 'Created (ISO 8601)',
+        ))
+        for ticket in queryset.select_related('priority', 'assigned').order_by(
+            '-pub_date', '-pk',
+        ).iterator(chunk_size=500):
+            yield writer.writerow((
+                ticket.pk, _safe_spreadsheet_cell(ticket.summary),
+                _safe_spreadsheet_cell(ticket.requestor_name),
+                _safe_spreadsheet_cell(ticket.description),
+                _safe_spreadsheet_cell(ticket.priority.name),
+                _safe_spreadsheet_cell(
+                    ticket.assigned.get_username() if ticket.assigned_id else 'Unassigned'
+                ),
+                'Open' if ticket.issue_open else 'Closed',
+                ticket.pub_date.isoformat(),
+            ))
+
+    response = StreamingHttpResponse(rows(), content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename="servdesk-tickets.csv"'
+    response['Cache-Control'] = 'private, no-store'
+    return response
+
 
 def _issue_list(request, queryset, title):
     # Offer only users who have assignments within the current queue scope.
@@ -37,11 +81,14 @@ def _issue_list(request, queryset, title):
         queryset = queryset.filter(assigned_id=assignee)
     else:
         assignee = ''
+    if request.method == 'GET' and request.GET.get('export') == 'csv':
+        return _ticket_csv(queryset)
     page = Paginator(
         queryset.select_related('assigned', 'priority').order_by('-pub_date', '-pk'), 15
     ).get_page(request.GET.get('page'))
     params = request.GET.copy()
     params.pop('page', None)
+    params.pop('export', None)
     return render(request, 'issue/issue_list.html', {
         'issue_list': page.object_list,
         'page_obj': page,
