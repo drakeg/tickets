@@ -29,6 +29,7 @@
     <a class="btn btn-secondary" href="{% url 'issues:index' %}">Back to issues</a>
     {% if history != None %}
     <h2>Change history</h2>
+    <p><a class="btn btn-outline-primary" href="{% url 'issues:issue_history_csv' issue.pk %}">Export change history CSV</a></p>
     {% for change in history %}
     <section class="card mb-3" aria-label="Ticket change">
         <div class="card-body">
