@@ -16,7 +16,7 @@ from .services import update_ticket
 def _safe_spreadsheet_cell(value):
     """Avoid formula execution in CSV readers such as Excel or Sheets."""
     text = str(value) if value is not None else ''
-    if text.lstrip(' \\t\\r\\n').startswith(('=', '+', '-', '@')):
+    if text.lstrip(' \t\r\n').startswith(('=', '+', '-', '@')):
         return "'" + text
     return text
 
