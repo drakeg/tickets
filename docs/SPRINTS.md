@@ -511,7 +511,7 @@ violations still raise, synthetic tests with injected database conflicts, and
 passing full Django/Compose/CodeQL checks. Legacy asset records unchanged.
 
 
-## Sprint 22A — Search CMDB systems by related fields — In review
+## Sprint 22A — Search CMDB systems by related fields — Complete (#229)
 
 Improve daily SMB help desk workflows by matching system identifiers and
 related vendor, cluster and operating-system names from the same inventory
@@ -524,3 +524,17 @@ Acceptance: all four search dimensions, case-insensitive partial matches,
 duplicate-free results when a system matches multiple dimensions, empty/no
 match handling, accessible search label and unchanged unauthorized access
 behavior. Confirm full Django/Compose/CodeQL checks and regression coverage.
+
+
+## Sprint 22B — Search tickets by people and priorities — In review
+
+Improve ticket discovery for SMB help desks: extend the existing summary and
+description search to requester display name, assigned user name and priority
+name. Preserve the existing authorization checks, status filters, stable
+newest-first pagination and escaped query display. Improve the accessible
+search label and placeholder to explain supported fields.
+
+Acceptance: all five query dimensions, no duplicate rows when multiple
+attributes match, status filter preservation, no results for blank input,
+permission denial for unauthorized users, safe HTML escaping and passing Django,
+Compose, CodeQL and repository-standards checks. No schema or data changes.
