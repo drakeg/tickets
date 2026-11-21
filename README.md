@@ -313,3 +313,10 @@ When two operators submit the same new system name concurrently, the database
 rejects the second insert. The regular system form shows an inline retry
 message; Django admin returns to the form with an error message. Unrelated
 database integrity errors are not suppressed.
+
+
+## Finding systems by any inventory field
+
+The Systems search accepts partial, case-insensitive matches against system
+names, vendors, operating systems and cluster names. Results are paginated,
+ordered deterministically and accessible only to permitted inventory readers.
