@@ -26,34 +26,23 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
+                    <th scope="col">Summary</th>
                     <th scope="col">Requestor</th>
-                    <th scope="col">Description</th>
+                    <th scope="col">Priority</th>
                     <th scope="col">Assigned</th>
-                    <th scope="col">Closed/Opened</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Date Opened</th>
                 </tr>
             </thead>
             <tbody>
 	        {% for issue in issue_list %}
 		<tr>
-            <td><a href="{% url 'issues:issue' issue.id %}">{{issue.id}}</a></td>
-            <td>{{issue.requestor_name }}</td>
-            <td>{{ issue.description }}</td>
-            <td>{{ issue.assigned }}</td>
-            <td>
-                {% if issue.issue_open %}
-                <!-- Rounded switch -->
-                <label class="switch">
-                    <input type="checkbox" checked disabled>
-                    <span class="slider round"></span>
-                </label>
-                {% else %}
-                <label class="switch">
-                    <input type="checkbox" disabled>
-                    <span class="slider round"></span>
-                </label>
-                {% endif %}
-            </td>
+            <td><a href="{% url 'issues:issue' issue.id %}">{{ issue.id }}</a></td>
+            <td><a href="{% url 'issues:issue' issue.id %}">{{ issue.summary }}</a></td>
+            <td>{{ issue.requestor_name }}</td>
+            <td>{{ issue.priority.name }}</td>
+            <td>{% if issue.assigned %}{{ issue.assigned.get_username }}{% else %}Unassigned{% endif %}</td>
+            <td>{% if issue.issue_open %}<span class="badge text-bg-success">Open</span>{% else %}<span class="badge text-bg-secondary">Closed</span>{% endif %}</td>
             <td>{{ issue.pub_date }}</td>
         </tr>
 	        {% endfor %}
