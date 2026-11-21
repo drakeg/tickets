@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 
 from .models import Server
@@ -75,7 +76,12 @@ def search(request):
     query = request.GET.get('q', '').strip()
     servers = Server.objects.none()
     if query:
-        servers = Server.objects.filter(server_name__icontains=query)
+        servers = Server.objects.filter(
+            Q(server_name__icontains=query)
+            | Q(cluster__cluster_name__icontains=query)
+            | Q(vendor__vendor_name__icontains=query)
+            | Q(os__os_name__icontains=query)
+        )
     return _server_list(request, servers)
 
 @login_required
