@@ -27,6 +27,11 @@ class Cluster(models.Model):
 
 class Server(models.Model):
     server_name = models.CharField(max_length=50)
+    # New/renamed records receive a collision-safe canonical key. Legacy rows
+    # retain NULL until their identity changes; this migration never backfills.
+    identity_key = models.CharField(
+        max_length=192, unique=True, null=True, blank=True, editable=False,
+    )
     os = models.ForeignKey(Operating_System, on_delete=models.CASCADE)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE)
