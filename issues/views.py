@@ -7,11 +7,11 @@ from django.core.paginator import Paginator
 from django.http import Http404, StreamingHttpResponse
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 
 from .models import Issue, Priority
 from .forms import IssueForm, IssueTriageForm
-from .services import update_ticket
+from .services import bulk_update_ticket_status, update_ticket
 
 def _safe_spreadsheet_cell(value):
     """Avoid formula execution in CSV readers such as Excel or Sheets."""
@@ -183,3 +183,19 @@ def issue_edit(request, issue_id):
     else:
         form = IssueTriageForm(instance=issue)
     return render(request, 'issue/issue_edit.html', {'issue': issue, 'form': form})
+
+
+@login_required
+@permission_required(('issues.view_issue', 'issues.change_issue'), raise_exception=True)
+@require_POST
+def issue_quick_status(request, issue_id):
+    """Perform one audited status transition using the existing bulk service."""
+    action = request.POST.get('action', '')
+    if action not in ('close', 'reopen'):
+        from django.http import HttpResponseBadRequest
+        return HttpResponseBadRequest('Choose close or reopen.')
+    issue = get_object_or_404(Issue, pk=issue_id)
+    bulk_update_ticket_status(
+        Issue.objects.filter(pk=issue.pk), action == 'reopen', request.user,
+    )
+    return redirect('issues:issue', issue_id=issue.pk)
