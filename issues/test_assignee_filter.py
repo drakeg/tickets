@@ -78,7 +78,8 @@ class TicketAssigneeFilterTests(TestCase):
             Permission.objects.get(content_type__app_label='issues', codename='view_issue')
         )
         ids, _ = self.query('my_issues', assignee=str(self.agent_b.pk))
-        self.assertEqual(ids, [])
+        # Unknown agents for this scoped queue are ignored, never broadening it.
+        self.assertEqual(ids, [self.first.pk])
         ids, response = self.query('my_issues', assignee=str(self.agent_a.pk))
         self.assertEqual(ids, [self.first.pk])
         self.assertNotContains(response, 'agent-beta')
