@@ -327,3 +327,13 @@ ordered deterministically and accessible only to permitted inventory readers.
 Use the ticket search box to find records by summary, description, requester
 name, assigned staff username or priority label. Status filtering remains
 available alongside searches, and access stays restricted to authorized readers.
+
+
+### Docker build cache
+
+Local builds use Docker BuildKit's cache for pip downloads. Rebuild with
+`docker compose build web` (or the existing Compose command); dependencies
+are still installed from `requirements.txt`. The downloaded wheel cache lives
+in the Docker builder rather than inside the app image or persistent SQLite
+volume. CI continues to build and smoke-test the image. No speedup is claimed
+without timing measurements from the same machine.

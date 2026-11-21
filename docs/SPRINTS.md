@@ -526,7 +526,7 @@ match handling, accessible search label and unchanged unauthorized access
 behavior. Confirm full Django/Compose/CodeQL checks and regression coverage.
 
 
-## Sprint 22B — Search tickets by people and priorities — In review
+## Sprint 22B — Search tickets by people and priorities — Complete (#230)
 
 Improve ticket discovery for SMB help desks: extend the existing summary and
 description search to requester display name, assigned user name and priority
@@ -538,3 +538,18 @@ Acceptance: all five query dimensions, no duplicate rows when multiple
 attributes match, status filter preservation, no results for blank input,
 permission denial for unauthorized users, safe HTML escaping and passing Django,
 Compose, CodeQL and repository-standards checks. No schema or data changes.
+
+
+## Sprint 22C — Faster repeatable local Docker builds — In review
+
+Keep the established Python 3.15-slim base, Compose services, named database
+volume and application behavior. Enable Docker BuildKit's pip download cache
+for the dependency layer so repeated local image builds can reuse downloaded
+packages after manifest updates rather than always downloading every wheel.
+A new dependency version still triggers pip resolution and installation.
+
+Acceptance: Dockerfile uses a build-only cached pip directory, no cache
+files enter the final image or repository, Compose test image builds and
+Django smoke checks pass in CI. No runtime dependency or data changes.
+Record that actual wall-clock speedups depend on host cache state and are
+not claimed without measurements.
