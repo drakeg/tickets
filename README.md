@@ -291,3 +291,19 @@ with a Back to workspace link. Native forms, model permissions, actions, theme
 switching and responsive navigation remain available. The Priority model's plural
 label is explicitly set to Priorities. Apply migrations on upgrade; the label
 migration changes Django model options without altering saved records.
+
+
+### Concurrent system creation and legacy compatibility
+
+New systems created through the application or Django admin receive a hidden,
+canonical identity key based on their cluster and whitespace-trimmed,
+case-insensitive name. A unique database index prevents two simultaneously
+validated forms from saving the same new identity. The additive migration leaves
+historical records unchanged (NULL keys), even if duplicate identifiers exist.
+Those records remain editable without changing their identity. The read-only
+`audit_asset_names` command identifies historical problems for operator review.
+
+This protects the supported web/admin form paths; direct ORM creation, custom
+imports or SQL writes need their own validation and identity-key handling.
+Do not backfill legacy rows or enforce global uniqueness without first reviewing
+the historical audit and migration impact.
