@@ -337,3 +337,14 @@ are still installed from `requirements.txt`. The downloaded wheel cache lives
 in the Docker builder rather than inside the app image or persistent SQLite
 volume. CI continues to build and smoke-test the image. No speedup is claimed
 without timing measurements from the same machine.
+
+
+### Export ticket queues
+
+From any ticket queue or ticket search, use **Export CSV** to download all
+matching tickets (not just the visible page) with the current status, priority,
+assignee and search filters applied. Export requires the same ticket-view
+permission as the queue. CSV includes ticket descriptions and requester names,
+so store files securely and share only with authorized recipients. Potential
+spreadsheet formulas in user-supplied fields are prefixed to prevent execution
+when opened in spreadsheet applications. This action does not modify tickets.
