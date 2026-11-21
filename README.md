@@ -320,3 +320,10 @@ database integrity errors are not suppressed.
 The Systems search accepts partial, case-insensitive matches against system
 names, vendors, operating systems and cluster names. Results are paginated,
 ordered deterministically and accessible only to permitted inventory readers.
+
+
+## Finding tickets by staff, requester or priority
+
+Use the ticket search box to find records by summary, description, requester
+name, assigned staff username or priority label. Status filtering remains
+available alongside searches, and access stays restricted to authorized readers.
