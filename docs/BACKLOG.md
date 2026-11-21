@@ -33,7 +33,8 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | TKT-003 | P1 | As an agent, open closed tickets from navigation | 1 | 6 | Done (#196) | TKT-002 |
 | TKT-009 | P1 | As an agent, scan ticket summary, priority, assignee and status directly from the queue without fake controls | 3 | 23A | Done (#232) | Existing queue and search routes |
 | TKT-010 | P1 | As an agent, filter ticket queues by priority alongside status and search | 3 | 23B | Done (#233) | TKT-009 and configured priorities |
-| TKT-011 | P1 | As an agent, filter queues by assigned staff or unassigned while preserving role scope | 3 | 23C | In review | TKT-010 and assigned user records |
+| TKT-011 | P1 | As an agent, filter queues by assigned staff or unassigned while preserving role scope | 3 | 23C | Done (#234) | TKT-010 and assigned user records |
+| TKT-012 | P1 | As an authorized reader, export current filtered ticket queue to safe CSV for reporting | 3 | 24A | In review | TKT-010/011 and permissioned queues |
 | TKT-004 | P1 | As a maintainer, find priorities, acceptance criteria, and sprint evidence in the repo | 2 | 6 | Done (#196) | None |
 | TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Done (#197) | Explicit issues.change_issue permission |
 | TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Done (#197) | TKT-005 permission policy |
