@@ -355,3 +355,13 @@ when opened in spreadsheet applications. This action does not modify tickets.
 Use the **Order** selector to choose newest-first (default) or oldest-first
 when triaging aging requests. Current priority, status, assignee and search
 filters continue to apply. The CSV export uses the same ordering as the queue.
+
+
+### Quick ticket status actions
+
+Agents with ticket-view and ticket-change permissions can close or reopen a
+ticket directly from its queue row. These are CSRF-protected POST actions and
+create the same actor-attributed triage history as regular ticket editing. They
+redirect to ticket detail for confirmation, and users with read-only access do
+not see the action buttons. Repeated identical actions do not create duplicate
+history events.

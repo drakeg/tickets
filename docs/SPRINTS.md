@@ -622,7 +622,7 @@ header. Django CI, Compose, CodeQL and standards must pass. No migration,
 dependency or persistent-data changes.
 
 
-## Sprint 24B — Deterministic ticket queue ordering — In review
+## Sprint 24B — Deterministic ticket queue ordering — Complete (#236)
 
 Make oldest-first work prioritization available beside the default newest-first
 ordering for all, personal, unassigned and search queues. Preserve existing
@@ -633,3 +633,20 @@ and CSV downloads. Invalid sort values fall back to newest first.
 Acceptance: the same set of tickets is reachable regardless of sort order,
 queue/CSV ordering agrees, no authorization change or additional queries per
 row, and all Django/Compose, CodeQL and repository checks pass.
+
+
+## Sprint 25A — Audited quick close/reopen from ticket queues — In review
+
+Enable authorized ticket editors to close or reopen requests directly from
+queue rows while keeping existing role permissions, CSRF and change history
+enforcement. Actions use POST only and reuse the atomic audited bulk status
+service for one target issue. No event is created if the requested status is
+already current. Invalid actions, nonexistent ticket IDs, anonymous users and
+read-only users cannot mutate status. Return to ticket detail for confirmation
+after a successful change.
+
+Acceptance: close/reopen buttons appear only to users with change_issue;
+POST-only and CSRF-protected, authenticated plus explicit ticket view/change
+permissions, history captures actor/snapshot, repeated requests are idempotent,
+no privilege bypass and no migrations/dependencies. Full Django/Compose,
+CodeQL and repository standards checks required.

@@ -59,6 +59,7 @@
                     <th scope="col">Assigned</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date Opened</th>
+                    {% if perms.issues.change_issue %}<th scope="col">Actions</th>{% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -71,6 +72,18 @@
             <td>{% if issue.assigned %}{{ issue.assigned.get_username }}{% else %}Unassigned{% endif %}</td>
             <td>{% if issue.issue_open %}<span class="badge text-bg-success">Open</span>{% else %}<span class="badge text-bg-secondary">Closed</span>{% endif %}</td>
             <td>{{ issue.pub_date }}</td>
+            {% if perms.issues.change_issue %}
+            <td>
+                <form method="post" action="{% url 'issues:issue_quick_status' issue.pk %}">
+                    {% csrf_token %}
+                    {% if issue.issue_open %}
+                    <button class="btn btn-sm btn-outline-secondary" type="submit" name="action" value="close" aria-label="Close ticket {{ issue.pk }}">Close</button>
+                    {% else %}
+                    <button class="btn btn-sm btn-outline-primary" type="submit" name="action" value="reopen" aria-label="Reopen ticket {{ issue.pk }}">Reopen</button>
+                    {% endif %}
+                </form>
+            </td>
+            {% endif %}
         </tr>
 	        {% endfor %}
             </tbody>
