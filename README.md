@@ -365,3 +365,12 @@ create the same actor-attributed triage history as regular ticket editing. They
 redirect to ticket detail for confirmation, and users with read-only access do
 not see the action buttons. Repeated identical actions do not create duplicate
 history events.
+
+
+### Download change history
+
+Authorized ticket editors can use **Export change history CSV** on a ticket's
+detail page to download its before/after status, priority, assignment, actor
+and timestamp. The export includes only that ticket and is not offered to
+read-only ticket viewers. Store exported audit files securely. This feature
+does not determine a retention period or delete historical events.
