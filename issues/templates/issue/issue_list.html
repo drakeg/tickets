@@ -2,6 +2,8 @@
 {% block search %}
    <form method="GET" action="{% url 'issues:search' %}">
         <label class="visually-hidden" for="ticket-search">Search tickets by summary, description, requester, assignee or priority</label>
+        {% if status != 'all' %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+        {% if priority %}<input type="hidden" name="priority" value="{{ priority }}">{% endif %}
         <input id="ticket-search" name="q" value="{{ request.GET.q }}" placeholder="Search tickets, people or priorities">
         <button class="btn btn-primary" type="submit">
             Search
@@ -17,6 +19,13 @@
             <option value="all"{% if status == 'all' %} selected{% endif %}>All</option>
             <option value="open"{% if status == 'open' %} selected{% endif %}>Open</option>
             <option value="closed"{% if status == 'closed' %} selected{% endif %}>Closed</option>
+        </select>
+        <label for="ticket-priority">Priority</label>
+        <select name="priority" id="ticket-priority">
+            <option value="">All priorities</option>
+            {% for option in priorities %}
+            <option value="{{ option.pk }}"{% if priority == option.pk|stringformat:"s" %} selected{% endif %}>{{ option.name }}</option>
+            {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary">Filter</button>
     </form>
