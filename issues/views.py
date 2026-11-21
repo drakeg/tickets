@@ -82,7 +82,11 @@ def search(request):
     issue_list = Issue.objects.none()
     if query:
         issue_list = Issue.objects.filter(
-            Q(summary__icontains=query) | Q(description__icontains=query)
+            Q(summary__icontains=query)
+            | Q(description__icontains=query)
+            | Q(requestor_name__icontains=query)
+            | Q(assigned__username__icontains=query)
+            | Q(priority__name__icontains=query)
         )
     return _issue_list(request, issue_list, 'Search results')
 
