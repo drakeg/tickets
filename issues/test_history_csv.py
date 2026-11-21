@@ -107,7 +107,7 @@ class TicketHistoryCSVTests(TestCase):
         self.assertContains(detail, 'Export change history CSV')
         self.assertContains(detail, self.url())
 
-    def test_missing_ticket_and_empty_history(self):
+    def test_missing_ticket_and_other_ticket_history(self):
         missing = reverse('issues:issue_history_csv', args=[self.issue.pk + 9999])
         self.assertEqual(self.client.get(missing).status_code, 404)
         response = self.client.get(self.url(self.other_issue))
