@@ -540,7 +540,7 @@ permission denial for unauthorized users, safe HTML escaping and passing Django,
 Compose, CodeQL and repository-standards checks. No schema or data changes.
 
 
-## Sprint 22C — Faster repeatable local Docker builds — In review
+## Sprint 22C — Faster repeatable local Docker builds — Complete (#231)
 
 Keep the established Python 3.15-slim base, Compose services, named database
 volume and application behavior. Enable Docker BuildKit's pip download cache
@@ -553,3 +553,20 @@ files enter the final image or repository, Compose test image builds and
 Django smoke checks pass in CI. No runtime dependency or data changes.
 Record that actual wall-clock speedups depend on host cache state and are
 not claimed without measurements.
+
+
+## Sprint 23A — Readable ticket queues — In review
+
+Improve daily triage for small support teams by displaying the ticket summary
+as a link to its detail, with explicit priority, assigned username (or
+Unassigned) and readable Open/Closed status. Remove the misleading non-clickable
+checkbox switch and avoid rendering long descriptions in the queue table.
+Preserve the existing newest-first pagination, status filtering, search and
+permission boundaries. Fetch priority with the existing related-user query to
+avoid introducing per-row database lookups.
+
+Acceptance: readable cells for open, closed, assigned and unassigned tickets;
+linked summaries; no fake toggle inputs; escaped user-supplied text; unchanged
+authorization and filtered search. Verify focused/full Django tests, migration
+drift, Compose smoke, CodeQL and standards checks. No migrations or dependency
+changes.

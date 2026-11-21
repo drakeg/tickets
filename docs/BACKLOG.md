@@ -29,8 +29,9 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | UI-004 | P1 | As an administrator, use consistent workspace branding and correct model labels | 2 | Admin polish | Done (#208) | User feedback |
 | UI-003 | P1 | As a user, navigate and find create actions on desktop/mobile with readable dashboard styling | 5 | Urgent repair | Done (#199) | User-reported blocker |
 | TKT-001 | P1 | As an agent, reach every ticket in stable newest-first pages | 3 | 6 | Done (#196) | #195 merged |
-| TKT-002 | P1 | As an agent, filter queues by status and search requester, assignee, priority and text | 3 | 6/22B | Core filtering done (#196); expanded search in review | TKT-001 |
+| TKT-002 | P1 | As an agent, filter queues by status and search requester, assignee, priority and text | 3 | 6/22B | Done (#196, #230) | TKT-001 |
 | TKT-003 | P1 | As an agent, open closed tickets from navigation | 1 | 6 | Done (#196) | TKT-002 |
+| TKT-009 | P1 | As an agent, scan ticket summary, priority, assignee and status directly from the queue without fake controls | 3 | 23A | In review | Existing queue and search routes |
 | TKT-004 | P1 | As a maintainer, find priorities, acceptance criteria, and sprint evidence in the repo | 2 | 6 | Done (#196) | None |
 | TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Done (#197) | Explicit issues.change_issue permission |
 | TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Done (#197) | TKT-005 permission policy |
@@ -39,7 +40,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | KB-001 | P2 | As a reader, search and page through all knowledge articles | 3 | 9 | Done (#200) | Existing search workflow |
 | KB-002 | P2 | As an authorized author/staff member, edit articles with explicit model grants | 5 | 16C | Done (#212) | change_article plus author/staff eligibility |
 | DATA-001 | P2 | As a maintainer, safely migrate requestor strings to user relations | 8 | Unscheduled | Needs discovery | Mapping/deleted-user policy |
-| CMDB-003 | P2 | As an operator, browse and search every system using its name, cluster, vendor and OS | 3 | 14/22A | List/detail done (#207); related-field search in review | CMDB-002 merged |
+| CMDB-003 | P2 | As an operator, browse and search every system using its name, cluster, vendor and OS | 3 | 14/22A | Done (#207, #229) | CMDB-002 merged |
 | CMDB-002 | P2 | As an operator, complete system creation with clear setup guidance and useful saved details | 3 | 13 | Done (#206) | Existing inventory workflow |
 | CMDB-001 | P2 | As an operator, validate asset identifiers and required fields | 5 | 20A–21B | Done (#222–#224, #227–#228); historical import review remains separate | Historical records remain unchanged |
 | PRJ-001 | P2 | As a project owner, receive a redirect after valid creation and useful detail feedback | 3 | 10 | Done (#201) | Workflow audit complete |
@@ -68,7 +69,7 @@ security/build defects take priority and displace named scope explicitly.
 
 | ID | Priority | Outcome | Sprint | State |
 |---|---|---|---|---|
-| OPS-003 | P2 | Reuse pip package downloads between local Docker image builds | 22C | In review; CI build evidence required |
+| OPS-003 | P2 | Reuse pip package downloads between local Docker image builds | 22C | Done (#231) |
 
 ## Standards and commercialization workstream
 

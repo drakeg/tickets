@@ -17,7 +17,7 @@ def _issue_list(request, queryset, title):
     if status != 'all':
         queryset = queryset.filter(issue_open=(status == 'open'))
     page = Paginator(
-        queryset.select_related('assigned').order_by('-pub_date', '-pk'), 15
+        queryset.select_related('assigned', 'priority').order_by('-pub_date', '-pk'), 15
     ).get_page(request.GET.get('page'))
     params = request.GET.copy()
     params.pop('page', None)
