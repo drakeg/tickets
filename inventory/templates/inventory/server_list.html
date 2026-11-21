@@ -1,8 +1,8 @@
 {% extends 'tickets/base.html' %}
 {% block search %}
     <form method="GET" action="{% url 'inventory:search' %}">
-        <label class="visually-hidden" for="system-search">Search system names</label>
-        <input id="system-search" name="q" value="{{ query }}" placeholder="Search system names">
+        <label class="visually-hidden" for="system-search">Search systems by name, vendor, cluster or OS</label>
+        <input id="system-search" name="q" value="{{ query }}" placeholder="Search systems, vendors, clusters or OS">
         <button class="btn btn-primary" type="submit">
             Search
         </button>
