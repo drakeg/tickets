@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods, require_POST
 
-from .models import Issue, Priority
+from .models import Issue, IssueChange, Priority
 from .forms import IssueForm, IssueTriageForm
 from .services import bulk_update_ticket_status, update_ticket
 
@@ -199,3 +199,39 @@ def issue_quick_status(request, issue_id):
         Issue.objects.filter(pk=issue.pk), action == 'reopen', request.user,
     )
     return redirect('issues:issue', issue_id=issue.pk)
+
+
+@login_required
+@permission_required(('issues.view_issue', 'issues.change_issue'), raise_exception=True)
+def issue_history_csv(request, issue_id):
+    """Download this ticket's audit history without relaxing existing permissions."""
+    issue = get_object_or_404(Issue, pk=issue_id)
+    writer = csv.writer(_CSVWriter())
+
+    def rows():
+        yield writer.writerow((
+            'Ticket ID', 'Changed (ISO 8601)', 'Actor',
+            'Previous status', 'New status', 'Previous priority', 'New priority',
+            'Previous assignee', 'New assignee',
+        ))
+        for change in IssueChange.objects.filter(issue=issue).order_by(
+            '-created_at', '-pk',
+        ).iterator(chunk_size=500):
+            before, after = change.before, change.after
+            yield writer.writerow((
+                issue.pk, change.created_at.isoformat(),
+                _safe_spreadsheet_cell(change.actor_name),
+                _safe_spreadsheet_cell(before.get('status', '')),
+                _safe_spreadsheet_cell(after.get('status', '')),
+                _safe_spreadsheet_cell(before.get('priority', {}).get('name', '')),
+                _safe_spreadsheet_cell(after.get('priority', {}).get('name', '')),
+                _safe_spreadsheet_cell(before.get('assigned', {}).get('name', '')),
+                _safe_spreadsheet_cell(after.get('assigned', {}).get('name', '')),
+            ))
+
+    response = StreamingHttpResponse(rows(), content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = (
+        f'attachment; filename="servdesk-ticket-{issue.pk}-history.csv"'
+    )
+    response['Cache-Control'] = 'private, no-store'
+    return response
