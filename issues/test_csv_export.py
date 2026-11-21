@@ -94,7 +94,7 @@ class TicketCSVExportTests(TestCase):
 
     def test_formula_prefixes_are_escaped_without_mangling_normal_text(self):
         for number, value in enumerate((
-            '=SUM(1,1)', '+cmd', '-cmd', '@NOW()', ' \\t=1+1',
+            '=SUM(1,1)', '+cmd', '-cmd', '@NOW()', ' \t=1+1',
         )):
             Issue.objects.create(
                 requestor_name=value, summary=f'Unsafe {number}',
