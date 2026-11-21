@@ -555,7 +555,7 @@ Record that actual wall-clock speedups depend on host cache state and are
 not claimed without measurements.
 
 
-## Sprint 23A — Readable ticket queues — In review
+## Sprint 23A — Readable ticket queues — Complete (#232)
 
 Improve daily triage for small support teams by displaying the ticket summary
 as a link to its detail, with explicit priority, assigned username (or
@@ -570,3 +570,18 @@ linked summaries; no fake toggle inputs; escaped user-supplied text; unchanged
 authorization and filtered search. Verify focused/full Django tests, migration
 drift, Compose smoke, CodeQL and standards checks. No migrations or dependency
 changes.
+
+
+## Sprint 23B — Priority filters across ticket queues — In review
+
+Help agents focus on high-priority work without manually searching for priority
+names. Add a dropdown listing configured priorities alongside the existing
+status filter for all, assigned, unassigned, and search queues. Preserve active
+query and filter selections across GET submissions and pagination. Reject
+invalid or missing priority identifiers gracefully by falling back to all
+priorities. The filter does not bypass any existing role or authentication gate.
+
+Acceptance: combined status/priority filtering, queue assignment scoping,
+text-search combination, pagination query retention, invalid ID handling,
+accessible label and no schema changes. Pass focused/full Django test suite,
+Compose smoke, CodeQL and repository standards.
