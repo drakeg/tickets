@@ -603,7 +603,7 @@ checks unchanged. All test coverage and CI/Compose/CodeQL checks must pass;
 no schema change or stored-data mutation.
 
 
-## Sprint 24A — Safe filtered ticket CSV export — In review
+## Sprint 24A — Safe filtered ticket CSV export — Complete (#235)
 
 Let authorized ticket readers download the currently filtered queue as a
 streamed CSV without exposing data from other user/assignment scopes.
@@ -620,3 +620,16 @@ formula injection prevention including leading whitespace; stable UTF-8
 CSV quoting, no full queryset materialization, and empty exports contain a
 header. Django CI, Compose, CodeQL and standards must pass. No migration,
 dependency or persistent-data changes.
+
+
+## Sprint 24B — Deterministic ticket queue ordering — In review
+
+Make oldest-first work prioritization available beside the default newest-first
+ordering for all, personal, unassigned and search queues. Preserve existing
+status/priority/assignee/text restrictions, stable pagination using ticket ID
+as a tie-breaker, and the currently selected order across search submissions
+and CSV downloads. Invalid sort values fall back to newest first.
+
+Acceptance: the same set of tickets is reachable regardless of sort order,
+queue/CSV ordering agrees, no authorization change or additional queries per
+row, and all Django/Compose, CodeQL and repository checks pass.
