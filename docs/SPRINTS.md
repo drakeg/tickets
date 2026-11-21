@@ -497,7 +497,7 @@ integrity error if a simultaneous insert happens after form validation; improve
 its user-facing conflict response in a subsequent small increment.
 
 
-## Sprint 21B — Friendly concurrent identity-conflict responses — In review
+## Sprint 21B — Friendly concurrent identity-conflict responses — Complete (#228)
 
 When another user inserts an asset between form validation and database save,
 catch **only** the canonical identity-key unique constraint violation. In the
@@ -509,3 +509,18 @@ rolls back; avoid swallowing unrelated database errors.
 Acceptance: conflict response and no writes in both paths, unrelated integrity
 violations still raise, synthetic tests with injected database conflicts, and
 passing full Django/Compose/CodeQL checks. Legacy asset records unchanged.
+
+
+## Sprint 22A — Search CMDB systems by related fields — In review
+
+Improve daily SMB help desk workflows by matching system identifiers and
+related vendor, cluster and operating-system names from the same inventory
+search field. Preserve stable cluster/name/PK ordering, pagination, escaped
+query display and existing view_server access controls. The SQL query joins
+existing foreign-key references and does not create duplicate systems for
+multi-field matches. No migration, dependency or data changes.
+
+Acceptance: all four search dimensions, case-insensitive partial matches,
+duplicate-free results when a system matches multiple dimensions, empty/no
+match handling, accessible search label and unchanged unauthorized access
+behavior. Confirm full Django/Compose/CodeQL checks and regression coverage.
