@@ -307,3 +307,9 @@ This protects the supported web/admin form paths; direct ORM creation, custom
 imports or SQL writes need their own validation and identity-key handling.
 Do not backfill legacy rows or enforce global uniqueness without first reviewing
 the historical audit and migration impact.
+
+
+When two operators submit the same new system name concurrently, the database
+rejects the second insert. The regular system form shows an inline retry
+message; Django admin returns to the form with an error message. Unrelated
+database integrity errors are not suppressed.

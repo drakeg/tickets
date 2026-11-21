@@ -79,3 +79,14 @@ class VendorForm(forms.ModelForm):
     class Meta:
         model = Vendor
         fields = ('vendor_name',)
+
+
+IDENTITY_CONFLICT_MESSAGE = (
+    "Another operator saved a system with this name in the selected cluster. "
+    "Choose a different name or cluster and try again."
+)
+
+
+def is_identity_conflict(error):
+    """Only handle canonical key collisions, not unrelated database problems."""
+    return 'identity_key' in str(error).lower()

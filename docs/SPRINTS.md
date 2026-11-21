@@ -469,7 +469,7 @@ record into a conflict is denied. Confirm targeted/full Django regression tests,
 CodeQL and Docker smoke checks before merging.
 
 
-## Sprint 21A — Database-enforced unique identifiers for new assets — In review
+## Sprint 21A — Database-enforced unique identifiers for new assets — Complete (#227)
 
 Prevent two concurrently validated web/admin forms from creating equivalent
 system identifiers in the same cluster. Add a nullable, database-unique
@@ -495,3 +495,17 @@ key; no data loss on migration. Verify makemigrations --check --dry-run, Django
 CI, CodeQL, Compose smoke and targeted tests. The race loser may encounter an
 integrity error if a simultaneous insert happens after form validation; improve
 its user-facing conflict response in a subsequent small increment.
+
+
+## Sprint 21B — Friendly concurrent identity-conflict responses — In review
+
+When another user inserts an asset between form validation and database save,
+catch **only** the canonical identity-key unique constraint violation. In the
+regular web flow, show the current entered values and a helpful inline field
+error, without a 500 or a partially committed asset. In Django admin, return
+to the relevant form with a visible error message after its atomic transaction
+rolls back; avoid swallowing unrelated database errors.
+
+Acceptance: conflict response and no writes in both paths, unrelated integrity
+violations still raise, synthetic tests with injected database conflicts, and
+passing full Django/Compose/CodeQL checks. Legacy asset records unchanged.

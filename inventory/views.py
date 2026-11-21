@@ -2,10 +2,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.db import IntegrityError, transaction
 from django.contrib.auth.decorators import login_required, permission_required
 
 from .models import Server
-from .forms import InventoryForm, VendorForm
+from .forms import (
+    IDENTITY_CONFLICT_MESSAGE, InventoryForm, VendorForm, is_identity_conflict,
+)
 
 def _server_list(request, servers):
     page = Paginator(
@@ -45,8 +48,15 @@ def servers_new(request):
         if form.is_valid():
             server = form.save(commit=False)
             server.pub_date = timezone.now()
-            server.save()
-            return redirect('inventory:servers', server_id=server.pk)
+            try:
+                with transaction.atomic():
+                    server.save()
+            except IntegrityError as error:
+                if not is_identity_conflict(error):
+                    raise
+                form.add_error('server_name', IDENTITY_CONFLICT_MESSAGE)
+            else:
+                return redirect('inventory:servers', server_id=server.pk)
     else:
         form = InventoryForm()
     missing_reference_data = [
