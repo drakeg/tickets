@@ -635,7 +635,7 @@ queue/CSV ordering agrees, no authorization change or additional queries per
 row, and all Django/Compose, CodeQL and repository checks pass.
 
 
-## Sprint 25A — Audited quick close/reopen from ticket queues — In review
+## Sprint 25A — Audited quick close/reopen from ticket queues — Complete (#237)
 
 Enable authorized ticket editors to close or reopen requests directly from
 queue rows while keeping existing role permissions, CSRF and change history
@@ -650,3 +650,19 @@ POST-only and CSRF-protected, authenticated plus explicit ticket view/change
 permissions, history captures actor/snapshot, repeated requests are idempotent,
 no privilege bypass and no migrations/dependencies. Full Django/Compose,
 CodeQL and repository standards checks required.
+
+
+## Sprint 25B — Permission-scoped audit history CSV — In review
+
+Give authorized ticket editors an audit trail they can retain for external
+review without exposing history to read-only or anonymous users. Export a
+single ticket's change history with actor, timestamp and before/after status,
+priority and assignee values. Use a streamed CSV, stable newest-first order,
+formula-safe values, and private/no-store headers. The link appears alongside
+the existing permission-gated change history display, and this is read-only.
+
+Acceptance: actor and before/after fidelity, no cross-ticket history leakage,
+CSVs escaped against spreadsheet formula injection, view+change permission
+required, read-only users see no export link, missing tickets return 404,
+no data/migration changes, full CI and local tests pass. Retention/deletion
+policy remains an explicit separate decision.
