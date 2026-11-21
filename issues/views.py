@@ -26,7 +26,7 @@ class _CSVWriter:
         return value
 
 
-def _ticket_csv(queryset):
+def _ticket_csv(queryset, ordering):
     writer = csv.writer(_CSVWriter())
 
     def rows():
@@ -35,7 +35,7 @@ def _ticket_csv(queryset):
             'Priority', 'Assignee', 'Status', 'Created (ISO 8601)',
         ))
         for ticket in queryset.select_related('priority', 'assigned').order_by(
-            '-pub_date', '-pk',
+            *ordering
         ).iterator(chunk_size=500):
             yield writer.writerow((
                 ticket.pk, _safe_spreadsheet_cell(ticket.summary),
@@ -81,10 +81,14 @@ def _issue_list(request, queryset, title):
         queryset = queryset.filter(assigned_id=assignee)
     else:
         assignee = ''
+    sort = request.GET.get('sort', 'newest')
+    if sort not in ('newest', 'oldest'):
+        sort = 'newest'
+    ordering = ('pub_date', 'pk') if sort == 'oldest' else ('-pub_date', '-pk')
     if request.method == 'GET' and request.GET.get('export') == 'csv':
-        return _ticket_csv(queryset)
+        return _ticket_csv(queryset, ordering)
     page = Paginator(
-        queryset.select_related('assigned', 'priority').order_by('-pub_date', '-pk'), 15
+        queryset.select_related('assigned', 'priority').order_by(*ordering), 15
     ).get_page(request.GET.get('page'))
     params = request.GET.copy()
     params.pop('page', None)
@@ -94,6 +98,7 @@ def _issue_list(request, queryset, title):
         'page_obj': page,
         'queue_title': title,
         'status': status,
+        'sort': sort,
         'priority': priority,
         'priorities': priorities,
         'assignee': assignee,
