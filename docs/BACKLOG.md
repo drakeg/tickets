@@ -64,6 +64,12 @@ review → Done; Blocked records a reason and next action. Done means merged wit
 passing checks, not merely implemented. Reference PRs in sprint evidence. New
 security/build defects take priority and displace named scope explicitly.
 
+## Developer productivity
+
+| ID | Priority | Outcome | Sprint | State |
+|---|---|---|---|---|
+| OPS-003 | P2 | Reuse pip package downloads between local Docker image builds | 22C | In review; CI build evidence required |
+
 ## Standards and commercialization workstream
 
 | ID | Priority | Outcome | Sprint | State |
