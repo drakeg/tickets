@@ -29,7 +29,7 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | UI-004 | P1 | As an administrator, use consistent workspace branding and correct model labels | 2 | Admin polish | Done (#208) | User feedback |
 | UI-003 | P1 | As a user, navigate and find create actions on desktop/mobile with readable dashboard styling | 5 | Urgent repair | Done (#199) | User-reported blocker |
 | TKT-001 | P1 | As an agent, reach every ticket in stable newest-first pages | 3 | 6 | Done (#196) | #195 merged |
-| TKT-002 | P1 | As an agent, filter all, assigned, unassigned, and search queues by status | 3 | 6 | Done (#196) | TKT-001 |
+| TKT-002 | P1 | As an agent, filter queues by status and search requester, assignee, priority and text | 3 | 6/22B | Core filtering done (#196); expanded search in review | TKT-001 |
 | TKT-003 | P1 | As an agent, open closed tickets from navigation | 1 | 6 | Done (#196) | TKT-002 |
 | TKT-004 | P1 | As a maintainer, find priorities, acceptance criteria, and sprint evidence in the repo | 2 | 6 | Done (#196) | None |
 | TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Done (#197) | Explicit issues.change_issue permission |
