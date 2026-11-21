@@ -455,7 +455,7 @@ non-destructive behavior. No migrations or production data cleanup. Any future
 uniqueness constraint requires a separate data review and explicit migration
 policy.
 
-## Sprint 20C — Django admin system-name validation — In review
+## Sprint 20C — Django admin system-name validation — Complete (#224)
 
 Apply the same blank and same-cluster case-insensitive duplicate checks to
 Django admin without removing any existing admin fields. Permit edits that do
@@ -467,3 +467,31 @@ and blank new entries are rejected; the same name in another cluster remains
 valid; editing legacy duplicates and blank records is possible; renaming a
 record into a conflict is denied. Confirm targeted/full Django regression tests,
 CodeQL and Docker smoke checks before merging.
+
+
+## Sprint 21A — Database-enforced unique identifiers for new assets — In review
+
+Prevent two concurrently validated web/admin forms from creating equivalent
+system identifiers in the same cluster. Add a nullable, database-unique
+canonical identity key for newly created assets and records whose actual
+cluster/name identity changes. The key combines cluster PK and stripped,
+casefolded system name; it remains private to persistence and is not a new
+user-editable field. Forms also include legacy whitespace-padded names in
+their preflight collision checks.
+
+Safety and migration: the additive column defaults to NULL. Do not backfill
+historical records or introduce a restrictive non-null constraint; legacy
+duplicate and blank assets remain editable without identity changes. Direct
+bulk SQL writes and unmanaged ORM creation paths do not automatically populate
+the key; a separate import/ORM contract is needed before promising global
+uniqueness. The unique index closes the validation-to-save race **among the
+supported form write paths**, not every possible database writer.
+
+Acceptance: sequential new names normalize; independent prevalidated form
+instances cannot save a duplicate in the same cluster; admin and application
+forms share the key; Unicode casefold/legacy padded collisions are handled;
+unchanged old records retain NULL; renaming an old asset assigns its canonical
+key; no data loss on migration. Verify makemigrations --check --dry-run, Django
+CI, CodeQL, Compose smoke and targeted tests. The race loser may encounter an
+integrity error if a simultaneous insert happens after form validation; improve
+its user-facing conflict response in a subsequent small increment.
