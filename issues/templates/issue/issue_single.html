@@ -24,6 +24,21 @@
     {% if perms.issues.view_issue and perms.issues.change_issue and perms.issues.view_priority %}
     <p><a class="btn btn-primary" href="{% url 'issues:issue_edit' issue.pk %}">Update ticket</a></p>
     {% endif %}
+    {% if perms.issues.view_issue and perms.issues.change_issue and issue.issue_open %}
+    <div class="d-flex gap-2 mb-3" aria-label="Ticket ownership actions">
+        {% if not issue.assigned_id %}
+        <form method="post" action="{% url 'issues:issue_claim' issue.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-primary">Claim this ticket</button>
+        </form>
+        {% elif issue.assigned_id == request.user.pk %}
+        <form method="post" action="{% url 'issues:issue_release' issue.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-secondary">Release my ticket</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endif %}
     <h2>Description</h2>
     {{ issue.description|linebreaks }}
     <a class="btn btn-secondary" href="{% url 'issues:index' %}">Back to issues</a>
