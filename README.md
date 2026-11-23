@@ -391,3 +391,8 @@ An agent can select **Release** for an open ticket currently assigned to
 themself, returning it to the unassigned queue. Other agents cannot release
 someone else's ticket through this action. Every successful change is audited
 and repeated release attempts do not create extra history.
+
+
+The ticket detail page also provides **Claim this ticket** or **Release my
+ticket** when the current agent is authorized and the ticket's ownership and
+status allow it. These use the same audited controls as the queue.
