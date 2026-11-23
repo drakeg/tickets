@@ -414,3 +414,8 @@ Users with permission to view tickets see a dashboard card with the number
 of open tickets older than 3 days and a secondary count older than 7 days.
 The card links to the same filtered queue, preserving authorization. Counts
 reflect ticket creation age and do not represent a contractual SLA breach.
+
+
+The dashboard also shows **Unassigned open tickets** to ticket readers,
+with a direct link to the open, unassigned queue where authorized agents
+can claim work. Closed and assigned tickets do not contribute.
