@@ -27,6 +27,10 @@ def index(request):
             older_3=Count('pk', filter=Q(pub_date__lte=now - timedelta(days=3))),
             older_7=Count('pk', filter=Q(pub_date__lte=now - timedelta(days=7))),
         )
+    num_unassigned_open = (
+        Issue.objects.filter(issue_open=True, assigned__isnull=True).count()
+        if request.user.has_perm('issues.view_issue') else 0
+    )
     max_open_projects = 100
     num_open_projects = Project.objects.filter(end_date__gte=datetime.date.today()).count() if request.user.has_perm('projects.view_project') else 0
     percent_open_projects = str(num_open_projects/max_open_projects * 100) + "%"
@@ -37,6 +41,7 @@ def index(request):
                  'num_my_issues':num_my_issues, 'percent_my_issues':percent_my_issues, 'max_my_issues':max_my_issues,
                  'num_open_issues':num_open_issues, 'percent_open_issues':percent_open_issues, 'max_open_issues':max_open_issues,
                  'num_aging_3_days':aging['older_3'], 'num_aging_7_days':aging['older_7'],
+                 'num_unassigned_open':num_unassigned_open,
                  'num_open_projects': num_open_projects, 'percent_open_projects': percent_open_projects,'max_open_projects': max_open_projects,
                  }
     )
