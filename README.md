@@ -396,3 +396,13 @@ and repeated release attempts do not create extra history.
 The ticket detail page also provides **Claim this ticket** or **Release my
 ticket** when the current agent is authorized and the ticket's ownership and
 status allow it. These use the same audited controls as the queue.
+
+
+### Aging open ticket triage
+
+Select **Open ticket age** on a queue to see tickets that have been open
+longer than 24 hours, 3 days or 7 days, measured from their creation date.
+Closed tickets are excluded when a threshold is active. Existing search,
+priority, owner and sort filters continue to apply; CSV exports reflect the
+same selection. This is an age-based triage aid, **not** an SLA or overdue
+breach calculation.
