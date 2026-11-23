@@ -74,6 +74,12 @@
             <td>{{ issue.pub_date }}</td>
             {% if perms.issues.change_issue %}
             <td>
+                {% if issue.issue_open and not issue.assigned_id %}
+                <form method="post" action="{% url 'issues:issue_claim' issue.pk %}">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Claim ticket {{ issue.pk }}">Claim</button>
+                </form>
+                {% endif %}
                 <form method="post" action="{% url 'issues:issue_quick_status' issue.pk %}">
                     {% csrf_token %}
                     {% if issue.issue_open %}
