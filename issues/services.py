@@ -52,3 +52,26 @@ def bulk_update_ticket_status(queryset, is_open, actor):
         )
         changed += 1
     return changed
+
+
+@transaction.atomic
+def claim_unassigned_ticket(issue_id, actor):
+    """Assign an open, unassigned ticket; record its first owner atomically.
+
+    Return False if another agent has already taken the ticket, or if closed.
+    The caller must enforce view_issue and change_issue permissions.
+    """
+    issue = Issue.objects.select_for_update().select_related(
+        'priority', 'assigned',
+    ).get(pk=issue_id)
+    if not issue.issue_open or issue.assigned_id is not None:
+        return False
+    before = triage_snapshot(issue)
+    issue.assigned = actor
+    after = triage_snapshot(issue)
+    issue.save(update_fields=['assigned'])
+    IssueChange.objects.create(
+        issue=issue, actor=actor, actor_name=actor.get_username(),
+        before=before, after=after,
+    )
+    return True

@@ -652,7 +652,7 @@ no privilege bypass and no migrations/dependencies. Full Django/Compose,
 CodeQL and repository standards checks required.
 
 
-## Sprint 25B — Permission-scoped audit history CSV — In review
+## Sprint 25B — Permission-scoped audit history CSV — Complete (#238)
 
 Give authorized ticket editors an audit trail they can retain for external
 review without exposing history to read-only or anonymous users. Export a
@@ -666,3 +666,17 @@ CSVs escaped against spreadsheet formula injection, view+change permission
 required, read-only users see no export link, missing tickets return 404,
 no data/migration changes, full CI and local tests pass. Retention/deletion
 policy remains an explicit separate decision.
+
+
+## Sprint 26A — Atomic ticket claim to self — In review
+
+Let an authorized support agent claim an open, unassigned ticket from the
+queue using a CSRF-protected POST action. Reuse row locking and actor-attributed
+IssueChange history. Closed or already assigned tickets cannot be claimed;
+a failed claim returns an explicit HTTP 409 conflict instead of silently
+reassigning the existing owner. Read-only users cannot see or invoke the action.
+
+Acceptance: ownership and audited before/after snapshots, deterministic
+no-op/conflict handling on repeated or competing claims, role boundary,
+CSRF protection, GET rejection, missing-ID handling, and no schema changes.
+Confirm targeted/full Django tests, Docker smoke, CodeQL and standards.
