@@ -75,3 +75,25 @@ def claim_unassigned_ticket(issue_id, actor):
         before=before, after=after,
     )
     return True
+
+
+@transaction.atomic
+def release_own_ticket(issue_id, actor):
+    """Return an open ticket owned by actor to the unassigned queue.
+
+    Never remove another user's assignment, even with change_issue permission.
+    """
+    issue = Issue.objects.select_for_update().select_related(
+        'priority', 'assigned',
+    ).get(pk=issue_id)
+    if not issue.issue_open or issue.assigned_id != actor.pk:
+        return False
+    before = triage_snapshot(issue)
+    issue.assigned = None
+    after = triage_snapshot(issue)
+    issue.save(update_fields=['assigned'])
+    IssueChange.objects.create(
+        issue=issue, actor=actor, actor_name=actor.get_username(),
+        before=before, after=after,
+    )
+    return True
