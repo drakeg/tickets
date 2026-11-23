@@ -6,6 +6,7 @@
         {% if priority %}<input type="hidden" name="priority" value="{{ priority }}">{% endif %}
         {% if assignee %}<input type="hidden" name="assignee" value="{{ assignee }}">{% endif %}
         {% if sort != 'newest' %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+        {% if age %}<input type="hidden" name="age" value="{{ age }}">{% endif %}
         <input id="ticket-search" name="q" value="{{ request.GET.q }}" placeholder="Search tickets, people or priorities">
         <button class="btn btn-primary" type="submit">
             Search
@@ -39,6 +40,13 @@
             {% for person in assignees %}
             <option value="{{ person.pk }}"{% if assignee == person.pk|stringformat:"s" %} selected{% endif %}>{{ person.get_username }}</option>
             {% endfor %}
+        </select>
+        <label for="ticket-age">Open ticket age</label>
+        <select name="age" id="ticket-age">
+            <option value=""{% if not age %} selected{% endif %}>All ages</option>
+            <option value="1"{% if age == '1' %} selected{% endif %}>Older than 24 hours</option>
+            <option value="3"{% if age == '3' %} selected{% endif %}>Older than 3 days</option>
+            <option value="7"{% if age == '7' %} selected{% endif %}>Older than 7 days</option>
         </select>
         <label for="ticket-sort">Order</label>
         <select name="sort" id="ticket-sort">

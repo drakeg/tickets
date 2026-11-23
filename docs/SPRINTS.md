@@ -697,7 +697,7 @@ CSRF is enforced and queue controls show only where appropriate. Full Django
 CI, Compose, CodeQL and standards validation. No migration or data loss.
 
 
-## Sprint 26C — Detail-page ticket ownership controls — In review
+## Sprint 26C — Detail-page ticket ownership controls — Complete (#241)
 
 Expose the existing Claim and Release actions beside the ticket description,
 not only from queue rows. The detail view must show Claim only when the ticket
@@ -708,3 +708,18 @@ logic, schema change, or additional permissions.
 
 Acceptance: permission-aware control visibility and actual audited transitions,
 with view tests and all CI/Compose/CodeQL checks green.
+
+
+## Sprint 27A — Aging open-ticket triage — In review
+
+Let agents locate tickets that have remained open for longer than 24 hours,
+3 days or 7 days. The age is measured from the existing ticket creation time,
+not last updated time or an SLA deadline. Apply the selected threshold to open
+tickets only; closed tickets are excluded even if the status filter says all.
+Combine with current query, assignee, priority and sort controls, and preserve
+the filter in pagination and CSV exports. Reject other age inputs safely.
+
+Acceptance: timezone-aware cutoff checks, threshold behavior, combined filters,
+CSV parity, empty results, invalid inputs and permission boundaries tested.
+No migration, data changes, or invented service-level commitments. Full Django
+CI/Compose, CodeQL and repo standards checks required before merging.

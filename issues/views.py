@@ -1,4 +1,5 @@
 import csv
+from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect, render
@@ -81,6 +82,16 @@ def _issue_list(request, queryset, title):
         queryset = queryset.filter(assigned_id=assignee)
     else:
         assignee = ''
+    age = request.GET.get('age', '')
+    # Only open tickets older than the selected age: closed tickets do not
+    # contribute to the aging queue, even when status=all.
+    if age in ('1', '3', '7'):
+        queryset = queryset.filter(
+            issue_open=True,
+            pub_date__lte=timezone.now() - timedelta(days=int(age)),
+        )
+    else:
+        age = ''
     sort = request.GET.get('sort', 'newest')
     if sort not in ('newest', 'oldest'):
         sort = 'newest'
@@ -99,6 +110,7 @@ def _issue_list(request, queryset, title):
         'queue_title': title,
         'status': status,
         'sort': sort,
+        'age': age,
         'priority': priority,
         'priorities': priorities,
         'assignee': assignee,
