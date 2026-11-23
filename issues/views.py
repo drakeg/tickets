@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 
 from .models import Issue, IssueChange, Priority
 from .forms import IssueForm, IssueTriageForm
-from .services import bulk_update_ticket_status, claim_unassigned_ticket, update_ticket
+from .services import bulk_update_ticket_status, claim_unassigned_ticket, release_own_ticket, update_ticket
 
 def _safe_spreadsheet_cell(value):
     """Avoid formula execution in CSV readers such as Excel or Sheets."""
@@ -249,6 +249,23 @@ def issue_claim(request, issue_id):
     if not claimed:
         return HttpResponse(
             'This ticket is already assigned or closed. Refresh the queue.',
+            status=409,
+        )
+    return redirect('issues:issue', issue_id=issue_id)
+
+
+@login_required
+@permission_required(('issues.view_issue', 'issues.change_issue'), raise_exception=True)
+@require_POST
+def issue_release(request, issue_id):
+    """Return an owned open ticket to the unassigned queue."""
+    try:
+        released = release_own_ticket(issue_id, request.user)
+    except Issue.DoesNotExist:
+        raise Http404('Ticket not found')
+    if not released:
+        return HttpResponse(
+            'You may only release your own open ticket. Refresh the queue.',
             status=409,
         )
     return redirect('issues:issue', issue_id=issue_id)
