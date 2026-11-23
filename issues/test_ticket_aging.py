@@ -47,8 +47,8 @@ class TicketAgeFilterTests(TestCase):
 
     def test_one_three_seven_day_age_thresholds(self):
         for age, expected in (
-            ('1', [self.ten_days, self.five_days, self.two_days]),
-            ('3', [self.ten_days, self.five_days]),
+            ('1', [self.two_days, self.five_days, self.ten_days]),
+            ('3', [self.five_days, self.ten_days]),
             ('7', [self.ten_days]),
         ):
             ids, response = self.ids('index', {'age': age})
@@ -61,7 +61,7 @@ class TicketAgeFilterTests(TestCase):
             'q': 'outage', 'age': '3', 'priority': self.priority.pk,
             'assignee': 'unassigned', 'sort': 'oldest', 'status': 'open',
         })
-        self.assertEqual(ids, [self.five_days.pk, self.ten_days.pk])
+        self.assertEqual(ids, [self.ten_days.pk, self.five_days.pk])
         for item in ('age=3', 'priority=', 'assignee=unassigned',
                      'sort=oldest', 'status=open', 'q=outage'):
             self.assertIn(item, response.context['pagination_query'])
@@ -87,7 +87,7 @@ class TicketAgeFilterTests(TestCase):
         rows = list(csv.reader(StringIO(
             b''.join(exported.streaming_content).decode('utf-8')
         )))
-        self.assertEqual([int(row[0]) for row in rows[1:]], list(reversed(ids)))
+        self.assertEqual([int(row[0]) for row in rows[1:]], ids)
         self.assertEqual(len(rows), 3)
 
     def test_empty_selection_has_clear_options_and_no_results(self):
