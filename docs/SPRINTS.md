@@ -725,7 +725,7 @@ No migration, data changes, or invented service-level commitments. Full Django
 CI/Compose, CodeQL and repo standards checks required before merging.
 
 
-## Sprint 27B — Dashboard aging KPIs with queue drilldown — In review
+## Sprint 27B — Dashboard aging KPIs with queue drilldown — Complete (#243)
 
 Add permission-aware counts of open tickets older than 3 days and 7 days
 in one grouped database aggregation. Show a compact dashboard card linking
@@ -736,3 +736,15 @@ These are age-from-creation measures, not SLA violation claims.
 Acceptance: both age thresholds, closed exclusion, existing RBAC, matching
 dashboard-to-queue counts, tests for unauthorized users and no data/schema
 changes. Django CI, CodeQL, repository standards and Docker smoke green.
+
+
+## Sprint 27C — Unassigned open-ticket dashboard metric — In review
+
+Show agents the number of open tickets with no current assignee and link
+directly to the existing unassigned queue filtered to open status. Respect
+view_issue permission, exclude closed unassigned tickets and tickets assigned
+to anyone, and recompute on each request. No SLA, notifications or new
+tables needed.
+
+Acceptance: count and linked queue agree, readers without access see neither
+card nor count, assignment changes update the metric, and full CI passes.
