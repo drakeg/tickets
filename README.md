@@ -383,3 +383,11 @@ ticket to assign it to themselves. The change is captured in ticket history.
 If it has already been assigned or closed, the request returns a conflict and
 does not overwrite the current owner. Claiming uses a protected POST; read-only
 users never see the control.
+
+
+### Return an owned ticket to the queue
+
+An agent can select **Release** for an open ticket currently assigned to
+themself, returning it to the unassigned queue. Other agents cannot release
+someone else's ticket through this action. Every successful change is audited
+and repeated release attempts do not create extra history.
