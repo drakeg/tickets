@@ -4,14 +4,14 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.core.paginator import Paginator
-from django.http import Http404, StreamingHttpResponse
+from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods, require_POST
 
 from .models import Issue, IssueChange, Priority
 from .forms import IssueForm, IssueTriageForm
-from .services import bulk_update_ticket_status, update_ticket
+from .services import bulk_update_ticket_status, claim_unassigned_ticket, update_ticket
 
 def _safe_spreadsheet_cell(value):
     """Avoid formula execution in CSV readers such as Excel or Sheets."""
@@ -235,3 +235,20 @@ def issue_history_csv(request, issue_id):
     )
     response['Cache-Control'] = 'private, no-store'
     return response
+
+
+@login_required
+@permission_required(('issues.view_issue', 'issues.change_issue'), raise_exception=True)
+@require_POST
+def issue_claim(request, issue_id):
+    """Claim an open, unassigned ticket with a single audited POST."""
+    try:
+        claimed = claim_unassigned_ticket(issue_id, request.user)
+    except Issue.DoesNotExist:
+        raise Http404('Ticket not found')
+    if not claimed:
+        return HttpResponse(
+            'This ticket is already assigned or closed. Refresh the queue.',
+            status=409,
+        )
+    return redirect('issues:issue', issue_id=issue_id)
