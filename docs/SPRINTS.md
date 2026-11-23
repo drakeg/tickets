@@ -668,7 +668,7 @@ no data/migration changes, full CI and local tests pass. Retention/deletion
 policy remains an explicit separate decision.
 
 
-## Sprint 26A — Atomic ticket claim to self — In review
+## Sprint 26A — Atomic ticket claim to self — Complete (#239)
 
 Let an authorized support agent claim an open, unassigned ticket from the
 queue using a CSRF-protected POST action. Reuse row locking and actor-attributed
@@ -680,3 +680,18 @@ Acceptance: ownership and audited before/after snapshots, deterministic
 no-op/conflict handling on repeated or competing claims, role boundary,
 CSRF protection, GET rejection, missing-ID handling, and no schema changes.
 Confirm targeted/full Django tests, Docker smoke, CodeQL and standards.
+
+
+## Sprint 26B — Owner-only ticket release — In review
+
+Allow an authorized agent to return their own **open** ticket to the unassigned
+pool via a protected POST action. The existing assigned user must match the
+actor; a team member cannot release another person's ticket even if they
+have broad ticket change permission. A concurrent or repeated release returns
+HTTP 409 with no write. The ownership transition is recorded with one
+IssueChange before/after snapshot, preserving ticket status and priority.
+
+Acceptance: owner release works; nonowners/read-only/anonymous/GET and
+closed-ticket cases cannot change ownership; repeated requests are non-writing,
+CSRF is enforced and queue controls show only where appropriate. Full Django
+CI, Compose, CodeQL and standards validation. No migration or data loss.
