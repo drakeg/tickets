@@ -374,3 +374,12 @@ detail page to download its before/after status, priority, assignment, actor
 and timestamp. The export includes only that ticket and is not offered to
 read-only ticket viewers. Store exported audit files securely. This feature
 does not determine a retention period or delete historical events.
+
+
+### Claim an unassigned ticket
+
+Authorized ticket editors can select **Claim** beside an open, unassigned
+ticket to assign it to themselves. The change is captured in ticket history.
+If it has already been assigned or closed, the request returns a conflict and
+does not overwrite the current owner. Claiming uses a protected POST; read-only
+users never see the control.
