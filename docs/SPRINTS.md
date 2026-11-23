@@ -710,7 +710,7 @@ Acceptance: permission-aware control visibility and actual audited transitions,
 with view tests and all CI/Compose/CodeQL checks green.
 
 
-## Sprint 27A — Aging open-ticket triage — In review
+## Sprint 27A — Aging open-ticket triage — Complete (#242)
 
 Let agents locate tickets that have remained open for longer than 24 hours,
 3 days or 7 days. The age is measured from the existing ticket creation time,
@@ -723,3 +723,16 @@ Acceptance: timezone-aware cutoff checks, threshold behavior, combined filters,
 CSV parity, empty results, invalid inputs and permission boundaries tested.
 No migration, data changes, or invented service-level commitments. Full Django
 CI/Compose, CodeQL and repo standards checks required before merging.
+
+
+## Sprint 27B — Dashboard aging KPIs with queue drilldown — In review
+
+Add permission-aware counts of open tickets older than 3 days and 7 days
+in one grouped database aggregation. Show a compact dashboard card linking
+to the exact queue filter implemented in Sprint 27A. Closed tickets and users
+without the view_issue permission must not contribute to or see the metrics.
+These are age-from-creation measures, not SLA violation claims.
+
+Acceptance: both age thresholds, closed exclusion, existing RBAC, matching
+dashboard-to-queue counts, tests for unauthorized users and no data/schema
+changes. Django CI, CodeQL, repository standards and Docker smoke green.
