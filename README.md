@@ -406,3 +406,11 @@ Closed tickets are excluded when a threshold is active. Existing search,
 priority, owner and sort filters continue to apply; CSV exports reflect the
 same selection. This is an age-based triage aid, **not** an SLA or overdue
 breach calculation.
+
+
+### Aging ticket dashboard
+
+Users with permission to view tickets see a dashboard card with the number
+of open tickets older than 3 days and a secondary count older than 7 days.
+The card links to the same filtered queue, preserving authorization. Counts
+reflect ticket creation age and do not represent a contractual SLA breach.
