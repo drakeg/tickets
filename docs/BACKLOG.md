@@ -41,7 +41,8 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | TKT-016 | P1 | As an authorized agent, claim an unassigned open ticket without overwriting another agent's ownership | 3 | 26A | Done (#239) | TKT-007 audit and queue actions |
 | TKT-017 | P1 | As an assigned agent, release my own open ticket to unassigned without taking other agents' tickets | 3 | 26B | Done (#240) | TKT-016 and audit history |
 | TKT-018 | P1 | As an agent, claim or release an open ticket directly from its detail page with correct permissions | 2 | 26C | Done (#241) | TKT-016/017 |
-| TKT-019 | P1 | As an agent, find aging open tickets using defined thresholds, search and CSV | 3 | 27A | In review | TKT-010–013 filters and export |
+| TKT-019 | P1 | As an agent, find aging open tickets using defined thresholds, search and CSV | 3 | 27A | Done (#242) | TKT-010–013 filters and export |
+| DASH-001 | P1 | As an agent, see and drill into aging open tickets from the dashboard | 2 | 27B | In review | TKT-019 |
 | TKT-004 | P1 | As a maintainer, find priorities, acceptance criteria, and sprint evidence in the repo | 2 | 6 | Done (#196) | None |
 | TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Done (#197) | Explicit issues.change_issue permission |
 | TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Done (#197) | TKT-005 permission policy |
