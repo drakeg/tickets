@@ -682,7 +682,7 @@ CSRF protection, GET rejection, missing-ID handling, and no schema changes.
 Confirm targeted/full Django tests, Docker smoke, CodeQL and standards.
 
 
-## Sprint 26B — Owner-only ticket release — In review
+## Sprint 26B — Owner-only ticket release — Complete (#240)
 
 Allow an authorized agent to return their own **open** ticket to the unassigned
 pool via a protected POST action. The existing assigned user must match the
@@ -695,3 +695,16 @@ Acceptance: owner release works; nonowners/read-only/anonymous/GET and
 closed-ticket cases cannot change ownership; repeated requests are non-writing,
 CSRF is enforced and queue controls show only where appropriate. Full Django
 CI, Compose, CodeQL and standards validation. No migration or data loss.
+
+
+## Sprint 26C — Detail-page ticket ownership controls — In review
+
+Expose the existing Claim and Release actions beside the ticket description,
+not only from queue rows. The detail view must show Claim only when the ticket
+is open and unassigned; show Release only when the current editor is its owner;
+and hide both for read-only users, other agents and closed tickets. Buttons
+submit to the existing CSRF-protected, audited endpoints. No duplicate update
+logic, schema change, or additional permissions.
+
+Acceptance: permission-aware control visibility and actual audited transitions,
+with view tests and all CI/Compose/CodeQL checks green.
