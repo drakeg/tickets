@@ -38,7 +38,8 @@ provisional until refinement; no measured velocity or delivery dates are assumed
 | TKT-013 | P1 | As an agent, order queue and CSV consistently by newest or oldest ticket | 2 | 24B | Done (#236) | TKT-012 CSV and queue filters |
 | TKT-014 | P1 | As an authorized agent, close/reopen a ticket from a queue row with an audited POST | 3 | 25A | Done (#237) | TKT-005/007 and queue actions |
 | TKT-015 | P2 | As an authorized auditor, download ticket-specific audit history without exposing other tickets | 3 | 25B | Done (#238) | TKT-007/008 and history permission gate |
-| TKT-016 | P1 | As an authorized agent, claim an unassigned open ticket without overwriting another agent's ownership | 3 | 26A | In review | TKT-007 audit and queue actions |
+| TKT-016 | P1 | As an authorized agent, claim an unassigned open ticket without overwriting another agent's ownership | 3 | 26A | Done (#239) | TKT-007 audit and queue actions |
+| TKT-017 | P1 | As an assigned agent, release my own open ticket to unassigned without taking other agents' tickets | 3 | 26B | In review | TKT-016 and audit history |
 | TKT-004 | P1 | As a maintainer, find priorities, acceptance criteria, and sprint evidence in the repo | 2 | 6 | Done (#196) | None |
 | TKT-005 | P1 | As an authorized agent, close/reopen a ticket using protected POST actions | 5 | 7 | Done (#197) | Explicit issues.change_issue permission |
 | TKT-006 | P1 | As an authorized agent, change assignment and priority | 5 | 7 | Done (#197) | TKT-005 permission policy |
