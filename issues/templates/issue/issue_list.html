@@ -80,6 +80,12 @@
                     <button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Claim ticket {{ issue.pk }}">Claim</button>
                 </form>
                 {% endif %}
+                {% if issue.issue_open and issue.assigned_id == request.user.pk %}
+                <form method="post" action="{% url 'issues:issue_release' issue.pk %}">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-secondary" type="submit" aria-label="Release ticket {{ issue.pk }}">Release</button>
+                </form>
+                {% endif %}
                 <form method="post" action="{% url 'issues:issue_quick_status' issue.pk %}">
                     {% csrf_token %}
                     {% if issue.issue_open %}
