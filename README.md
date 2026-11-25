@@ -1,12 +1,9 @@
 # ServDesk — SMB Service Desk
 
-[![License](https://img.shields.io/github/license/drakeg/tickets)](https://github.com/drakeg/tickets/blob/master/LICENSE)
-
-
 <!-- madmallard-badges:start -->
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://github.com/drakeg/tickets/blob/master/.github/workflows/django-ci.yml) [![Django](https://img.shields.io/badge/Django-6.1-092E20?logo=django&logoColor=white)](https://github.com/drakeg/tickets/blob/master/requirements.txt) [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.3-7952B3?logo=bootstrap&logoColor=white)](https://github.com/drakeg/tickets/tree/master/static/tickets) [![SQLite](https://img.shields.io/badge/SQLite-local%20database-003B57?logo=sqlite&logoColor=white)](https://github.com/drakeg/tickets/blob/master/docker-compose.yml) [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://github.com/drakeg/tickets/blob/master/docker-compose.yml)
 
-[![Django CI](https://github.com/drakeg/tickets/actions/workflows/django-ci.yml/badge.svg)](https://github.com/drakeg/tickets/actions/workflows/django-ci.yml) [![CodeQL](https://github.com/drakeg/tickets/actions/workflows/codeql.yml/badge.svg)](https://github.com/drakeg/tickets/actions/workflows/codeql.yml) [![Issues](https://img.shields.io/github/issues/drakeg/tickets)](https://github.com/drakeg/tickets/issues) [![Pull requests](https://img.shields.io/github/issues-pr/drakeg/tickets)](https://github.com/drakeg/tickets/pulls)
+[![Django CI](https://github.com/drakeg/tickets/actions/workflows/django-ci.yml/badge.svg)](https://github.com/drakeg/tickets/actions/workflows/django-ci.yml) [![CodeQL](https://github.com/drakeg/tickets/actions/workflows/codeql.yml/badge.svg)](https://github.com/drakeg/tickets/actions/workflows/codeql.yml) [![Issues](https://img.shields.io/github/issues/drakeg/tickets)](https://github.com/drakeg/tickets/issues) [![Pull requests](https://img.shields.io/github/issues-pr/drakeg/tickets)](https://github.com/drakeg/tickets/pulls) [![License](https://img.shields.io/github/license/drakeg/tickets)](https://github.com/drakeg/tickets/blob/master/LICENSE)
 <!-- madmallard-badges:end -->
 
 A simpler ServiceNow-style ticketing system.
